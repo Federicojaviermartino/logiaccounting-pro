@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import NotificationBell from './NotificationBell';
 import ThemeToggle from './ThemeToggle';
 import LanguageSelector from './LanguageSelector';
+import CommandPalette from './CommandPalette';
+import ShortcutsHelp from './ShortcutsHelp';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
 const navItems = [
   { path: '/dashboard', icon: '📊', label: 'Dashboard', roles: ['admin', 'client', 'supplier'] },
@@ -27,11 +31,15 @@ const navItems = [
   { section: 'Administration', roles: ['admin'] },
   { path: '/users', icon: '👥', label: 'Users', roles: ['admin'] },
   { path: '/reports', icon: '📈', label: 'Reports', roles: ['admin'] },
+  { path: '/report-builder', icon: '📊', label: 'Report Builder', roles: ['admin'] },
   { path: '/activity-log', icon: '📋', label: 'Activity Log', roles: ['admin'] },
   { path: '/bulk-operations', icon: '📥', label: 'Bulk Operations', roles: ['admin'] },
+  { path: '/backup', icon: '💾', label: 'Backup', roles: ['admin'] },
+  { path: '/webhooks', icon: '🔗', label: 'Webhooks', roles: ['admin'] },
 
   { section: 'Settings', roles: ['admin', 'client', 'supplier'] },
-  { path: '/settings', icon: '⚙️', label: 'Settings', roles: ['admin', 'client', 'supplier'] }
+  { path: '/settings', icon: '⚙️', label: 'Settings', roles: ['admin', 'client', 'supplier'] },
+  { path: '/help', icon: '❓', label: 'Help', roles: ['admin', 'client', 'supplier'] }
 ];
 
 const pageTitles = {
@@ -43,18 +51,33 @@ const pageTitles = {
   '/payments': 'Payments',
   '/users': 'User Management',
   '/reports': 'Reports & Analytics',
+  '/report-builder': 'Report Builder',
   '/ai-dashboard': 'AI Analytics Dashboard',
   '/invoice-ocr': 'Smart Invoice Processing',
   '/assistant': 'Profitability Assistant',
   '/activity-log': 'Activity Log',
   '/bulk-operations': 'Bulk Operations',
-  '/settings': 'Settings'
+  '/backup': 'Backup & Restore',
+  '/webhooks': 'Webhooks',
+  '/settings': 'Settings',
+  '/help': 'Help Center'
 };
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+
+  useKeyboardShortcuts({
+    onCommandPalette: () => setShowCommandPalette(true),
+    onShowShortcuts: () => setShowShortcuts(true),
+    onCloseModal: () => {
+      setShowCommandPalette(false);
+      setShowShortcuts(false);
+    }
+  });
 
   const handleLogout = async () => {
     await logout();
@@ -117,6 +140,13 @@ export default function Layout({ children }) {
         </header>
         {children}
       </main>
+
+      <CommandPalette
+        isOpen={showCommandPalette}
+        onClose={() => setShowCommandPalette(false)}
+        onShowShortcuts={() => { setShowCommandPalette(false); setShowShortcuts(true); }}
+      />
+      <ShortcutsHelp isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />
     </div>
   );
 }

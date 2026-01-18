@@ -12,36 +12,60 @@ from app.schemas.schemas import (
     LoginRequest, LoginResponse, RegisterRequest,
     ProfileUpdate, PasswordChange, UserStatusUpdate
 )
+from app.services.two_factor import two_factor_service
 
 router = APIRouter()
 
 
-@router.post("/login", response_model=LoginResponse)
+@router.post("/login")
 async def login(request: LoginRequest):
     """User login endpoint"""
     user = db.users.find_by_email(request.email)
-    
+
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials"
         )
-    
+
     if not verify_password(request.password, user["password"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials"
         )
-    
+
     if user.get("status") != "active":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Account is not active"
         )
-    
+
+    if two_factor_service.is_2fa_enabled(user["id"]):
+        return {
+            "requires_2fa": True,
+            "email": user["email"],
+            "message": "Please enter your 2FA code"
+        }
+
     token = create_access_token({"user_id": user["id"], "role": user["role"]})
     user_data = {k: v for k, v in user.items() if k != "password"}
-    
+
+    return {"success": True, "token": token, "user": user_data}
+
+
+@router.post("/verify-2fa")
+async def verify_2fa_login(email: str, code: str):
+    """Verify 2FA code during login"""
+    user = db.users.find_by_email(email)
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+
+    if not two_factor_service.verify_login(user["id"], code):
+        raise HTTPException(status_code=401, detail="Invalid 2FA code")
+
+    token = create_access_token({"user_id": user["id"], "role": user["role"]})
+    user_data = {k: v for k, v in user.items() if k != "password"}
+
     return {"success": True, "token": token, "user": user_data}
 
 

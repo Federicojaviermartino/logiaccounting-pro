@@ -231,3 +231,58 @@ export const emailAPI = {
   getHistory: (params) => api.get('/api/v1/email/history', { params }),
   getStatus: () => api.get('/api/v1/email/status')
 };
+
+// Two-Factor Auth API
+export const twoFactorAPI = {
+  getStatus: () => api.get('/api/v1/2fa/status'),
+  setup: () => api.post('/api/v1/2fa/setup'),
+  verifySetup: (code) => api.post('/api/v1/2fa/verify-setup', { code }),
+  disable: (code) => api.post('/api/v1/2fa/disable', { code }),
+  verifyLogin: (email, code) => api.post('/api/v1/auth/verify-2fa', null, {
+    params: { email, code }
+  })
+};
+
+// Report Builder API
+export const reportBuilderAPI = {
+  getColumns: (type) => api.get(`/api/v1/report-builder/columns/${type}`),
+  preview: (config, limit = 20) => api.post('/api/v1/report-builder/preview', config, {
+    params: { limit }
+  }),
+  generate: (config, format = 'json') => api.post('/api/v1/report-builder/generate', config, {
+    params: { format },
+    responseType: format === 'csv' ? 'blob' : 'json'
+  }),
+  getTemplates: () => api.get('/api/v1/report-builder/templates'),
+  saveTemplate: (template) => api.post('/api/v1/report-builder/templates', template),
+  deleteTemplate: (id) => api.delete(`/api/v1/report-builder/templates/${id}`)
+};
+
+// Backup API
+export const backupAPI = {
+  create: (data) => api.post('/api/v1/backup/create', data),
+  list: () => api.get('/api/v1/backup/list'),
+  download: (id) => api.get(`/api/v1/backup/download/${id}`, { responseType: 'blob' }),
+  delete: (id) => api.delete(`/api/v1/backup/${id}`),
+  restore: (data) => api.post('/api/v1/backup/restore', data),
+  restoreFromFile: (file, mode = 'merge') => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/api/v1/backup/restore/upload?mode=${mode}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  }
+};
+
+// Webhook API
+export const webhookAPI = {
+  getEvents: () => api.get('/api/v1/webhooks/events'),
+  list: () => api.get('/api/v1/webhooks'),
+  create: (data) => api.post('/api/v1/webhooks', data),
+  get: (id) => api.get(`/api/v1/webhooks/${id}`),
+  update: (id, data) => api.put(`/api/v1/webhooks/${id}`, data),
+  delete: (id) => api.delete(`/api/v1/webhooks/${id}`),
+  test: (id) => api.post(`/api/v1/webhooks/${id}/test`),
+  getLogs: (id, limit = 50) => api.get(`/api/v1/webhooks/${id}/logs`, { params: { limit } }),
+  getAllLogs: (params) => api.get('/api/v1/webhooks/logs/all', { params })
+};

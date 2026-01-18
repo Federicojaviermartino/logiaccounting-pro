@@ -29,6 +29,10 @@ const Assistant = lazy(() => import('./pages/Assistant'));
 const Settings = lazy(() => import('./pages/Settings'));
 const ActivityLog = lazy(() => import('./pages/ActivityLog'));
 const BulkOperations = lazy(() => import('./pages/BulkOperations'));
+const ReportBuilder = lazy(() => import('./pages/ReportBuilder'));
+const BackupRestore = lazy(() => import('./pages/BackupRestore'));
+const Webhooks = lazy(() => import('./pages/Webhooks'));
+const HelpCenter = lazy(() => import('./pages/HelpCenter'));
 
 // Loading fallback component
 function PageLoader() {
@@ -168,6 +172,30 @@ function App() {
         <Route path="/bulk-operations" element={
           <LazyRoute roles={['admin']}>
             <BulkOperations />
+          </LazyRoute>
+        } />
+
+        <Route path="/report-builder" element={
+          <LazyRoute roles={['admin']}>
+            <ReportBuilder />
+          </LazyRoute>
+        } />
+
+        <Route path="/backup" element={
+          <LazyRoute roles={['admin']}>
+            <BackupRestore />
+          </LazyRoute>
+        } />
+
+        <Route path="/webhooks" element={
+          <LazyRoute roles={['admin']}>
+            <Webhooks />
+          </LazyRoute>
+        } />
+
+        <Route path="/help" element={
+          <LazyRoute>
+            <HelpCenter />
           </LazyRoute>
         } />
 

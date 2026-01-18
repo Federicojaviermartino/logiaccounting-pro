@@ -13,7 +13,7 @@ import os
 from app.routes import (
     auth, inventory, projects, movements, transactions, payments,
     notifications, reports, ocr, cashflow, assistant, anomaly, scheduler, settings,
-    activity, bulk, email
+    activity, bulk, email, two_factor, report_builder, backup, webhooks
 )
 from app.models.store import init_database
 
@@ -65,6 +65,10 @@ app.include_router(settings.router, prefix="/api/v1/settings", tags=["Settings"]
 app.include_router(activity.router, prefix="/api/v1/activity", tags=["Activity"])
 app.include_router(bulk.router, prefix="/api/v1/bulk", tags=["Bulk Operations"])
 app.include_router(email.router, prefix="/api/v1/email", tags=["Email"])
+app.include_router(two_factor.router, prefix="/api/v1/2fa", tags=["Two-Factor Auth"])
+app.include_router(report_builder.router, prefix="/api/v1/report-builder", tags=["Report Builder"])
+app.include_router(backup.router, prefix="/api/v1/backup", tags=["Backup"])
+app.include_router(webhooks.router, prefix="/api/v1/webhooks", tags=["Webhooks"])
 
 
 @app.get("/health")
