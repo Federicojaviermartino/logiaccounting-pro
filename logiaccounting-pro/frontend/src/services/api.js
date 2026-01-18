@@ -106,3 +106,85 @@ export const reportsAPI = {
   getInventorySummary: () => api.get('/api/v1/reports/inventory-summary'),
   getPaymentSummary: () => api.get('/api/v1/reports/payment-summary')
 };
+
+// ============================================
+// AI-POWERED FEATURES API
+// ============================================
+
+// OCR API - Smart Invoice Processing
+export const ocrAPI = {
+  processInvoice: (file, autoCreate = false) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/api/v1/ocr/extract-and-create?auto_create=${autoCreate}&create_payment=false`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  extractOnly: (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/api/v1/ocr/extract', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  createFromExtracted: (data) => api.post('/api/v1/ocr/create-from-extracted', data),
+  getCategorySuggestions: (vendorName) =>
+    api.get('/api/v1/ocr/categories/suggestions', { params: { vendor_name: vendorName } }),
+  getStatus: () => api.get('/api/v1/ocr/status')
+};
+
+// Cash Flow Predictor API
+export const cashflowAPI = {
+  predict: (days = 90, includePending = true) =>
+    api.get('/api/v1/cashflow/predict', {
+      params: { days, include_pending: includePending }
+    }),
+  getSummary: () => api.get('/api/v1/cashflow/predict/summary'),
+  getDailyPredictions: (days = 30, offset = 0) =>
+    api.get('/api/v1/cashflow/predict/daily', { params: { days, offset } }),
+  getInsights: () => api.get('/api/v1/cashflow/insights'),
+  getRiskAssessment: () => api.get('/api/v1/cashflow/risk-assessment'),
+  getStatus: () => api.get('/api/v1/cashflow/status')
+};
+
+// Anomaly Detection API
+export const anomalyAPI = {
+  runScan: () => api.get('/api/v1/anomaly/scan'),
+  getSummary: () => api.get('/api/v1/anomaly/summary'),
+  getByType: (type) => api.get(`/api/v1/anomaly/by-type/${type}`),
+  getBySeverity: (severity) => api.get(`/api/v1/anomaly/by-severity/${severity}`),
+  checkTransaction: (data) => api.post('/api/v1/anomaly/check-transaction', data),
+  checkDuplicates: (invoiceNumber) =>
+    api.get('/api/v1/anomaly/duplicates', { params: { invoice_number: invoiceNumber } }),
+  analyzeVendor: (vendorId) => api.get(`/api/v1/anomaly/vendor/${vendorId}/analysis`),
+  getStatus: () => api.get('/api/v1/anomaly/status')
+};
+
+// Payment Scheduler API
+export const schedulerAPI = {
+  optimize: (availableCash, strategy = 'balanced') =>
+    api.get('/api/v1/scheduler/optimize', {
+      params: { available_cash: availableCash, strategy }
+    }),
+  getSummary: () => api.get('/api/v1/scheduler/summary'),
+  getDailySchedule: (days = 30) =>
+    api.get('/api/v1/scheduler/daily', { params: { days } }),
+  getPaymentInsights: (paymentId) => api.get(`/api/v1/scheduler/payment/${paymentId}/insights`),
+  getUrgentPayments: () => api.get('/api/v1/scheduler/urgent'),
+  getDiscountOpportunities: () => api.get('/api/v1/scheduler/discounts'),
+  simulate: (data) => api.post('/api/v1/scheduler/simulate', data),
+  getStatus: () => api.get('/api/v1/scheduler/status')
+};
+
+// Profitability Assistant API
+export const assistantAPI = {
+  query: (userQuery, conversationHistory = null) =>
+    api.post('/api/v1/assistant/query', {
+      query: userQuery,
+      conversation_history: conversationHistory
+    }),
+  getSuggestions: (context = null) =>
+    api.get('/api/v1/assistant/suggestions', { params: { context } }),
+  getQuickInsights: () => api.get('/api/v1/assistant/quick-insights'),
+  getStatus: () => api.get('/api/v1/assistant/status')
+};

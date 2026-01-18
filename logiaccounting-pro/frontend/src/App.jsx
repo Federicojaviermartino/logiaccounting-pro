@@ -11,6 +11,11 @@ import Users from './pages/Users';
 import Reports from './pages/Reports';
 import Layout from './components/Layout';
 
+// AI-Powered Pages
+import AIDashboard from './pages/AIDashboard';
+import InvoiceOCR from './pages/InvoiceOCR';
+import Assistant from './pages/Assistant';
+
 function PrivateRoute({ children, roles }) {
   const { user, loading } = useAuth();
   
@@ -87,7 +92,26 @@ function App() {
           <Layout><Reports /></Layout>
         </PrivateRoute>
       } />
-      
+
+      {/* AI-Powered Routes */}
+      <Route path="/ai-dashboard" element={
+        <PrivateRoute roles={['admin']}>
+          <Layout><AIDashboard /></Layout>
+        </PrivateRoute>
+      } />
+
+      <Route path="/invoice-ocr" element={
+        <PrivateRoute roles={['admin', 'supplier']}>
+          <Layout><InvoiceOCR /></Layout>
+        </PrivateRoute>
+      } />
+
+      <Route path="/assistant" element={
+        <PrivateRoute roles={['admin']}>
+          <Layout><Assistant /></Layout>
+        </PrivateRoute>
+      } />
+
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );

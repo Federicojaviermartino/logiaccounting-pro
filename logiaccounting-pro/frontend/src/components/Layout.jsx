@@ -3,14 +3,23 @@ import { useAuth } from '../contexts/AuthContext';
 
 const navItems = [
   { path: '/dashboard', icon: '📊', label: 'Dashboard', roles: ['admin', 'client', 'supplier'] },
+
   { section: 'Logistics', roles: ['admin', 'supplier'] },
   { path: '/inventory', icon: '📦', label: 'Inventory', roles: ['admin', 'supplier'] },
   { path: '/movements', icon: '🔄', label: 'Movements', roles: ['admin', 'supplier'] },
+
   { section: 'Projects', roles: ['admin', 'client'] },
   { path: '/projects', icon: '📁', label: 'Projects', roles: ['admin', 'client'] },
+
   { section: 'Finance', roles: ['admin', 'client', 'supplier'] },
   { path: '/transactions', icon: '💰', label: 'Transactions', roles: ['admin', 'client', 'supplier'] },
   { path: '/payments', icon: '💳', label: 'Payments', roles: ['admin', 'client', 'supplier'] },
+
+  { section: 'AI Tools', roles: ['admin'] },
+  { path: '/ai-dashboard', icon: '🤖', label: 'AI Dashboard', roles: ['admin'] },
+  { path: '/invoice-ocr', icon: '📄', label: 'Invoice OCR', roles: ['admin', 'supplier'] },
+  { path: '/assistant', icon: '💬', label: 'Assistant', roles: ['admin'] },
+
   { section: 'Administration', roles: ['admin'] },
   { path: '/users', icon: '👥', label: 'Users', roles: ['admin'] },
   { path: '/reports', icon: '📈', label: 'Reports', roles: ['admin'] }
@@ -24,7 +33,10 @@ const pageTitles = {
   '/transactions': 'Transactions',
   '/payments': 'Payments',
   '/users': 'User Management',
-  '/reports': 'Reports & Analytics'
+  '/reports': 'Reports & Analytics',
+  '/ai-dashboard': 'AI Analytics Dashboard',
+  '/invoice-ocr': 'Smart Invoice Processing',
+  '/assistant': 'Profitability Assistant'
 };
 
 export default function Layout({ children }) {
