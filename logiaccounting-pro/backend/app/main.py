@@ -10,7 +10,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import os
 
-from app.routes import auth, inventory, projects, movements, transactions, payments, notifications, reports
+from app.routes import (
+    auth, inventory, projects, movements, transactions, payments,
+    notifications, reports, ocr, cashflow, assistant, anomaly, scheduler
+)
 from app.models.store import init_database
 
 
@@ -23,8 +26,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="LogiAccounting Pro API",
-    description="Enterprise logistics and accounting platform",
-    version="1.0.0",
+    description="Enterprise logistics and accounting platform with AI-powered features",
+    version="2.0.0",
     lifespan=lifespan
 )
 
@@ -50,6 +53,13 @@ app.include_router(transactions.router, prefix="/api/v1/transactions", tags=["Tr
 app.include_router(payments.router, prefix="/api/v1/payments", tags=["Payments"])
 app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
 app.include_router(reports.router, prefix="/api/v1/reports", tags=["Reports"])
+app.include_router(ocr.router, prefix="/api/v1/ocr", tags=["OCR Invoice Processing"])
+
+# AI-Powered Features
+app.include_router(cashflow.router, prefix="/api/v1/cashflow", tags=["Cash Flow Predictor"])
+app.include_router(assistant.router, prefix="/api/v1/assistant", tags=["Profitability Assistant"])
+app.include_router(anomaly.router, prefix="/api/v1/anomaly", tags=["Anomaly Detection"])
+app.include_router(scheduler.router, prefix="/api/v1/scheduler", tags=["Payment Scheduler"])
 
 
 @app.get("/health")
@@ -63,8 +73,15 @@ async def api_info():
     """API information"""
     return {
         "name": "LogiAccounting Pro",
-        "version": "1.0.0",
-        "description": "Enterprise logistics and accounting platform",
+        "version": "2.0.0",
+        "description": "Enterprise logistics and accounting platform with AI-powered features",
+        "ai_features": {
+            "ocr_invoice_processing": "Smart Invoice OCR + Auto-Categorization (Tesseract + OpenAI Vision)",
+            "cash_flow_predictor": "Intelligent 30-60-90 day cash flow prediction (Prophet ML)",
+            "profitability_assistant": "NLP chatbot for financial queries (Claude API)",
+            "anomaly_detection": "Fraud prevention & duplicate detection (Statistical ML + Isolation Forest)",
+            "payment_scheduler": "Optimized payment scheduling (Constraint optimization)"
+        },
         "demo_credentials": {
             "admin": "admin@logiaccounting.demo / Demo2024!Admin",
             "client": "client@logiaccounting.demo / Demo2024!Client",
