@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import { reportsAPI } from '../services/api';
+import ExportButton from '../components/ExportButton';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -125,7 +126,19 @@ export default function Reports() {
 
           <div className="grid-2">
             <div className="section">
-              <h3 className="section-title">Cash Flow (12 Months)</h3>
+              <div className="section-header">
+                <h3 className="section-title">Cash Flow (12 Months)</h3>
+                <ExportButton
+                  data={cashFlow.map(d => ({
+                    Month: d.month,
+                    Income: d.income,
+                    Expenses: d.expenses,
+                    'Net Profit': d.income - d.expenses
+                  }))}
+                  filename="cash-flow-report"
+                  title="Cash Flow Report"
+                />
+              </div>
               <div className="chart-container">
                 <Bar data={cashFlowChartData} options={{ responsive: true, maintainAspectRatio: false }} />
               </div>
@@ -189,7 +202,23 @@ export default function Reports() {
 
       {activeTab === 'projects' && (
         <div className="section">
-          <h3 className="section-title">Project Profitability</h3>
+          <div className="section-header">
+            <h3 className="section-title">Project Profitability</h3>
+            <ExportButton
+              data={projects.map(p => ({
+                Code: p.code,
+                Name: p.name,
+                Status: p.status,
+                Budget: p.budget,
+                Income: p.income,
+                Expenses: p.expenses,
+                Profit: p.profit,
+                'Margin %': p.margin
+              }))}
+              filename="project-profitability-report"
+              title="Project Profitability Report"
+            />
+          </div>
           <div className="table-container">
             <table className="data-table">
               <thead>

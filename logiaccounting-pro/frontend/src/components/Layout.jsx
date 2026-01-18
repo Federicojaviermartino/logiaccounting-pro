@@ -1,5 +1,6 @@
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import NotificationBell from './NotificationBell';
 
 const navItems = [
   { path: '/dashboard', icon: '📊', label: 'Dashboard', roles: ['admin', 'client', 'supplier'] },
@@ -93,9 +94,12 @@ export default function Layout({ children }) {
       <main className="main-content">
         <header className="page-header">
           <h1 className="page-title">{pageTitles[location.pathname] || 'Dashboard'}</h1>
-          <div className="user-info">
-            <div className="user-name">{user?.first_name} {user?.last_name}</div>
-            <div className="user-role">{user?.role}</div>
+          <div className="header-right">
+            <NotificationBell />
+            <div className="user-info">
+              <div className="user-name">{user?.first_name} {user?.last_name}</div>
+              <div className="user-role">{user?.role}</div>
+            </div>
           </div>
         </header>
         {children}

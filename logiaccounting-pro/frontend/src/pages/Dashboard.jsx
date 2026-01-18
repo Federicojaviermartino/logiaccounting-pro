@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { useAuth } from '../contexts/AuthContext';
-import { reportsAPI, paymentsAPI } from '../services/api';
+import { reportsAPI, paymentsAPI, cashflowAPI, anomalyAPI } from '../services/api';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
@@ -15,9 +15,12 @@ export default function Dashboard() {
   const [expenses, setExpenses] = useState([]);
   const [pendingPayments, setPendingPayments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [aiInsights, setAiInsights] = useState(null);
+  const [aiLoading, setAiLoading] = useState(true);
 
   useEffect(() => {
     loadData();
+    loadAIInsights();
   }, []);
 
   const loadData = async () => {
@@ -42,6 +45,29 @@ export default function Dashboard() {
       console.error('Failed to load dashboard:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadAIInsights = async () => {
+    if (user?.role !== 'admin') {
+      setAiLoading(false);
+      return;
+    }
+
+    try {
+      const [cashflowRes, anomalyRes] = await Promise.all([
+        cashflowAPI.predict(30),
+        anomalyAPI.getSummary()
+      ]);
+
+      setAiInsights({
+        cashflow: cashflowRes.data,
+        anomalies: anomalyRes.data
+      });
+    } catch (error) {
+      console.error('Failed to load AI insights:', error);
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -125,6 +151,53 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {user?.role === 'admin' && aiInsights && (
+        <div className="section mb-6">
+          <div className="section-header">
+            <h3 className="section-title">AI Insights</h3>
+            <button className="btn btn-sm btn-secondary" onClick={() => navigate('/ai-dashboard')}>View Details</button>
+          </div>
+          <div className="stats-grid">
+            <div className="stat-card">
+              <span className="stat-icon">📈</span>
+              <div className="stat-content">
+                <div className="stat-label">30-Day Cash Forecast</div>
+                <div className={`stat-value ${aiInsights.cashflow?.summary?.total_net >= 0 ? 'success' : 'danger'}`}>
+                  {formatCurrency(aiInsights.cashflow?.summary?.total_net)}
+                </div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <span className="stat-icon">⚠️</span>
+              <div className="stat-content">
+                <div className="stat-label">Anomalies Detected</div>
+                <div className={`stat-value ${aiInsights.anomalies?.total_anomalies > 0 ? 'warning' : 'success'}`}>
+                  {aiInsights.anomalies?.total_anomalies || 0}
+                </div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <span className="stat-icon">🎯</span>
+              <div className="stat-content">
+                <div className="stat-label">Risk Score</div>
+                <div className={`stat-value ${(aiInsights.anomalies?.risk_score || 0) > 0.5 ? 'danger' : 'success'}`}>
+                  {((aiInsights.anomalies?.risk_score || 0) * 100).toFixed(0)}%
+                </div>
+              </div>
+            </div>
+          </div>
+          {aiInsights.cashflow?.risk_alerts?.length > 0 && (
+            <div className="mt-4">
+              {aiInsights.cashflow.risk_alerts.slice(0, 2).map((alert, i) => (
+                <div key={i} className="info-banner" style={{ background: '#fef2f2', borderColor: '#fecaca', color: '#dc2626', marginBottom: '8px' }}>
+                  ⚠️ {alert}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {user?.role === 'admin' && (
         <div className="grid-2 mb-6">
