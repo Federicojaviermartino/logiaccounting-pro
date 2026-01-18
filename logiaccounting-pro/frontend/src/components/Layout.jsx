@@ -22,6 +22,8 @@ const navItems = [
   { section: 'Finance', roles: ['admin', 'client', 'supplier'] },
   { path: '/transactions', icon: '💰', label: 'Transactions', roles: ['admin', 'client', 'supplier'] },
   { path: '/payments', icon: '💳', label: 'Payments', roles: ['admin', 'client', 'supplier'] },
+  { path: '/budgets', icon: '💵', label: 'Budgets', roles: ['admin'] },
+  { path: '/recurring', icon: '🔁', label: 'Recurring', roles: ['admin'] },
 
   { section: 'AI Tools', roles: ['admin'] },
   { path: '/ai-dashboard', icon: '🤖', label: 'AI Dashboard', roles: ['admin'] },
@@ -30,12 +32,14 @@ const navItems = [
 
   { section: 'Administration', roles: ['admin'] },
   { path: '/users', icon: '👥', label: 'Users', roles: ['admin'] },
+  { path: '/approvals', icon: '✅', label: 'Approvals', roles: ['admin', 'manager'] },
   { path: '/reports', icon: '📈', label: 'Reports', roles: ['admin'] },
   { path: '/report-builder', icon: '📊', label: 'Report Builder', roles: ['admin'] },
   { path: '/activity-log', icon: '📋', label: 'Activity Log', roles: ['admin'] },
   { path: '/bulk-operations', icon: '📥', label: 'Bulk Operations', roles: ['admin'] },
   { path: '/backup', icon: '💾', label: 'Backup', roles: ['admin'] },
   { path: '/webhooks', icon: '🔗', label: 'Webhooks', roles: ['admin'] },
+  { path: '/api-keys', icon: '🔑', label: 'API Keys', roles: ['admin'] },
 
   { section: 'Settings', roles: ['admin', 'client', 'supplier'] },
   { path: '/settings', icon: '⚙️', label: 'Settings', roles: ['admin', 'client', 'supplier'] },
@@ -49,7 +53,10 @@ const pageTitles = {
   '/movements': 'Stock Movements',
   '/transactions': 'Transactions',
   '/payments': 'Payments',
+  '/budgets': 'Budget Management',
+  '/recurring': 'Recurring Transactions',
   '/users': 'User Management',
+  '/approvals': 'Approval Workflows',
   '/reports': 'Reports & Analytics',
   '/report-builder': 'Report Builder',
   '/ai-dashboard': 'AI Analytics Dashboard',
@@ -59,6 +66,7 @@ const pageTitles = {
   '/bulk-operations': 'Bulk Operations',
   '/backup': 'Backup & Restore',
   '/webhooks': 'Webhooks',
+  '/api-keys': 'API Keys Management',
   '/settings': 'Settings',
   '/help': 'Help Center'
 };

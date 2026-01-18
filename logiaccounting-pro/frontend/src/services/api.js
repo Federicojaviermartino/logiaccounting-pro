@@ -286,3 +286,77 @@ export const webhookAPI = {
   getLogs: (id, limit = 50) => api.get(`/api/v1/webhooks/${id}/logs`, { params: { limit } }),
   getAllLogs: (params) => api.get('/api/v1/webhooks/logs/all', { params })
 };
+
+// ============================================
+// PHASE 5 - ENTERPRISE FEATURES API
+// ============================================
+
+// AI Chat Assistant API
+export const chatAssistantAPI = {
+  chat: (message, language = 'en') => api.post('/api/v1/assistant/chat', { message, language }),
+  getHistory: (limit = 20) => api.get('/api/v1/assistant/history', { params: { limit } }),
+  clearHistory: () => api.delete('/api/v1/assistant/history')
+};
+
+// Approvals API
+export const approvalsAPI = {
+  getPending: () => api.get('/api/v1/approvals/pending'),
+  getMyRequests: () => api.get('/api/v1/approvals/my-requests'),
+  get: (id) => api.get(`/api/v1/approvals/${id}`),
+  approve: (id, comments = '') => api.post(`/api/v1/approvals/${id}/approve`, { comments }),
+  reject: (id, comments) => api.post(`/api/v1/approvals/${id}/reject`, { comments }),
+  getRules: () => api.get('/api/v1/approvals/rules'),
+  createRule: (data) => api.post('/api/v1/approvals/rules', data),
+  updateRule: (id, data) => api.put(`/api/v1/approvals/rules/${id}`, data),
+  deleteRule: (id) => api.delete(`/api/v1/approvals/rules/${id}`)
+};
+
+// Recurring Transactions API
+export const recurringAPI = {
+  getAll: () => api.get('/api/v1/recurring'),
+  get: (id) => api.get(`/api/v1/recurring/${id}`),
+  create: (data) => api.post('/api/v1/recurring', data),
+  update: (id, data) => api.put(`/api/v1/recurring/${id}`, data),
+  delete: (id) => api.delete(`/api/v1/recurring/${id}`),
+  pause: (id) => api.post(`/api/v1/recurring/${id}/pause`),
+  resume: (id) => api.post(`/api/v1/recurring/${id}/resume`),
+  preview: (id, count = 5) => api.get(`/api/v1/recurring/${id}/preview`, { params: { count } }),
+  generateNow: (id) => api.post(`/api/v1/recurring/${id}/generate`)
+};
+
+// Budgets API
+export const budgetsAPI = {
+  getAll: () => api.get('/api/v1/budgets'),
+  get: (id) => api.get(`/api/v1/budgets/${id}`),
+  create: (data) => api.post('/api/v1/budgets', data),
+  update: (id, data) => api.put(`/api/v1/budgets/${id}`, data),
+  delete: (id) => api.delete(`/api/v1/budgets/${id}`),
+  getSpending: (id) => api.get(`/api/v1/budgets/${id}/spending`),
+  getVariance: () => api.get('/api/v1/budgets/variance/report')
+};
+
+// Documents API
+export const documentsAPI = {
+  upload: (entityType, entityId, file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/api/v1/documents/upload/${entityType}/${entityId}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  getByEntity: (entityType, entityId) => api.get(`/api/v1/documents/${entityType}/${entityId}`),
+  download: (id) => api.get(`/api/v1/documents/download/${id}`, { responseType: 'blob' }),
+  delete: (id) => api.delete(`/api/v1/documents/${id}`),
+  search: (query) => api.get('/api/v1/documents/search', { params: { query } })
+};
+
+// API Keys API
+export const apiKeysAPI = {
+  list: () => api.get('/api/v1/api-keys'),
+  get: (id) => api.get(`/api/v1/api-keys/${id}`),
+  create: (data) => api.post('/api/v1/api-keys', data),
+  getPermissions: () => api.get('/api/v1/api-keys/permissions'),
+  updatePermissions: (id, permissions) => api.put(`/api/v1/api-keys/${id}/permissions`, { permissions }),
+  revoke: (id) => api.post(`/api/v1/api-keys/${id}/revoke`),
+  delete: (id) => api.delete(`/api/v1/api-keys/${id}`)
+};

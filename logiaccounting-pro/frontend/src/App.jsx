@@ -34,6 +34,12 @@ const BackupRestore = lazy(() => import('./pages/BackupRestore'));
 const Webhooks = lazy(() => import('./pages/Webhooks'));
 const HelpCenter = lazy(() => import('./pages/HelpCenter'));
 
+// Phase 5 - Enterprise Features
+const Approvals = lazy(() => import('./pages/Approvals'));
+const RecurringItems = lazy(() => import('./pages/RecurringItems'));
+const Budgets = lazy(() => import('./pages/Budgets'));
+const APIKeys = lazy(() => import('./pages/APIKeys'));
+
 // Loading fallback component
 function PageLoader() {
   return (
@@ -196,6 +202,31 @@ function App() {
         <Route path="/help" element={
           <LazyRoute>
             <HelpCenter />
+          </LazyRoute>
+        } />
+
+        {/* Phase 5 - Enterprise Features Routes */}
+        <Route path="/approvals" element={
+          <LazyRoute roles={['admin', 'manager']}>
+            <Approvals />
+          </LazyRoute>
+        } />
+
+        <Route path="/recurring" element={
+          <LazyRoute roles={['admin']}>
+            <RecurringItems />
+          </LazyRoute>
+        } />
+
+        <Route path="/budgets" element={
+          <LazyRoute roles={['admin']}>
+            <Budgets />
+          </LazyRoute>
+        } />
+
+        <Route path="/api-keys" element={
+          <LazyRoute roles={['admin']}>
+            <APIKeys />
           </LazyRoute>
         } />
 

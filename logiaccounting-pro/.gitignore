@@ -38,3 +38,6 @@ htmlcov/
 # Misc
 *.bak
 *.tmp
+
+# Claude
+.claude/

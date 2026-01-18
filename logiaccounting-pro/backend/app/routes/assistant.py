@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from app.utils.auth import get_current_user
 from app.models.store import db
 from app.services.profitability_assistant import create_profitability_assistant, ANTHROPIC_AVAILABLE
+from app.services.ai_assistant import ai_assistant
 
 router = APIRouter()
 
@@ -260,3 +261,37 @@ async def get_assistant_status():
             "What's our monthly revenue trend?"
         ]
     }
+
+
+class ChatRequest(BaseModel):
+    message: str
+    language: str = "en"
+
+
+@router.post("/chat")
+async def chat(
+    request: ChatRequest,
+    current_user: dict = Depends(get_current_user)
+):
+    """Send a message to the AI assistant"""
+    return ai_assistant.process_query(
+        user_id=current_user["id"],
+        message=request.message,
+        language=request.language
+    )
+
+
+@router.get("/history")
+async def get_history(
+    limit: int = 20,
+    current_user: dict = Depends(get_current_user)
+):
+    """Get conversation history"""
+    return {"messages": ai_assistant.get_conversation_history(current_user["id"], limit)}
+
+
+@router.delete("/history")
+async def clear_history(current_user: dict = Depends(get_current_user)):
+    """Clear conversation history"""
+    ai_assistant.clear_conversation(current_user["id"])
+    return {"message": "Conversation cleared"}
