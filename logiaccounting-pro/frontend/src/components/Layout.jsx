@@ -1,6 +1,9 @@
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import NotificationBell from './NotificationBell';
+import ThemeToggle from './ThemeToggle';
+import LanguageSelector from './LanguageSelector';
 
 const navItems = [
   { path: '/dashboard', icon: '📊', label: 'Dashboard', roles: ['admin', 'client', 'supplier'] },
@@ -23,7 +26,12 @@ const navItems = [
 
   { section: 'Administration', roles: ['admin'] },
   { path: '/users', icon: '👥', label: 'Users', roles: ['admin'] },
-  { path: '/reports', icon: '📈', label: 'Reports', roles: ['admin'] }
+  { path: '/reports', icon: '📈', label: 'Reports', roles: ['admin'] },
+  { path: '/activity-log', icon: '📋', label: 'Activity Log', roles: ['admin'] },
+  { path: '/bulk-operations', icon: '📥', label: 'Bulk Operations', roles: ['admin'] },
+
+  { section: 'Settings', roles: ['admin', 'client', 'supplier'] },
+  { path: '/settings', icon: '⚙️', label: 'Settings', roles: ['admin', 'client', 'supplier'] }
 ];
 
 const pageTitles = {
@@ -37,7 +45,10 @@ const pageTitles = {
   '/reports': 'Reports & Analytics',
   '/ai-dashboard': 'AI Analytics Dashboard',
   '/invoice-ocr': 'Smart Invoice Processing',
-  '/assistant': 'Profitability Assistant'
+  '/assistant': 'Profitability Assistant',
+  '/activity-log': 'Activity Log',
+  '/bulk-operations': 'Bulk Operations',
+  '/settings': 'Settings'
 };
 
 export default function Layout({ children }) {
@@ -95,6 +106,8 @@ export default function Layout({ children }) {
         <header className="page-header">
           <h1 className="page-title">{pageTitles[location.pathname] || 'Dashboard'}</h1>
           <div className="header-right">
+            <LanguageSelector />
+            <ThemeToggle />
             <NotificationBell />
             <div className="user-info">
               <div className="user-name">{user?.first_name} {user?.last_name}</div>

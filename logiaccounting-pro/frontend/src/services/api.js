@@ -188,3 +188,46 @@ export const assistantAPI = {
   getQuickInsights: () => api.get('/api/v1/assistant/quick-insights'),
   getStatus: () => api.get('/api/v1/assistant/status')
 };
+
+// Settings API
+export const settingsAPI = {
+  getUserPreferences: () => api.get('/api/v1/settings/user'),
+  updateUserPreferences: (prefs) => api.put('/api/v1/settings/user', prefs),
+  getSystemSettings: () => api.get('/api/v1/settings/system'),
+  updateSystemSettings: (settings) => api.put('/api/v1/settings/system', settings),
+  getAvailableOptions: () => api.get('/api/v1/settings/available-options')
+};
+
+// Activity Log API
+export const activityAPI = {
+  getActivities: (params) => api.get('/api/v1/activity', { params }),
+  getStats: (days = 30) => api.get('/api/v1/activity/stats', { params: { days } }),
+  getAvailableActions: () => api.get('/api/v1/activity/actions'),
+  exportCSV: (params) => api.get('/api/v1/activity/export', { params, responseType: 'blob' })
+};
+
+// Bulk Operations API
+export const bulkAPI = {
+  getTemplate: (entity) => api.get(`/api/v1/bulk/template/${entity}`, { responseType: 'blob' }),
+  importData: (entity, file, skipErrors = false) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/api/v1/bulk/import/${entity}?skip_errors=${skipErrors}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  exportData: (entity, ids = null, format = 'csv') =>
+    api.post(`/api/v1/bulk/export/${entity}?format=${format}`, ids, { responseType: 'blob' }),
+  bulkDelete: (entity, ids) => api.post(`/api/v1/bulk/delete/${entity}`, { ids }),
+  bulkUpdate: (entity, ids, updates) => api.post(`/api/v1/bulk/update/${entity}`, { ids, updates })
+};
+
+// Email Notifications API
+export const emailAPI = {
+  sendNotification: (data) => api.post('/api/v1/email/send', data),
+  sendPaymentReminder: (paymentId) => api.post(`/api/v1/email/payment-reminder/${paymentId}`),
+  sendLowStockAlert: (materialId) => api.post(`/api/v1/email/low-stock-alert/${materialId}`),
+  getTemplates: () => api.get('/api/v1/email/templates'),
+  getHistory: (params) => api.get('/api/v1/email/history', { params }),
+  getStatus: () => api.get('/api/v1/email/status')
+};

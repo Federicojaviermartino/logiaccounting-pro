@@ -14,6 +14,29 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: false
+    sourcemap: false,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // Vendor chunk splitting
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'react-vendor';
+            }
+            if (id.includes('chart.js') || id.includes('react-chartjs')) {
+              return 'chart-vendor';
+            }
+            if (id.includes('xlsx') || id.includes('jspdf')) {
+              return 'export-vendor';
+            }
+          }
+        }
+      }
+    }
+  },
+  // Optimize deps
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', 'axios', 'chart.js']
   }
 });

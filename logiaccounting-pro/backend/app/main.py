@@ -12,7 +12,8 @@ import os
 
 from app.routes import (
     auth, inventory, projects, movements, transactions, payments,
-    notifications, reports, ocr, cashflow, assistant, anomaly, scheduler
+    notifications, reports, ocr, cashflow, assistant, anomaly, scheduler, settings,
+    activity, bulk, email
 )
 from app.models.store import init_database
 
@@ -60,6 +61,10 @@ app.include_router(cashflow.router, prefix="/api/v1/cashflow", tags=["Cash Flow 
 app.include_router(assistant.router, prefix="/api/v1/assistant", tags=["Profitability Assistant"])
 app.include_router(anomaly.router, prefix="/api/v1/anomaly", tags=["Anomaly Detection"])
 app.include_router(scheduler.router, prefix="/api/v1/scheduler", tags=["Payment Scheduler"])
+app.include_router(settings.router, prefix="/api/v1/settings", tags=["Settings"])
+app.include_router(activity.router, prefix="/api/v1/activity", tags=["Activity"])
+app.include_router(bulk.router, prefix="/api/v1/bulk", tags=["Bulk Operations"])
+app.include_router(email.router, prefix="/api/v1/email", tags=["Email"])
 
 
 @app.get("/health")
