@@ -61,6 +61,11 @@ const PaymentAnalytics = lazy(() => import('./pages/PaymentAnalytics'));
 const Checkout = lazy(() => import('./pages/public/Checkout'));
 const CheckoutSuccess = lazy(() => import('./pages/public/CheckoutSuccess'));
 
+// Phase 9 - E-commerce Integration
+const EcommerceDashboard = lazy(() => import('./pages/EcommerceDashboard'));
+const EcommerceStores = lazy(() => import('./pages/EcommerceStores'));
+const ImportedOrders = lazy(() => import('./pages/ImportedOrders'));
+
 // Portal Pages
 const ClientDashboard = lazy(() => import('./pages/portal/ClientDashboard'));
 const ClientProjects = lazy(() => import('./pages/portal/ClientProjects'));
@@ -379,6 +384,23 @@ function App() {
         {/* Public checkout routes (no Layout, no auth) */}
         <Route path="/pay/:code" element={<Checkout />} />
         <Route path="/pay/:code/success" element={<CheckoutSuccess />} />
+
+        {/* Phase 9 - E-commerce Integration */}
+        <Route path="/ecommerce" element={
+          <LazyRoute roles={['admin']}>
+            <EcommerceDashboard />
+          </LazyRoute>
+        } />
+        <Route path="/ecommerce/stores" element={
+          <LazyRoute roles={['admin']}>
+            <EcommerceStores />
+          </LazyRoute>
+        } />
+        <Route path="/ecommerce/orders" element={
+          <LazyRoute roles={['admin']}>
+            <ImportedOrders />
+          </LazyRoute>
+        } />
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

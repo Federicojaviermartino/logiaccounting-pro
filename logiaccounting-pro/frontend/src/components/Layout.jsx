@@ -58,6 +58,11 @@ const navItems = [
   { path: '/gateways', icon: '💳', label: 'Gateways', roles: ['admin'] },
   { path: '/payment-analytics', icon: '📊', label: 'Payment Analytics', roles: ['admin'] },
 
+  { section: 'E-commerce', roles: ['admin'] },
+  { path: '/ecommerce', icon: '🛒', label: 'Dashboard', roles: ['admin'] },
+  { path: '/ecommerce/stores', icon: '🏪', label: 'Stores', roles: ['admin'] },
+  { path: '/ecommerce/orders', icon: '🛍️', label: 'Imported Orders', roles: ['admin'] },
+
   { section: 'Client Portal', roles: ['client'] },
   { path: '/portal/client', icon: '🏠', label: 'My Dashboard', roles: ['client'] },
   { path: '/portal/client/projects', icon: '📁', label: 'My Projects', roles: ['client'] },
@@ -107,6 +112,9 @@ const pageTitles = {
   '/payment-links': 'Payment Links',
   '/gateways': 'Gateway Settings',
   '/payment-analytics': 'Payment Analytics',
+  '/ecommerce': 'E-commerce Dashboard',
+  '/ecommerce/stores': 'E-commerce Stores',
+  '/ecommerce/orders': 'Imported Orders',
   '/portal/client': 'Client Portal',
   '/portal/client/projects': 'My Projects',
   '/portal/client/payments': 'My Payments',
