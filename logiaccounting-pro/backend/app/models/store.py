@@ -8,8 +8,7 @@ from typing import Optional, List, Dict, Any
 from uuid import uuid4
 from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__truncate_error=False)
 
 class BaseStore:
     """Base class for data stores"""
