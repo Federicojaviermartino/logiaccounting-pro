@@ -54,6 +54,13 @@ const TaxManagement = lazy(() => import('./pages/TaxManagement'));
 const CustomFieldsConfig = lazy(() => import('./pages/CustomFieldsConfig'));
 const Calendar = lazy(() => import('./pages/Calendar'));
 
+// Phase 8 - Payment Gateway Integration
+const GatewaySettings = lazy(() => import('./pages/GatewaySettings'));
+const PaymentLinks = lazy(() => import('./pages/PaymentLinks'));
+const PaymentAnalytics = lazy(() => import('./pages/PaymentAnalytics'));
+const Checkout = lazy(() => import('./pages/public/Checkout'));
+const CheckoutSuccess = lazy(() => import('./pages/public/CheckoutSuccess'));
+
 // Portal Pages
 const ClientDashboard = lazy(() => import('./pages/portal/ClientDashboard'));
 const ClientProjects = lazy(() => import('./pages/portal/ClientProjects'));
@@ -351,6 +358,27 @@ function App() {
             <Calendar />
           </LazyRoute>
         } />
+
+        {/* Phase 8 - Payment Gateway Integration */}
+        <Route path="/gateways" element={
+          <PrivateRoute roles={['admin']}>
+            <Layout><GatewaySettings /></Layout>
+          </PrivateRoute>
+        } />
+        <Route path="/payment-links" element={
+          <PrivateRoute roles={['admin']}>
+            <Layout><PaymentLinks /></Layout>
+          </PrivateRoute>
+        } />
+        <Route path="/payment-analytics" element={
+          <PrivateRoute roles={['admin']}>
+            <Layout><PaymentAnalytics /></Layout>
+          </PrivateRoute>
+        } />
+
+        {/* Public checkout routes (no Layout, no auth) */}
+        <Route path="/pay/:code" element={<Checkout />} />
+        <Route path="/pay/:code/success" element={<CheckoutSuccess />} />
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>

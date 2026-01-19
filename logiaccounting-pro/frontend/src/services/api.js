@@ -547,5 +547,57 @@ export const calendarAPI = {
   delete: (eventId) => api.delete(`/api/v1/calendar/${eventId}`)
 };
 
+// ============================================
+// PHASE 8 - PAYMENT GATEWAY INTEGRATION API
+// ============================================
+
+// Gateway API
+export const gatewayAPI = {
+  getProviders: () => api.get('/api/v1/gateways/providers'),
+  list: (enabledOnly = false) => api.get('/api/v1/gateways', { params: { enabled_only: enabledOnly } }),
+  getDefault: () => api.get('/api/v1/gateways/default'),
+  getForCurrency: (currency) => api.get(`/api/v1/gateways/for-currency/${currency}`),
+  get: (provider) => api.get(`/api/v1/gateways/${provider}`),
+  update: (provider, data) => api.put(`/api/v1/gateways/${provider}`, data),
+  test: (provider) => api.post(`/api/v1/gateways/${provider}/test`),
+  calculateFee: (provider, amount) => api.get(`/api/v1/gateways/${provider}/calculate-fee`, { params: { amount } })
+};
+
+// Payment Links API
+export const paymentLinksAPI = {
+  getStatistics: () => api.get('/api/v1/payment-links/statistics'),
+  list: (params) => api.get('/api/v1/payment-links', { params }),
+  create: (data) => api.post('/api/v1/payment-links', data),
+  get: (linkId) => api.get(`/api/v1/payment-links/${linkId}`),
+  update: (linkId, data) => api.put(`/api/v1/payment-links/${linkId}`, data),
+  cancel: (linkId) => api.delete(`/api/v1/payment-links/${linkId}`),
+  send: (linkId) => api.post(`/api/v1/payment-links/${linkId}/send`)
+};
+
+// Checkout API (public - no auth)
+export const checkoutAPI = {
+  getData: (code) => api.get(`/api/v1/checkout/${code}`),
+  pay: (code, data) => api.post(`/api/v1/checkout/${code}/pay`, data),
+  getStatus: (code) => api.get(`/api/v1/checkout/${code}/status`)
+};
+
+// Refunds API
+export const refundsAPI = {
+  getReasons: () => api.get('/api/v1/refunds/reasons'),
+  getStatistics: () => api.get('/api/v1/refunds/statistics'),
+  list: (params) => api.get('/api/v1/refunds', { params }),
+  create: (data) => api.post('/api/v1/refunds', data),
+  get: (refundId) => api.get(`/api/v1/refunds/${refundId}`)
+};
+
+// Payment Analytics API
+export const paymentAnalyticsAPI = {
+  getSummary: (days = 30) => api.get('/api/v1/payment-analytics/summary', { params: { days } }),
+  getTrend: (days = 30) => api.get('/api/v1/payment-analytics/trend', { params: { days } }),
+  getByGateway: () => api.get('/api/v1/payment-analytics/by-gateway'),
+  getTopClients: (limit = 10) => api.get('/api/v1/payment-analytics/top-clients', { params: { limit } }),
+  getFees: (days = 30) => api.get('/api/v1/payment-analytics/fees', { params: { days } })
+};
+
 // Export api instance
 export { api };

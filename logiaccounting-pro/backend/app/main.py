@@ -19,7 +19,9 @@ from app.routes import (
     dashboards, websocket, reconciliation, client_portal, supplier_portal,
     scheduled_reports, currencies,
     # Phase 7 - Advanced Analytics & Integrations
-    audit, data_import, comments, tasks, taxes, custom_fields, calendar
+    audit, data_import, comments, tasks, taxes, custom_fields, calendar,
+    # Phase 8 - Payment Gateway Integration
+    gateways, payment_links, checkout, payment_webhooks, refunds, payment_analytics
 )
 from app.models.store import init_database
 
@@ -102,6 +104,14 @@ app.include_router(tasks.router, prefix="/api/v1/tasks", tags=["Tasks"])
 app.include_router(taxes.router, prefix="/api/v1/taxes", tags=["Tax Management"])
 app.include_router(custom_fields.router, prefix="/api/v1/custom-fields", tags=["Custom Fields"])
 app.include_router(calendar.router, prefix="/api/v1/calendar", tags=["Calendar"])
+
+# Phase 8 - Payment Gateway Integration
+app.include_router(gateways.router, prefix="/api/v1/gateways", tags=["Payment Gateways"])
+app.include_router(payment_links.router, prefix="/api/v1/payment-links", tags=["Payment Links"])
+app.include_router(checkout.router, prefix="/api/v1/checkout", tags=["Checkout"])
+app.include_router(payment_webhooks.router, prefix="/api/v1/webhooks/payment", tags=["Payment Webhooks"])
+app.include_router(refunds.router, prefix="/api/v1/refunds", tags=["Refunds"])
+app.include_router(payment_analytics.router, prefix="/api/v1/payment-analytics", tags=["Payment Analytics"])
 
 
 @app.get("/health")

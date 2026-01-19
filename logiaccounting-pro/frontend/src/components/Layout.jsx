@@ -53,6 +53,11 @@ const navItems = [
   { path: '/tasks', icon: '✔️', label: 'Team Tasks', roles: ['admin', 'client', 'supplier'] },
   { path: '/calendar', icon: '📅', label: 'Calendar', roles: ['admin', 'client', 'supplier'] },
 
+  { section: 'Payment Gateway', roles: ['admin'] },
+  { path: '/payment-links', icon: '🔗', label: 'Payment Links', roles: ['admin'] },
+  { path: '/gateways', icon: '💳', label: 'Gateways', roles: ['admin'] },
+  { path: '/payment-analytics', icon: '📊', label: 'Payment Analytics', roles: ['admin'] },
+
   { section: 'Client Portal', roles: ['client'] },
   { path: '/portal/client', icon: '🏠', label: 'My Dashboard', roles: ['client'] },
   { path: '/portal/client/projects', icon: '📁', label: 'My Projects', roles: ['client'] },
@@ -99,6 +104,9 @@ const pageTitles = {
   '/taxes': 'Tax Management',
   '/custom-fields': 'Custom Fields Configuration',
   '/calendar': 'Calendar & Scheduling',
+  '/payment-links': 'Payment Links',
+  '/gateways': 'Gateway Settings',
+  '/payment-analytics': 'Payment Analytics',
   '/portal/client': 'Client Portal',
   '/portal/client/projects': 'My Projects',
   '/portal/client/payments': 'My Payments',
