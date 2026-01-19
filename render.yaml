@@ -1,0 +1,24 @@
+# Render Blueprint Configuration
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: logiaccounting-pro
+    runtime: python
+    region: oregon
+    plan: free
+    branch: main
+    rootDir: logiaccounting-pro
+    buildCommand: |
+      cd frontend && npm install && npm run build &&
+      cd ../backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: NODE_VERSION
+        value: 18
+    healthCheckPath: /health
+    autoDeploy: true
