@@ -63,6 +63,9 @@ const navItems = [
   { path: '/ecommerce/stores', icon: '🏪', label: 'Stores', roles: ['admin'] },
   { path: '/ecommerce/orders', icon: '🛍️', label: 'Imported Orders', roles: ['admin'] },
 
+  { section: 'Analytics & ML', roles: ['admin'] },
+  { path: '/analytics', icon: '📈', label: 'Analytics Dashboard', roles: ['admin'] },
+
   { section: 'Client Portal', roles: ['client'] },
   { path: '/portal/client', icon: '🏠', label: 'My Dashboard', roles: ['client'] },
   { path: '/portal/client/projects', icon: '📁', label: 'My Projects', roles: ['client'] },
@@ -115,6 +118,7 @@ const pageTitles = {
   '/ecommerce': 'E-commerce Dashboard',
   '/ecommerce/stores': 'E-commerce Stores',
   '/ecommerce/orders': 'Imported Orders',
+  '/analytics': 'Analytics & ML Forecasting',
   '/portal/client': 'Client Portal',
   '/portal/client/projects': 'My Projects',
   '/portal/client/payments': 'My Payments',

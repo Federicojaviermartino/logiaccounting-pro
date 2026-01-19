@@ -66,6 +66,9 @@ const EcommerceDashboard = lazy(() => import('./pages/EcommerceDashboard'));
 const EcommerceStores = lazy(() => import('./pages/EcommerceStores'));
 const ImportedOrders = lazy(() => import('./pages/ImportedOrders'));
 
+// Phase 10 - Advanced Analytics & ML Forecasting
+const AnalyticsDashboard = lazy(() => import('./pages/AnalyticsDashboard'));
+
 // Portal Pages
 const ClientDashboard = lazy(() => import('./pages/portal/ClientDashboard'));
 const ClientProjects = lazy(() => import('./pages/portal/ClientProjects'));
@@ -399,6 +402,13 @@ function App() {
         <Route path="/ecommerce/orders" element={
           <LazyRoute roles={['admin']}>
             <ImportedOrders />
+          </LazyRoute>
+        } />
+
+        {/* Phase 10 - Advanced Analytics & ML Forecasting */}
+        <Route path="/analytics" element={
+          <LazyRoute roles={['admin']}>
+            <AnalyticsDashboard />
           </LazyRoute>
         } />
 

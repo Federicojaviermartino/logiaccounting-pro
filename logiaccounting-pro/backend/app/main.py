@@ -23,7 +23,9 @@ from app.routes import (
     # Phase 8 - Payment Gateway Integration
     gateways, payment_links, checkout, payment_webhooks, refunds, payment_analytics,
     # Phase 9 - E-commerce Integration
-    ecommerce, ecommerce_sync, ecommerce_webhooks, ecommerce_analytics
+    ecommerce, ecommerce_sync, ecommerce_webhooks, ecommerce_analytics,
+    # Phase 10 - Advanced Analytics & ML Forecasting
+    analytics
 )
 from app.models.store import init_database
 
@@ -120,6 +122,9 @@ app.include_router(ecommerce.router, tags=["E-commerce Stores"])
 app.include_router(ecommerce_sync.router, tags=["E-commerce Sync"])
 app.include_router(ecommerce_webhooks.router, tags=["E-commerce Webhooks"])
 app.include_router(ecommerce_analytics.router, tags=["E-commerce Analytics"])
+
+# Phase 10 - Advanced Analytics & ML Forecasting
+app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytics & ML Forecasting"])
 
 
 @app.get("/health")
