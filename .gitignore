@@ -1,0 +1,30 @@
+# Claude Code settings
+.claude/
+
+# Node modules
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+.env
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local files
+FolderFiles/
