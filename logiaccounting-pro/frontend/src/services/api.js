@@ -451,5 +451,101 @@ export const supplierPortalAPI = {
   updateCatalogItem: (id, data) => api.put(`/api/v1/portal/supplier/catalog/${id}`, data)
 };
 
+// ============================================
+// PHASE 7 - ADVANCED ANALYTICS & INTEGRATIONS API
+// ============================================
+
+// Audit Trail API
+export const auditAPI = {
+  getActions: () => api.get('/api/v1/audit/actions'),
+  getEntities: () => api.get('/api/v1/audit/entities'),
+  search: (params) => api.get('/api/v1/audit', { params }),
+  getStatistics: (days = 30) => api.get('/api/v1/audit/statistics', { params: { days } }),
+  getAnomalies: () => api.get('/api/v1/audit/anomalies'),
+  getEntityHistory: (entityType, entityId) => api.get(`/api/v1/audit/entity/${entityType}/${entityId}`),
+  getUserActivity: (userId, days = 30) => api.get(`/api/v1/audit/user/${userId}`, { params: { days } }),
+  export: (format, dateFrom, dateTo) => api.get('/api/v1/audit/export', { params: { format, date_from: dateFrom, date_to: dateTo } }),
+  get: (logId) => api.get(`/api/v1/audit/${logId}`)
+};
+
+// Data Import API
+export const importAPI = {
+  getEntities: () => api.get('/api/v1/import/entities'),
+  getEntityConfig: (entity) => api.get(`/api/v1/import/entities/${entity}/config`),
+  parse: (content, delimiter = ',') => api.post('/api/v1/import/parse', { content, delimiter }),
+  suggestMapping: (entity, headers) => api.post('/api/v1/import/suggest-mapping', headers, { params: { entity } }),
+  create: (data) => api.post('/api/v1/import', data),
+  list: (limit = 20) => api.get('/api/v1/import', { params: { limit } }),
+  get: (importId) => api.get(`/api/v1/import/${importId}`),
+  execute: (importId) => api.post(`/api/v1/import/${importId}/execute`),
+  rollback: (importId) => api.post(`/api/v1/import/${importId}/rollback`)
+};
+
+// Comments API
+export const commentsAPI = {
+  getReactions: () => api.get('/api/v1/comments/reactions'),
+  create: (data) => api.post('/api/v1/comments', data),
+  getEntityComments: (entityType, entityId) => api.get(`/api/v1/comments/entity/${entityType}/${entityId}`),
+  getMentions: () => api.get('/api/v1/comments/mentions'),
+  get: (commentId) => api.get(`/api/v1/comments/${commentId}`),
+  update: (commentId, content) => api.put(`/api/v1/comments/${commentId}`, { content }),
+  delete: (commentId) => api.delete(`/api/v1/comments/${commentId}`),
+  addReaction: (commentId, reaction) => api.post(`/api/v1/comments/${commentId}/reactions`, { reaction }),
+  removeReaction: (commentId, reaction) => api.delete(`/api/v1/comments/${commentId}/reactions/${reaction}`)
+};
+
+// Tasks API
+export const tasksAPI = {
+  getStatuses: () => api.get('/api/v1/tasks/statuses'),
+  getPriorities: () => api.get('/api/v1/tasks/priorities'),
+  getMy: (status) => api.get('/api/v1/tasks/my', { params: status ? { status } : {} }),
+  getOverdue: () => api.get('/api/v1/tasks/overdue'),
+  create: (data) => api.post('/api/v1/tasks', data),
+  getEntityTasks: (entityType, entityId) => api.get(`/api/v1/tasks/entity/${entityType}/${entityId}`),
+  getActivityFeed: (entityType, entityId, limit = 20) => api.get(`/api/v1/tasks/activity/${entityType}/${entityId}`, { params: { limit } }),
+  get: (taskId) => api.get(`/api/v1/tasks/${taskId}`),
+  update: (taskId, data) => api.put(`/api/v1/tasks/${taskId}`, data),
+  delete: (taskId) => api.delete(`/api/v1/tasks/${taskId}`)
+};
+
+// Tax Management API
+export const taxAPI = {
+  getTypes: () => api.get('/api/v1/taxes/types'),
+  list: (activeOnly = true, taxType) => api.get('/api/v1/taxes', { params: { active_only: activeOnly, tax_type: taxType } }),
+  create: (data) => api.post('/api/v1/taxes', data),
+  getDefault: (taxType = 'vat') => api.get('/api/v1/taxes/default', { params: { tax_type: taxType } }),
+  calculate: (data) => api.post('/api/v1/taxes/calculate', data),
+  getReport: (periodStart, periodEnd) => api.get('/api/v1/taxes/report', { params: { period_start: periodStart, period_end: periodEnd } }),
+  get: (taxId) => api.get(`/api/v1/taxes/${taxId}`),
+  update: (taxId, data) => api.put(`/api/v1/taxes/${taxId}`, data),
+  delete: (taxId) => api.delete(`/api/v1/taxes/${taxId}`)
+};
+
+// Custom Fields API
+export const customFieldsAPI = {
+  getTypes: () => api.get('/api/v1/custom-fields/types'),
+  getEntities: () => api.get('/api/v1/custom-fields/entities'),
+  getEntityFields: (entity, activeOnly = true) => api.get(`/api/v1/custom-fields/entity/${entity}`, { params: { active_only: activeOnly } }),
+  create: (data) => api.post('/api/v1/custom-fields', data),
+  get: (fieldId) => api.get(`/api/v1/custom-fields/${fieldId}`),
+  update: (fieldId, data) => api.put(`/api/v1/custom-fields/${fieldId}`, data),
+  delete: (fieldId) => api.delete(`/api/v1/custom-fields/${fieldId}`),
+  getValues: (entity, entityId) => api.get(`/api/v1/custom-fields/values/${entity}/${entityId}`),
+  setValue: (entity, entityId, fieldId, value) => api.put(`/api/v1/custom-fields/values/${entity}/${entityId}/${fieldId}`, { value }),
+  setBulkValues: (entity, entityId, values) => api.put(`/api/v1/custom-fields/values/${entity}/${entityId}`, { values })
+};
+
+// Calendar API
+export const calendarAPI = {
+  getTypes: () => api.get('/api/v1/calendar/types'),
+  getEvents: (start, end, type) => api.get('/api/v1/calendar', { params: { start, end, type } }),
+  getUpcoming: (days = 7) => api.get('/api/v1/calendar/upcoming', { params: { days } }),
+  generate: () => api.post('/api/v1/calendar/generate'),
+  create: (data) => api.post('/api/v1/calendar', data),
+  get: (eventId) => api.get(`/api/v1/calendar/${eventId}`),
+  update: (eventId, data) => api.put(`/api/v1/calendar/${eventId}`, data),
+  delete: (eventId) => api.delete(`/api/v1/calendar/${eventId}`)
+};
+
 // Export api instance
 export { api };

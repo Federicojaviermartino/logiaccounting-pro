@@ -46,6 +46,14 @@ const BankReconciliation = lazy(() => import('./pages/BankReconciliation'));
 const ScheduledReports = lazy(() => import('./pages/ScheduledReports'));
 const CurrencySettings = lazy(() => import('./pages/CurrencySettings'));
 
+// Phase 7 - Advanced Analytics & Integrations
+const AuditTrail = lazy(() => import('./pages/AuditTrail'));
+const DataImport = lazy(() => import('./pages/DataImport'));
+const TeamTasks = lazy(() => import('./pages/TeamTasks'));
+const TaxManagement = lazy(() => import('./pages/TaxManagement'));
+const CustomFieldsConfig = lazy(() => import('./pages/CustomFieldsConfig'));
+const Calendar = lazy(() => import('./pages/Calendar'));
+
 // Portal Pages
 const ClientDashboard = lazy(() => import('./pages/portal/ClientDashboard'));
 const ClientProjects = lazy(() => import('./pages/portal/ClientProjects'));
@@ -304,6 +312,43 @@ function App() {
         <Route path="/portal/supplier/payments" element={
           <LazyRoute roles={['supplier']}>
             <SupplierPayments />
+          </LazyRoute>
+        } />
+
+        {/* Phase 7 - Advanced Analytics & Integrations Routes */}
+        <Route path="/audit" element={
+          <LazyRoute roles={['admin']}>
+            <AuditTrail />
+          </LazyRoute>
+        } />
+
+        <Route path="/import" element={
+          <LazyRoute roles={['admin']}>
+            <DataImport />
+          </LazyRoute>
+        } />
+
+        <Route path="/tasks" element={
+          <LazyRoute>
+            <TeamTasks />
+          </LazyRoute>
+        } />
+
+        <Route path="/taxes" element={
+          <LazyRoute roles={['admin']}>
+            <TaxManagement />
+          </LazyRoute>
+        } />
+
+        <Route path="/custom-fields" element={
+          <LazyRoute roles={['admin']}>
+            <CustomFieldsConfig />
+          </LazyRoute>
+        } />
+
+        <Route path="/calendar" element={
+          <LazyRoute>
+            <Calendar />
           </LazyRoute>
         } />
 

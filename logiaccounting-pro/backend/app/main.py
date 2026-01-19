@@ -17,7 +17,9 @@ from app.routes import (
     approvals, recurring, budgets, documents, api_keys,
     # Phase 6 - Ultimate Enterprise Features
     dashboards, websocket, reconciliation, client_portal, supplier_portal,
-    scheduled_reports, currencies
+    scheduled_reports, currencies,
+    # Phase 7 - Advanced Analytics & Integrations
+    audit, data_import, comments, tasks, taxes, custom_fields, calendar
 )
 from app.models.store import init_database
 
@@ -89,6 +91,15 @@ app.include_router(client_portal.router, prefix="/api/v1/portal/client", tags=["
 app.include_router(supplier_portal.router, prefix="/api/v1/portal/supplier", tags=["Supplier Portal"])
 app.include_router(scheduled_reports.router, prefix="/api/v1/scheduled-reports", tags=["Scheduled Reports"])
 app.include_router(currencies.router, prefix="/api/v1/currencies", tags=["Currencies"])
+
+# Phase 7 - Advanced Analytics & Integrations
+app.include_router(audit.router, prefix="/api/v1/audit", tags=["Audit Trail"])
+app.include_router(data_import.router, prefix="/api/v1/import", tags=["Data Import"])
+app.include_router(comments.router, prefix="/api/v1/comments", tags=["Comments"])
+app.include_router(tasks.router, prefix="/api/v1/tasks", tags=["Tasks"])
+app.include_router(taxes.router, prefix="/api/v1/taxes", tags=["Tax Management"])
+app.include_router(custom_fields.router, prefix="/api/v1/custom-fields", tags=["Custom Fields"])
+app.include_router(calendar.router, prefix="/api/v1/calendar", tags=["Calendar"])
 
 
 @app.get("/health")
