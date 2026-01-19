@@ -40,6 +40,20 @@ const RecurringItems = lazy(() => import('./pages/RecurringItems'));
 const Budgets = lazy(() => import('./pages/Budgets'));
 const APIKeys = lazy(() => import('./pages/APIKeys'));
 
+// Phase 6 - Ultimate Enterprise Features
+const DashboardBuilder = lazy(() => import('./pages/DashboardBuilder'));
+const BankReconciliation = lazy(() => import('./pages/BankReconciliation'));
+const ScheduledReports = lazy(() => import('./pages/ScheduledReports'));
+const CurrencySettings = lazy(() => import('./pages/CurrencySettings'));
+
+// Portal Pages
+const ClientDashboard = lazy(() => import('./pages/portal/ClientDashboard'));
+const ClientProjects = lazy(() => import('./pages/portal/ClientProjects'));
+const ClientPayments = lazy(() => import('./pages/portal/ClientPayments'));
+const SupplierDashboard = lazy(() => import('./pages/portal/SupplierDashboard'));
+const SupplierOrders = lazy(() => import('./pages/portal/SupplierOrders'));
+const SupplierPayments = lazy(() => import('./pages/portal/SupplierPayments'));
+
 // Loading fallback component
 function PageLoader() {
   return (
@@ -227,6 +241,69 @@ function App() {
         <Route path="/api-keys" element={
           <LazyRoute roles={['admin']}>
             <APIKeys />
+          </LazyRoute>
+        } />
+
+        {/* Phase 6 - Ultimate Enterprise Features Routes */}
+        <Route path="/dashboard-builder" element={
+          <LazyRoute roles={['admin']}>
+            <DashboardBuilder />
+          </LazyRoute>
+        } />
+
+        <Route path="/reconciliation" element={
+          <LazyRoute roles={['admin']}>
+            <BankReconciliation />
+          </LazyRoute>
+        } />
+
+        <Route path="/scheduled-reports" element={
+          <LazyRoute roles={['admin']}>
+            <ScheduledReports />
+          </LazyRoute>
+        } />
+
+        <Route path="/currencies" element={
+          <LazyRoute roles={['admin']}>
+            <CurrencySettings />
+          </LazyRoute>
+        } />
+
+        {/* Client Portal Routes */}
+        <Route path="/portal/client" element={
+          <LazyRoute roles={['client']}>
+            <ClientDashboard />
+          </LazyRoute>
+        } />
+
+        <Route path="/portal/client/projects" element={
+          <LazyRoute roles={['client']}>
+            <ClientProjects />
+          </LazyRoute>
+        } />
+
+        <Route path="/portal/client/payments" element={
+          <LazyRoute roles={['client']}>
+            <ClientPayments />
+          </LazyRoute>
+        } />
+
+        {/* Supplier Portal Routes */}
+        <Route path="/portal/supplier" element={
+          <LazyRoute roles={['supplier']}>
+            <SupplierDashboard />
+          </LazyRoute>
+        } />
+
+        <Route path="/portal/supplier/orders" element={
+          <LazyRoute roles={['supplier']}>
+            <SupplierOrders />
+          </LazyRoute>
+        } />
+
+        <Route path="/portal/supplier/payments" element={
+          <LazyRoute roles={['supplier']}>
+            <SupplierPayments />
           </LazyRoute>
         } />
 

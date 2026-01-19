@@ -360,3 +360,96 @@ export const apiKeysAPI = {
   revoke: (id) => api.post(`/api/v1/api-keys/${id}/revoke`),
   delete: (id) => api.delete(`/api/v1/api-keys/${id}`)
 };
+
+// ============================================
+// PHASE 6 - ULTIMATE ENTERPRISE FEATURES API
+// ============================================
+
+// Dashboard Builder API
+export const dashboardAPI = {
+  list: () => api.get('/api/v1/dashboards'),
+  get: (id) => api.get(`/api/v1/dashboards/${id}`),
+  create: (data) => api.post('/api/v1/dashboards', data),
+  update: (id, data) => api.put(`/api/v1/dashboards/${id}`, data),
+  delete: (id) => api.delete(`/api/v1/dashboards/${id}`),
+  setDefault: (id) => api.post(`/api/v1/dashboards/${id}/default`),
+  duplicate: (id) => api.post(`/api/v1/dashboards/${id}/duplicate`),
+  share: (id, data) => api.post(`/api/v1/dashboards/${id}/share`, data),
+  getShared: () => api.get('/api/v1/dashboards/shared'),
+  getTemplates: () => api.get('/api/v1/dashboards/templates'),
+  createFromTemplate: (templateId) => api.post(`/api/v1/dashboards/templates/${templateId}/create`),
+  getWidgetData: (widgetType, config) => api.post('/api/v1/dashboards/widget-data', { widget_type: widgetType, config })
+};
+
+// Bank Reconciliation API
+export const reconciliationAPI = {
+  getSessions: () => api.get('/api/v1/reconciliation/sessions'),
+  getSession: (id) => api.get(`/api/v1/reconciliation/sessions/${id}`),
+  createSession: (data) => api.post('/api/v1/reconciliation/sessions', data),
+  importStatement: (sessionId, file, bankFormat = 'generic') => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/api/v1/reconciliation/sessions/${sessionId}/import?bank_format=${bankFormat}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+  autoMatch: (sessionId) => api.post(`/api/v1/reconciliation/sessions/${sessionId}/auto-match`),
+  manualMatch: (sessionId, data) => api.post(`/api/v1/reconciliation/sessions/${sessionId}/manual-match`, data),
+  unmatch: (sessionId, matchId) => api.post(`/api/v1/reconciliation/sessions/${sessionId}/unmatch/${matchId}`),
+  completeSession: (sessionId) => api.post(`/api/v1/reconciliation/sessions/${sessionId}/complete`),
+  getUnmatched: (sessionId) => api.get(`/api/v1/reconciliation/sessions/${sessionId}/unmatched`),
+  getSuggestions: (sessionId, statementId) => api.get(`/api/v1/reconciliation/sessions/${sessionId}/suggestions/${statementId}`)
+};
+
+// Scheduled Reports API
+export const scheduledReportsAPI = {
+  list: () => api.get('/api/v1/scheduled-reports'),
+  get: (id) => api.get(`/api/v1/scheduled-reports/${id}`),
+  create: (data) => api.post('/api/v1/scheduled-reports', data),
+  update: (id, data) => api.put(`/api/v1/scheduled-reports/${id}`, data),
+  delete: (id) => api.delete(`/api/v1/scheduled-reports/${id}`),
+  pause: (id) => api.post(`/api/v1/scheduled-reports/${id}/pause`),
+  resume: (id) => api.post(`/api/v1/scheduled-reports/${id}/resume`),
+  runNow: (id) => api.post(`/api/v1/scheduled-reports/${id}/run`),
+  getHistory: (id, limit = 10) => api.get(`/api/v1/scheduled-reports/${id}/history`, { params: { limit } }),
+  downloadReport: (id, executionId) => api.get(`/api/v1/scheduled-reports/${id}/download/${executionId}`, { responseType: 'blob' })
+};
+
+// Currency API
+export const currencyAPI = {
+  list: () => api.get('/api/v1/currencies'),
+  get: (code) => api.get(`/api/v1/currencies/${code}`),
+  create: (data) => api.post('/api/v1/currencies', data),
+  update: (code, data) => api.put(`/api/v1/currencies/${code}`, data),
+  delete: (code) => api.delete(`/api/v1/currencies/${code}`),
+  setBase: (code) => api.post(`/api/v1/currencies/${code}/set-base`),
+  updateRate: (code, rate) => api.put(`/api/v1/currencies/${code}/rate`, { rate }),
+  convert: (amount, from, to) => api.get('/api/v1/currencies/convert', { params: { amount, from_currency: from, to_currency: to } }),
+  fetchRates: () => api.post('/api/v1/currencies/fetch-rates'),
+  getHistoricalRates: (code, days = 30) => api.get(`/api/v1/currencies/${code}/history`, { params: { days } })
+};
+
+// Client Portal API
+export const clientPortalAPI = {
+  getDashboard: () => api.get('/api/v1/portal/client/dashboard'),
+  getProjects: () => api.get('/api/v1/portal/client/projects'),
+  getProject: (id) => api.get(`/api/v1/portal/client/projects/${id}`),
+  getPayments: () => api.get('/api/v1/portal/client/payments'),
+  getInvoices: () => api.get('/api/v1/portal/client/invoices'),
+  getInvoice: (id) => api.get(`/api/v1/portal/client/invoices/${id}`),
+  downloadInvoice: (id) => api.get(`/api/v1/portal/client/invoices/${id}/download`, { responseType: 'blob' })
+};
+
+// Supplier Portal API
+export const supplierPortalAPI = {
+  getDashboard: () => api.get('/api/v1/portal/supplier/dashboard'),
+  getOrders: () => api.get('/api/v1/portal/supplier/orders'),
+  getOrder: (id) => api.get(`/api/v1/portal/supplier/orders/${id}`),
+  updateOrderStatus: (id, status) => api.put(`/api/v1/portal/supplier/orders/${id}/status`, { status }),
+  getPayments: () => api.get('/api/v1/portal/supplier/payments'),
+  getCatalog: () => api.get('/api/v1/portal/supplier/catalog'),
+  updateCatalogItem: (id, data) => api.put(`/api/v1/portal/supplier/catalog/${id}`, data)
+};
+
+// Export api instance
+export { api };

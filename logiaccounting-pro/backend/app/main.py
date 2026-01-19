@@ -14,7 +14,10 @@ from app.routes import (
     auth, inventory, projects, movements, transactions, payments,
     notifications, reports, ocr, cashflow, assistant, anomaly, scheduler, settings,
     activity, bulk, email, two_factor, report_builder, backup, webhooks,
-    approvals, recurring, budgets, documents, api_keys
+    approvals, recurring, budgets, documents, api_keys,
+    # Phase 6 - Ultimate Enterprise Features
+    dashboards, websocket, reconciliation, client_portal, supplier_portal,
+    scheduled_reports, currencies
 )
 from app.models.store import init_database
 
@@ -77,6 +80,15 @@ app.include_router(recurring.router, prefix="/api/v1/recurring", tags=["Recurrin
 app.include_router(budgets.router, prefix="/api/v1/budgets", tags=["Budgets"])
 app.include_router(documents.router, prefix="/api/v1/documents", tags=["Documents"])
 app.include_router(api_keys.router, prefix="/api/v1/api-keys", tags=["API Keys"])
+
+# Phase 6 - Ultimate Enterprise Features
+app.include_router(dashboards.router, prefix="/api/v1/dashboards", tags=["Dashboard Builder"])
+app.include_router(websocket.router, tags=["WebSocket"])
+app.include_router(reconciliation.router, prefix="/api/v1/reconciliation", tags=["Bank Reconciliation"])
+app.include_router(client_portal.router, prefix="/api/v1/portal/client", tags=["Client Portal"])
+app.include_router(supplier_portal.router, prefix="/api/v1/portal/supplier", tags=["Supplier Portal"])
+app.include_router(scheduled_reports.router, prefix="/api/v1/scheduled-reports", tags=["Scheduled Reports"])
+app.include_router(currencies.router, prefix="/api/v1/currencies", tags=["Currencies"])
 
 
 @app.get("/health")

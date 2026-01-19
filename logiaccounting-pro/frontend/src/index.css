@@ -2621,3 +2621,764 @@ body {
 .items-start {
   align-items: flex-start;
 }
+
+/* ============================================
+   PHASE 6 - ULTIMATE ENTERPRISE FEATURES
+   ============================================ */
+
+/* Dashboard Builder Styles */
+.dashboard-builder {
+  display: flex;
+  gap: 1.5rem;
+  height: calc(100vh - 180px);
+}
+
+.widget-palette {
+  width: 280px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  overflow-y: auto;
+}
+
+.palette-section {
+  margin-bottom: 1.5rem;
+}
+
+.palette-section h4 {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.widget-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.widget-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  cursor: grab;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.widget-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--primary);
+}
+
+.widget-item:active {
+  cursor: grabbing;
+}
+
+.widget-item .widget-icon {
+  font-size: 1.25rem;
+}
+
+.widget-item .widget-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.dashboard-canvas {
+  flex: 1;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  overflow-y: auto;
+}
+
+.canvas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  min-height: 100%;
+}
+
+.dashboard-widget {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+.dashboard-widget.kpi { grid-column: span 1; }
+.dashboard-widget.chart { grid-column: span 2; }
+.dashboard-widget.donut { grid-column: span 1; }
+.dashboard-widget.gauge { grid-column: span 1; }
+.dashboard-widget.table { grid-column: span 3; }
+.dashboard-widget.alerts { grid-column: span 1; }
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.widget-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.widget-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.widget-actions button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.widget-actions button:hover {
+  color: var(--text-primary);
+}
+
+.widget-content {
+  height: calc(100% - 40px);
+}
+
+/* KPI Widget */
+.kpi-widget {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.kpi-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.kpi-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+.kpi-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.kpi-change.positive {
+  color: var(--success);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.kpi-change.negative {
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Chart Widget */
+.chart-widget canvas {
+  width: 100% !important;
+  height: 200px !important;
+}
+
+/* Donut Widget */
+.donut-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.donut-widget canvas {
+  width: 150px !important;
+  height: 150px !important;
+}
+
+.donut-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+/* Gauge Widget */
+.gauge-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.gauge-widget svg {
+  max-width: 180px;
+}
+
+.gauge-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 0.5rem;
+}
+
+.gauge-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Alerts Widget */
+.alerts-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.alert-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  border-left: 3px solid;
+}
+
+.alert-item.critical { border-left-color: var(--danger); }
+.alert-item.warning { border-left-color: var(--warning); }
+.alert-item.info { border-left-color: var(--primary); }
+
+.alert-icon {
+  font-size: 1rem;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-message {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.alert-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* Dashboard Templates */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.template-card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.template-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+}
+
+.template-card h4 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.template-card p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* Bank Reconciliation Styles */
+.reconciliation-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.reconciliation-panel {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.reconciliation-panel h3 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statement-item,
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.statement-item:hover,
+.transaction-item:hover {
+  background: var(--bg-hover);
+}
+
+.statement-item.selected,
+.transaction-item.selected {
+  border-color: var(--primary);
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.statement-item.matched,
+.transaction-item.matched {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: var(--success);
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-desc {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.item-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.item-amount {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.item-amount.debit {
+  color: var(--danger);
+}
+
+.item-amount.credit {
+  color: var(--success);
+}
+
+.match-score {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
+  background: var(--primary);
+  color: white;
+  margin-left: 0.5rem;
+}
+
+.reconciliation-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.summary-stat {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+.summary-stat .value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.summary-stat .label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+/* Scheduled Reports Styles */
+.schedule-card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  margin-bottom: 1rem;
+}
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.schedule-info h4 {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.schedule-info p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.schedule-meta {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.schedule-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.schedule-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Currency Settings Styles */
+.currency-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.currency-card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.currency-card.base {
+  border-color: var(--primary);
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.currency-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.currency-code {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.currency-name {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.currency-rate {
+  text-align: right;
+}
+
+.currency-rate .rate {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.currency-rate .label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.currency-converter {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+}
+
+.converter-form {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.converter-form .form-group {
+  flex: 1;
+}
+
+.converter-result {
+  text-align: center;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+  margin-top: 1rem;
+}
+
+.converter-result .amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* Portal Styles */
+.portal-welcome {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  color: white;
+}
+
+.portal-welcome h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.portal-welcome p {
+  opacity: 0.9;
+}
+
+.portal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.portal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 6px;
+}
+
+.portal-item-name {
+  font-weight: 500;
+}
+
+.portal-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1rem;
+}
+
+.portal-project-card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.portal-project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.portal-project-header h4 {
+  font-size: 1rem;
+}
+
+.portal-project-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.portal-project-progress {
+  margin-bottom: 1rem;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar-container {
+  height: 6px;
+  background: var(--bg-secondary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--success) 100%);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.portal-project-dates {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 400px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  border-left: 4px solid var(--primary);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border-radius: 50%;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.toast-message {
+  flex: 1;
+  font-size: 0.875rem;
+  text-transform: capitalize;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem;
+}
+
+.toast-close:hover {
+  color: var(--text-primary);
+}
+
+/* Grid utilities for portals */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .reconciliation-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-builder {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .widget-palette {
+    width: 100%;
+  }
+
+  .canvas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-widget.chart,
+  .dashboard-widget.table {
+    grid-column: span 1;
+  }
+
+  .reconciliation-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .portal-projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
