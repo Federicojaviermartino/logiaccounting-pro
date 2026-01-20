@@ -69,6 +69,10 @@ const ImportedOrders = lazy(() => import('./pages/ImportedOrders'));
 // Phase 10 - Advanced Analytics & ML Forecasting
 const AnalyticsDashboard = lazy(() => import('./pages/AnalyticsDashboard'));
 
+// Phase 12 - Enterprise SSO
+const SSOSettings = lazy(() => import('./pages/SSOSettings'));
+const SSOCallback = lazy(() => import('./pages/SSOCallback'));
+
 // Portal Pages
 const ClientDashboard = lazy(() => import('./pages/portal/ClientDashboard'));
 const ClientProjects = lazy(() => import('./pages/portal/ClientProjects'));
@@ -410,6 +414,25 @@ function App() {
           <LazyRoute roles={['admin']}>
             <AnalyticsDashboard />
           </LazyRoute>
+        } />
+
+        {/* Phase 12 - Enterprise SSO */}
+        <Route path="/sso-settings" element={
+          <LazyRoute roles={['admin']}>
+            <SSOSettings />
+          </LazyRoute>
+        } />
+
+        {/* SSO Callback routes (public, no layout) */}
+        <Route path="/sso/callback" element={
+          <Suspense fallback={<PageLoader />}>
+            <SSOCallback />
+          </Suspense>
+        } />
+        <Route path="/sso/error" element={
+          <Suspense fallback={<PageLoader />}>
+            <SSOCallback />
+          </Suspense>
         } />
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

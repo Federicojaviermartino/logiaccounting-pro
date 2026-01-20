@@ -4539,3 +4539,291 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   PHASE 12 - ENTERPRISE SSO
+   ============================================ */
+
+/* SSO Settings Page */
+.provider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.provider-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.provider-icon {
+  font-size: 2rem;
+}
+
+.provider-name {
+  font-weight: 600;
+}
+
+.provider-protocols {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.provider-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.domain-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-right: 4px;
+}
+
+/* SSO Login Detected */
+.sso-detected {
+  background: linear-gradient(135deg, var(--primary-light) 0%, rgba(var(--primary-rgb), 0.05) 100%);
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.sso-badge {
+  display: inline-block;
+  background: var(--primary);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.sso-detected p {
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.sso-btn {
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 1rem;
+}
+
+.sso-divider {
+  position: relative;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.sso-divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background: var(--border-color);
+}
+
+.sso-divider span {
+  position: relative;
+  background: var(--card-bg);
+  padding: 0 16px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* SSO Callback Page */
+.sso-callback-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+}
+
+.sso-callback-container {
+  text-align: center;
+  padding: 48px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+}
+
+.sso-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 24px;
+}
+
+.sso-success-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--success);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 24px;
+}
+
+.sso-error-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--danger);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 24px;
+}
+
+.sso-callback-container h2 {
+  margin-bottom: 8px;
+}
+
+.sso-callback-container p {
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+/* SSO Config Modal */
+.endpoint-item {
+  margin-bottom: 16px;
+}
+
+.endpoint-item label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.endpoint-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.endpoint-value code {
+  flex: 1;
+  background: var(--bg-tertiary);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+.token-code {
+  font-family: monospace;
+  font-size: 0.75rem;
+}
+
+.scim-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.scim-token-display {
+  margin-top: 20px;
+}
+
+.scim-endpoints {
+  margin-top: 24px;
+}
+
+.scim-endpoints h4 {
+  margin-bottom: 12px;
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.info-item {
+  padding: 12px;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+.info-item label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.info-item span,
+.info-item code {
+  font-size: 0.9rem;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.tab-content {
+  padding-top: 8px;
+}
+
+.info-text {
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}

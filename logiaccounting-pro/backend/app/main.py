@@ -25,7 +25,9 @@ from app.routes import (
     # Phase 9 - E-commerce Integration
     ecommerce, ecommerce_sync, ecommerce_webhooks, ecommerce_analytics,
     # Phase 10 - Advanced Analytics & ML Forecasting
-    analytics
+    analytics,
+    # Phase 12 - Enterprise SSO
+    sso, scim
 )
 from app.models.store import init_database
 
@@ -125,6 +127,10 @@ app.include_router(ecommerce_analytics.router, tags=["E-commerce Analytics"])
 
 # Phase 10 - Advanced Analytics & ML Forecasting
 app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytics & ML Forecasting"])
+
+# Phase 12 - Enterprise SSO
+app.include_router(sso.router, prefix="/api/v1/sso", tags=["Enterprise SSO"])
+app.include_router(scim.router, prefix="/api/v1/scim", tags=["SCIM 2.0 Provisioning"])
 
 
 @app.get("/health")

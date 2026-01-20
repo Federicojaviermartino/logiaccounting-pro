@@ -176,7 +176,7 @@ class NotificationStore(BaseStore):
 
 class Database:
     """Main database container"""
-    
+
     def __init__(self):
         self.users = UserStore()
         self.categories = BaseStore()
@@ -187,6 +187,16 @@ class Database:
         self.transactions = BaseStore()
         self.payments = PaymentStore()
         self.notifications = NotificationStore()
+
+        # SSO stores (Phase 12)
+        from app.models.sso_store import (
+            SSOConnectionStore, SSOSessionStore,
+            UserExternalIdentityStore, SCIMSyncLogStore
+        )
+        self.sso_connections = SSOConnectionStore()
+        self.sso_sessions = SSOSessionStore()
+        self.external_identities = UserExternalIdentityStore()
+        self.scim_logs = SCIMSyncLogStore()
 
 
 # Global database instance

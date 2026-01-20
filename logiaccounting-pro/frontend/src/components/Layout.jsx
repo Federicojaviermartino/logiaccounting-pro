@@ -48,6 +48,7 @@ const navItems = [
   { path: '/backup', icon: '💾', label: 'Backup', roles: ['admin'] },
   { path: '/webhooks', icon: '🔗', label: 'Webhooks', roles: ['admin'] },
   { path: '/api-keys', icon: '🔑', label: 'API Keys', roles: ['admin'] },
+  { path: '/sso-settings', icon: '🔐', label: 'SSO Settings', roles: ['admin'] },
 
   { section: 'Collaboration', roles: ['admin', 'client', 'supplier'] },
   { path: '/tasks', icon: '✔️', label: 'Team Tasks', roles: ['admin', 'client', 'supplier'] },
@@ -119,6 +120,7 @@ const pageTitles = {
   '/ecommerce/stores': 'E-commerce Stores',
   '/ecommerce/orders': 'Imported Orders',
   '/analytics': 'Analytics & ML Forecasting',
+  '/sso-settings': 'Enterprise SSO',
   '/portal/client': 'Client Portal',
   '/portal/client/projects': 'My Projects',
   '/portal/client/payments': 'My Payments',
