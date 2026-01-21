@@ -320,7 +320,7 @@ class AuditStatisticsResponse(BaseModel):
 # Export Schemas
 
 class ExportRequest(BaseModel):
-    format: str = Field(default='csv', regex='^(csv|excel|json)$')
+    format: str = Field(default='csv', pattern='^(csv|excel|json)$')
     filters: Optional[Dict[str, Any]] = None
 
 
