@@ -80,6 +80,10 @@ const DocumentsManager = lazy(() => import('./pages/DocumentsManager'));
 const Integrations = lazy(() => import('./pages/Integrations'));
 const IntegrationCallback = lazy(() => import('./pages/IntegrationCallback'));
 
+// Phase 15 - Audit & Compliance
+const ComplianceDashboard = lazy(() => import('./pages/ComplianceDashboard'));
+const SecurityAlerts = lazy(() => import('./pages/SecurityAlerts'));
+
 // Portal Pages
 const ClientDashboard = lazy(() => import('./pages/portal/ClientDashboard'));
 const ClientProjects = lazy(() => import('./pages/portal/ClientProjects'));
@@ -470,6 +474,18 @@ function App() {
               <IntegrationCallback />
             </Suspense>
           </PrivateRoute>
+        } />
+
+        {/* Phase 15 - Audit & Compliance */}
+        <Route path="/compliance" element={
+          <LazyRoute roles={['admin', 'auditor']}>
+            <ComplianceDashboard />
+          </LazyRoute>
+        } />
+        <Route path="/security-alerts" element={
+          <LazyRoute roles={['admin', 'auditor']}>
+            <SecurityAlerts />
+          </LazyRoute>
         } />
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

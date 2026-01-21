@@ -31,7 +31,9 @@ from app.routes import (
     # Phase 13 - Document Management System
     documents_v2, signatures,
     # Phase 14 - External Integrations Hub
-    integrations
+    integrations,
+    # Phase 15 - Audit & Compliance
+    compliance
 )
 from app.models.store import init_database
 
@@ -142,6 +144,9 @@ app.include_router(signatures.router, prefix="/api/v1/signatures", tags=["Digita
 
 # Phase 14 - External Integrations Hub
 app.include_router(integrations.router, prefix="/api/v1/integrations", tags=["External Integrations"])
+
+# Phase 15 - Audit & Compliance
+app.include_router(compliance.router, prefix="/api/v1/compliance", tags=["Compliance Framework"])
 
 
 @app.get("/health")
