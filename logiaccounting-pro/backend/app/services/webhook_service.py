@@ -766,7 +766,7 @@ class WebhookService:
         updated = webhook_db.deliveries.find_by_id(delivery_id)
         return {
             "success": success,
-            **self._format_delivery(updated) if updated else {}
+            **(self._format_delivery(updated) if updated else {})
         }
 
     def get_logs(
