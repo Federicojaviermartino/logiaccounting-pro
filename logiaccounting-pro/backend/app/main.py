@@ -33,15 +33,20 @@ from app.routes import (
     # Phase 14 - External Integrations Hub
     integrations,
     # Phase 15 - Audit & Compliance
-    compliance
+    compliance,
+    # Phase 16 - Multi-Tenancy
+    tenant
 )
 from app.models.store import init_database
+from app.models.tenant_store import init_tenant_database
+from app.middleware.tenant_context import TenantMiddleware
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize database on startup"""
     init_database()
+    init_tenant_database()
     yield
 
 
@@ -66,6 +71,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Tenant middleware for multi-tenancy support
+app.add_middleware(TenantMiddleware, require_tenant=False)
 
 # API routes
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
@@ -147,6 +155,9 @@ app.include_router(integrations.router, prefix="/api/v1/integrations", tags=["Ex
 
 # Phase 15 - Audit & Compliance
 app.include_router(compliance.router, prefix="/api/v1/compliance", tags=["Compliance Framework"])
+
+# Phase 16 - Multi-Tenancy
+app.include_router(tenant.router, prefix="/api/v1/tenant", tags=["Multi-Tenancy"])
 
 
 @app.get("/health")

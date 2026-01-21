@@ -84,6 +84,11 @@ const IntegrationCallback = lazy(() => import('./pages/IntegrationCallback'));
 const ComplianceDashboard = lazy(() => import('./pages/ComplianceDashboard'));
 const SecurityAlerts = lazy(() => import('./pages/SecurityAlerts'));
 
+// Phase 16 - Multi-Tenancy
+const TenantSettings = lazy(() => import('./pages/TenantSettings'));
+const TeamManagement = lazy(() => import('./pages/TeamManagement'));
+const SubscriptionUsage = lazy(() => import('./pages/SubscriptionUsage'));
+
 // Portal Pages
 const ClientDashboard = lazy(() => import('./pages/portal/ClientDashboard'));
 const ClientProjects = lazy(() => import('./pages/portal/ClientProjects'));
@@ -485,6 +490,23 @@ function App() {
         <Route path="/security-alerts" element={
           <LazyRoute roles={['admin', 'auditor']}>
             <SecurityAlerts />
+          </LazyRoute>
+        } />
+
+        {/* Phase 16 - Multi-Tenancy */}
+        <Route path="/organization" element={
+          <LazyRoute roles={['admin']}>
+            <TenantSettings />
+          </LazyRoute>
+        } />
+        <Route path="/team" element={
+          <LazyRoute roles={['admin']}>
+            <TeamManagement />
+          </LazyRoute>
+        } />
+        <Route path="/subscription" element={
+          <LazyRoute roles={['admin']}>
+            <SubscriptionUsage />
           </LazyRoute>
         } />
 
