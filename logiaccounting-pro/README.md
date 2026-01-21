@@ -4,15 +4,55 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 
 ## Features
 
-### Logistics Module
+### Core Modules
+
+#### Logistics Module
 - **Inventory Management**: Track materials, quantities, locations, and costs
 - **Stock Movements**: Record entries and exits with project association
 - **Low Stock Alerts**: Automatic alerts when materials fall below minimum thresholds
 
-### Accounting Module
+#### Accounting Module
 - **Transaction Tracking**: Record income and expenses with categories
 - **Payment Management**: Track payables and receivables with due dates
 - **Cash Flow Reports**: Visualize financial performance over time
+
+### AI-Powered Features
+- **Smart Invoice OCR**: Extract data from invoices using Tesseract + AI
+- **Cash Flow Predictor**: 30-60-90 day predictions using Prophet ML
+- **Profitability Assistant**: NLP chatbot for financial queries
+- **Anomaly Detection**: Fraud prevention and duplicate detection
+- **Payment Scheduler**: Optimized payment scheduling
+
+### Enterprise Features
+
+#### Multi-Tenancy (Phase 16)
+- Tenant isolation with separate data stores
+- Subscription management and quota tracking
+- Team management with role-based access
+
+#### API Gateway & Webhooks (Phase 17)
+- **API Key Management**
+  - Scoped access control (invoices:read, payments:write, etc.)
+  - Per-key rate limiting (minute/hour/day)
+  - IP whitelist restrictions
+  - Key regeneration and revocation
+  - Usage statistics tracking
+- **Webhook System**
+  - 30+ event types (invoices, payments, inventory, projects, etc.)
+  - HMAC-SHA256 signature verification
+  - Automatic retry with exponential backoff
+  - Delivery tracking and manual retry
+  - Secret rotation
+
+#### External Integrations (Phase 14)
+- QuickBooks, Xero, Salesforce, HubSpot
+- Shopify, Stripe, Plaid connections
+- OAuth 2.0 authentication flow
+
+#### Audit & Compliance (Phase 15)
+- Comprehensive audit trail
+- Compliance framework for SOX, GDPR, HIPAA
+- Security alerts and monitoring
 
 ### Multi-Role System
 | Role | Access |
@@ -125,6 +165,24 @@ logiaccounting-pro/
 ### Reports
 - `GET /api/v1/reports/dashboard` - Dashboard stats
 - `GET /api/v1/reports/cash-flow` - Cash flow data
+
+### API Keys (Phase 17)
+- `GET /api/v1/api-keys` - List API keys
+- `POST /api/v1/api-keys` - Create API key with scopes
+- `GET /api/v1/api-keys/scopes` - Available scopes
+- `POST /api/v1/api-keys/{id}/regenerate` - Regenerate key
+- `POST /api/v1/api-keys/{id}/revoke` - Revoke key
+- `GET /api/v1/api-keys/{id}/usage` - Usage statistics
+
+### Webhooks (Phase 17)
+- `GET /api/v1/webhooks` - List webhooks
+- `POST /api/v1/webhooks` - Create webhook
+- `GET /api/v1/webhooks/events` - Available event types
+- `POST /api/v1/webhooks/{id}/test` - Send test event
+- `POST /api/v1/webhooks/{id}/rotate-secret` - Rotate signing secret
+- `GET /api/v1/webhooks/{id}/deliveries` - Delivery history
+- `POST /api/v1/webhooks/{id}/deliveries/{delivery_id}/retry` - Retry delivery
+- `GET /api/v1/webhooks/{id}/stats` - Delivery statistics
 
 ## License
 

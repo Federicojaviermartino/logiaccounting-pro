@@ -276,15 +276,27 @@ export const backupAPI = {
 
 // Webhook API
 export const webhookAPI = {
-  getEvents: () => api.get('/api/v1/webhooks/events'),
-  list: () => api.get('/api/v1/webhooks'),
-  create: (data) => api.post('/api/v1/webhooks', data),
+  // Event types
+  getEvents: (category) => api.get('/api/v1/webhooks/events', { params: { category } }),
+  // Webhooks CRUD
+  list: (params) => api.get('/api/v1/webhooks', { params }),
   get: (id) => api.get(`/api/v1/webhooks/${id}`),
+  create: (data) => api.post('/api/v1/webhooks', data),
   update: (id, data) => api.put(`/api/v1/webhooks/${id}`, data),
   delete: (id) => api.delete(`/api/v1/webhooks/${id}`),
+  // Secret management
+  rotateSecret: (id) => api.post(`/api/v1/webhooks/${id}/rotate-secret`),
+  // Testing
   test: (id) => api.post(`/api/v1/webhooks/${id}/test`),
-  getLogs: (id, limit = 50) => api.get(`/api/v1/webhooks/${id}/logs`, { params: { limit } }),
-  getAllLogs: (params) => api.get('/api/v1/webhooks/logs/all', { params })
+  // Deliveries
+  getDeliveries: (id, params) => api.get(`/api/v1/webhooks/${id}/deliveries`, { params }),
+  retryDelivery: (webhookId, deliveryId) => api.post(`/api/v1/webhooks/${webhookId}/deliveries/${deliveryId}/retry`),
+  getAllDeliveries: (params) => api.get('/api/v1/webhooks/deliveries/all', { params }),
+  // Stats
+  getStats: (id, days = 30) => api.get(`/api/v1/webhooks/${id}/stats`, { params: { days } }),
+  // Legacy compatibility
+  getLogs: (id, limit = 50) => api.get(`/api/v1/webhooks/${id}/deliveries`, { params: { per_page: limit } }),
+  getAllLogs: (params) => api.get('/api/v1/webhooks/deliveries/all', { params })
 };
 
 // ============================================
@@ -352,13 +364,23 @@ export const documentsAPI = {
 
 // API Keys API
 export const apiKeysAPI = {
-  list: () => api.get('/api/v1/api-keys'),
+  // Scopes and rate limits
+  getScopes: () => api.get('/api/v1/api-keys/scopes'),
+  getRateLimits: () => api.get('/api/v1/api-keys/rate-limits'),
+  // API Keys CRUD
+  list: (params) => api.get('/api/v1/api-keys', { params }),
   get: (id) => api.get(`/api/v1/api-keys/${id}`),
   create: (data) => api.post('/api/v1/api-keys', data),
-  getPermissions: () => api.get('/api/v1/api-keys/permissions'),
-  updatePermissions: (id, permissions) => api.put(`/api/v1/api-keys/${id}/permissions`, { permissions }),
+  update: (id, data) => api.put(`/api/v1/api-keys/${id}`, data),
+  // Key management
+  regenerate: (id) => api.post(`/api/v1/api-keys/${id}/regenerate`),
   revoke: (id) => api.post(`/api/v1/api-keys/${id}/revoke`),
-  delete: (id) => api.delete(`/api/v1/api-keys/${id}`)
+  delete: (id) => api.delete(`/api/v1/api-keys/${id}`),
+  // Usage stats
+  getUsage: (id, days = 30) => api.get(`/api/v1/api-keys/${id}/usage`, { params: { days } }),
+  // Legacy compatibility
+  getPermissions: () => api.get('/api/v1/api-keys/scopes'),
+  updatePermissions: (id, permissions) => api.put(`/api/v1/api-keys/${id}`, { scopes: Object.keys(permissions) })
 };
 
 // ============================================

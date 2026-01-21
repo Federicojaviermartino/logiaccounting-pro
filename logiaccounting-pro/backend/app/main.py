@@ -39,7 +39,10 @@ from app.routes import (
 )
 from app.models.store import init_database
 from app.models.tenant_store import init_tenant_database
+from app.models.gateway_store import init_gateway_database
+from app.models.webhook_store import init_webhook_database
 from app.middleware.tenant_context import TenantMiddleware
+from app.middleware.gateway import RequestLoggerMiddleware, GatewayMiddleware
 
 
 @asynccontextmanager
@@ -47,6 +50,8 @@ async def lifespan(app: FastAPI):
     """Initialize database on startup"""
     init_database()
     init_tenant_database()
+    init_gateway_database()
+    init_webhook_database()
     yield
 
 
@@ -74,6 +79,10 @@ app.add_middleware(
 
 # Tenant middleware for multi-tenancy support
 app.add_middleware(TenantMiddleware, require_tenant=False)
+
+# Phase 17 - API Gateway middleware for request logging and rate limiting
+app.add_middleware(RequestLoggerMiddleware)
+app.add_middleware(GatewayMiddleware)
 
 # API routes
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
