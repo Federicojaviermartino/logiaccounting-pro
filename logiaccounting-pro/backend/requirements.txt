@@ -48,6 +48,10 @@ scim2-filter-parser==0.5.0
 # Encryption
 cryptography==42.0.0
 
+# Real-Time Collaboration (Phase 18)
+python-socketio[asyncio]==5.11.0
+aioredis==2.0.1
+
 # Testing
 pytest==8.0.0
 pytest-cov==4.1.0

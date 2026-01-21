@@ -44,6 +44,29 @@ Enterprise logistics and accounting platform with multi-role support for adminis
   - Delivery tracking and manual retry
   - Secret rotation
 
+#### Real-Time Collaboration (Phase 18)
+- **User Presence System**
+  - Live online/away/busy status indicators
+  - Automatic away detection after 5 minutes
+  - Per-tenant user presence tracking
+- **Collaboration Rooms**
+  - Entity-based rooms (invoices, projects, etc.)
+  - See who's viewing/editing the same document
+  - Real-time user count per entity
+- **Cursor Tracking**
+  - Live cursor position synchronization
+  - User-specific cursor colors
+  - Document-level cursor visibility
+- **Notification Center**
+  - Real-time notification delivery via WebSocket
+  - Priority levels (urgent, high, normal, low)
+  - Mark read/unread, delete notifications
+  - Unread count badge
+- **Activity Feed**
+  - Real-time activity stream
+  - Entity-specific activity filtering
+  - Action icons (created, updated, deleted, completed)
+
 #### External Integrations (Phase 14)
 - QuickBooks, Xero, Salesforce, HubSpot
 - Shopify, Stripe, Plaid connections
@@ -66,8 +89,9 @@ When payments are marked as paid, all relevant parties (admin, client, supplier)
 
 ## Tech Stack
 
-- **Frontend**: React 18, Vite, Chart.js, Axios
-- **Backend**: FastAPI, Pydantic, PyJWT, bcrypt
+- **Frontend**: React 18, Vite, Chart.js, Axios, Socket.IO Client
+- **Backend**: FastAPI, Pydantic, PyJWT, bcrypt, Socket.IO
+- **Real-Time**: Socket.IO with Redis adapter for horizontal scaling
 - **Database**: In-memory (PostgreSQL ready)
 
 ## Quick Start
@@ -123,6 +147,12 @@ logiaccounting-pro/
 │   │   ├── routes/           # API endpoints
 │   │   ├── models/           # Data stores
 │   │   ├── schemas/          # Pydantic models
+│   │   ├── realtime/         # WebSocket collaboration
+│   │   │   ├── server.py     # Socket.IO server
+│   │   │   ├── managers/     # Connection, presence, rooms
+│   │   │   ├── handlers/     # Event handlers
+│   │   │   ├── services/     # Notification, activity
+│   │   │   └── routes/       # REST endpoints
 │   │   └── utils/            # Auth utilities
 │   └── requirements.txt
 ├── frontend/
@@ -130,6 +160,11 @@ logiaccounting-pro/
 │   │   ├── components/       # React components
 │   │   ├── pages/            # Page components
 │   │   ├── contexts/         # Auth context
+│   │   ├── features/
+│   │   │   └── realtime/     # Real-time collaboration
+│   │   │       ├── context/  # RealtimeContext
+│   │   │       ├── hooks/    # usePresence, useRoom, etc.
+│   │   │       └── components/ # UI components
 │   │   └── services/         # API client
 │   └── package.json
 ├── skills/                   # Agent Skills
@@ -183,6 +218,30 @@ logiaccounting-pro/
 - `GET /api/v1/webhooks/{id}/deliveries` - Delivery history
 - `POST /api/v1/webhooks/{id}/deliveries/{delivery_id}/retry` - Retry delivery
 - `GET /api/v1/webhooks/{id}/stats` - Delivery statistics
+
+### Real-Time Presence (Phase 18)
+- `GET /api/v1/presence/online` - Get online users
+- `POST /api/v1/presence/status` - Update presence status
+- `GET /api/v1/presence/{user_id}` - Get user presence
+
+### Real-Time Notifications (Phase 18)
+- `GET /api/v1/notifications` - Get notifications
+- `GET /api/v1/notifications/unread-count` - Get unread count
+- `POST /api/v1/notifications/{id}/read` - Mark as read
+- `POST /api/v1/notifications/read-all` - Mark all as read
+- `DELETE /api/v1/notifications/{id}` - Delete notification
+
+### Activity Feed (Phase 18)
+- `GET /api/v1/activity` - Get activity feed
+- `GET /api/v1/activity/entity/{type}/{id}` - Get entity activities
+
+### WebSocket Events (Phase 18)
+Connect via Socket.IO to `/socket.io` with JWT token:
+- `presence:update` - User presence changed
+- `room:user_joined` / `room:user_left` - Room membership
+- `cursor:moved` - Cursor position updates
+- `notification:new` - New notification
+- `activity` - New activity logged
 
 ## License
 
