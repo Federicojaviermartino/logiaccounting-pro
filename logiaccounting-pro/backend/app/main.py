@@ -29,7 +29,9 @@ from app.routes import (
     # Phase 12 - Enterprise SSO
     sso, scim,
     # Phase 13 - Document Management System
-    documents_v2, signatures
+    documents_v2, signatures,
+    # Phase 14 - External Integrations Hub
+    integrations
 )
 from app.models.store import init_database
 
@@ -137,6 +139,9 @@ app.include_router(scim.router, prefix="/api/v1/scim", tags=["SCIM 2.0 Provision
 # Phase 13 - Document Management System
 app.include_router(documents_v2.router, prefix="/api/v1/documents-v2", tags=["Document Management v2"])
 app.include_router(signatures.router, prefix="/api/v1/signatures", tags=["Digital Signatures"])
+
+# Phase 14 - External Integrations Hub
+app.include_router(integrations.router, prefix="/api/v1/integrations", tags=["External Integrations"])
 
 
 @app.get("/health")

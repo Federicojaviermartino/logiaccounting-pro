@@ -76,6 +76,10 @@ const SSOCallback = lazy(() => import('./pages/SSOCallback'));
 // Phase 13 - Document Management System
 const DocumentsManager = lazy(() => import('./pages/DocumentsManager'));
 
+// Phase 14 - External Integrations Hub
+const Integrations = lazy(() => import('./pages/Integrations'));
+const IntegrationCallback = lazy(() => import('./pages/IntegrationCallback'));
+
 // Portal Pages
 const ClientDashboard = lazy(() => import('./pages/portal/ClientDashboard'));
 const ClientProjects = lazy(() => import('./pages/portal/ClientProjects'));
@@ -443,6 +447,29 @@ function App() {
           <LazyRoute>
             <DocumentsManager />
           </LazyRoute>
+        } />
+
+        {/* Phase 14 - External Integrations Hub */}
+        <Route path="/integrations" element={
+          <LazyRoute roles={['admin', 'accountant']}>
+            <Integrations />
+          </LazyRoute>
+        } />
+
+        {/* Integration OAuth Callback (semi-public, needs auth but no layout) */}
+        <Route path="/integrations/callback" element={
+          <PrivateRoute>
+            <Suspense fallback={<PageLoader />}>
+              <IntegrationCallback />
+            </Suspense>
+          </PrivateRoute>
+        } />
+        <Route path="/integrations/callback/:provider" element={
+          <PrivateRoute>
+            <Suspense fallback={<PageLoader />}>
+              <IntegrationCallback />
+            </Suspense>
+          </PrivateRoute>
         } />
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
