@@ -73,6 +73,9 @@ const AnalyticsDashboard = lazy(() => import('./pages/AnalyticsDashboard'));
 const SSOSettings = lazy(() => import('./pages/SSOSettings'));
 const SSOCallback = lazy(() => import('./pages/SSOCallback'));
 
+// Phase 13 - Document Management System
+const DocumentsManager = lazy(() => import('./pages/DocumentsManager'));
+
 // Portal Pages
 const ClientDashboard = lazy(() => import('./pages/portal/ClientDashboard'));
 const ClientProjects = lazy(() => import('./pages/portal/ClientProjects'));
@@ -433,6 +436,13 @@ function App() {
           <Suspense fallback={<PageLoader />}>
             <SSOCallback />
           </Suspense>
+        } />
+
+        {/* Phase 13 - Document Management System */}
+        <Route path="/documents" element={
+          <LazyRoute>
+            <DocumentsManager />
+          </LazyRoute>
         } />
 
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

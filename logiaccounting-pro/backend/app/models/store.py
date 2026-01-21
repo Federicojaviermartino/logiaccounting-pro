@@ -288,3 +288,7 @@ def init_database():
     
     print("Database initialized with demo data")
     print(f"Users: {len(db.users._data)}, Categories: {len(db.categories._data)}, Locations: {len(db.locations._data)}")
+
+    # Initialize Phase 13 Document Database
+    from app.models.document_store import init_document_database
+    init_document_database()
