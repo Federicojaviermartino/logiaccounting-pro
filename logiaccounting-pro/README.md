@@ -16,6 +16,35 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Payment Management**: Track payables and receivables with due dates
 - **Cash Flow Reports**: Visualize financial performance over time
 
+### Performance & Scalability (Phase 20)
+
+#### Multi-Layer Caching
+- **Redis Cluster**: High-availability caching with Sentinel support
+- **L1/L2 Cache**: Local memory cache with Redis distributed cache
+- **Cache Decorators**: `@cached` and `@invalidate_cache` for automatic caching
+- **Tag-Based Invalidation**: Group related cache entries for bulk invalidation
+- **Cache Warmup**: Preload frequently accessed data on startup
+
+#### Database Optimization
+- **Connection Pooling**: Configurable pool sizes with overflow support
+- **Read Replicas**: Automatic query routing to replicas for read scaling
+- **Materialized Views**: Pre-computed analytics for dashboard performance
+- **Table Partitioning**: Time and tenant-based partitioning for large tables
+- **Query Optimizer**: Index recommendations and slow query detection
+
+#### Observability Stack
+- **Prometheus Metrics**: Request latency, cache hit rates, DB query performance
+- **OpenTelemetry Tracing**: Distributed tracing across services
+- **Structured Logging**: JSON logging with correlation IDs
+- **Grafana Dashboards**: Real-time performance visualization
+
+#### Kubernetes Deployment
+- **Auto-Scaling**: HPA based on CPU, memory, and custom metrics
+- **Rolling Updates**: Zero-downtime deployments
+- **Health Probes**: Liveness, readiness, and startup probes
+- **Graceful Shutdown**: Connection draining before termination
+- **Network Policies**: Secure pod-to-pod communication
+
 ### AI-Powered Features (Phase 19)
 
 #### Advanced AI Infrastructure
@@ -128,7 +157,10 @@ When payments are marked as paid, all relevant parties (admin, client, supplier)
 - **Frontend**: React 18, Vite, Chart.js, Axios, Socket.IO Client
 - **Backend**: FastAPI, Pydantic, PyJWT, bcrypt, Socket.IO
 - **Real-Time**: Socket.IO with Redis adapter for horizontal scaling
-- **Database**: In-memory (PostgreSQL ready)
+- **Database**: PostgreSQL with read replicas, connection pooling
+- **Caching**: Redis Cluster with Sentinel for high availability
+- **Observability**: Prometheus, Grafana, Jaeger, OpenTelemetry
+- **Infrastructure**: Docker, Kubernetes, Nginx Ingress
 
 ## Quick Start
 
@@ -200,7 +232,29 @@ logiaccounting-pro/
 │   │   │   │   ├── payments/       # Payment optimizer
 │   │   │   │   └── anomaly/        # Anomaly detection
 │   │   │   └── routes/       # AI API endpoints
+│   │   ├── performance/      # Performance & Scalability (Phase 20)
+│   │   │   ├── caching/      # Multi-layer caching
+│   │   │   │   ├── redis_client.py   # Redis connection
+│   │   │   │   ├── cache_manager.py  # L1/L2 cache manager
+│   │   │   │   ├── decorators.py     # @cached, @invalidate_cache
+│   │   │   │   ├── invalidation.py   # Event-driven invalidation
+│   │   │   │   └── warmup.py         # Cache warmup service
+│   │   │   ├── database/     # Database optimization
+│   │   │   │   ├── connection_pool.py # Read/write splitting
+│   │   │   │   ├── read_replica.py   # Query routing
+│   │   │   │   ├── materialized_views.py # Analytics views
+│   │   │   │   ├── partitioning.py   # Table partitioning
+│   │   │   │   └── query_optimizer.py # Index recommendations
+│   │   │   ├── monitoring/   # Observability
+│   │   │   │   ├── metrics.py        # Prometheus metrics
+│   │   │   │   ├── tracing.py        # OpenTelemetry
+│   │   │   │   └── logging_config.py # Structured logging
+│   │   │   ├── scaling/      # Auto-scaling support
+│   │   │   │   ├── health_check.py   # K8s probes
+│   │   │   │   └── graceful_shutdown.py # Connection draining
+│   │   │   └── routes/       # Health endpoints
 │   │   └── utils/            # Auth utilities
+│   ├── Dockerfile            # Multi-stage build
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
@@ -219,8 +273,29 @@ logiaccounting-pro/
 │   │   │       ├── PaymentOptimizer.jsx
 │   │   │       ├── AnomalyDashboard.jsx
 │   │   │       └── AIUsageStats.jsx
+│   │   ├── lib/
+│   │   │   └── performance/  # Frontend Performance (Phase 20)
+│   │   │       ├── cache.ts          # API caching
+│   │   │       ├── optimization.ts   # Debounce, throttle, memoize
+│   │   │       ├── virtualization.ts # Virtual scrolling
+│   │   │       ├── lazy-loading.ts   # Component lazy loading
+│   │   │       └── metrics.ts        # Web Vitals tracking
 │   │   └── services/         # API client
 │   └── package.json
+├── k8s/                      # Kubernetes manifests (Phase 20)
+│   ├── namespace.yaml        # Namespace definition
+│   ├── configmap.yaml        # Configuration
+│   ├── deployment.yaml       # API and worker deployments
+│   ├── service.yaml          # Service definitions
+│   ├── hpa.yaml              # Horizontal Pod Autoscaler
+│   ├── ingress.yaml          # Ingress configuration
+│   ├── pdb.yaml              # Pod Disruption Budget
+│   ├── rbac.yaml             # Service accounts and roles
+│   └── network-policy.yaml   # Network security
+├── infrastructure/           # Infrastructure configs
+│   ├── prometheus/           # Prometheus configuration
+│   └── grafana/              # Grafana provisioning
+├── docker-compose.yml        # Local development stack
 ├── skills/                   # Agent Skills
 ├── AGENTS.md                 # AI agent instructions
 ├── render.yaml               # Render deployment
@@ -345,6 +420,52 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `GET /api/v1/ai/usage/costs` - Usage costs
 - `GET /api/v1/ai/config` - Get AI configuration
 - `GET /api/v1/ai/health` - Check AI services health
+
+### Health & Metrics (Phase 20)
+- `GET /health` - Full health check with all components
+- `GET /health/live` - Kubernetes liveness probe
+- `GET /health/ready` - Kubernetes readiness probe
+- `GET /health/startup` - Startup status for debugging
+- `GET /metrics` - Prometheus metrics endpoint
+
+## Docker Compose (Local Development)
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f api
+
+# Stop services
+docker-compose down
+```
+
+Services included:
+- API server (port 8000)
+- Celery worker
+- PostgreSQL primary and replica (ports 5432, 5433)
+- Redis (port 6379)
+- Prometheus (port 9090)
+- Grafana (port 3001)
+- Jaeger (port 16686)
+
+## Kubernetes Deployment
+
+```bash
+# Create namespace and deploy
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/
+
+# Check deployment status
+kubectl -n logiaccounting get pods
+
+# View HPA status
+kubectl -n logiaccounting get hpa
+
+# Port forward for local testing
+kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
+```
 
 ## License
 
