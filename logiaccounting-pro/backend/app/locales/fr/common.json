@@ -1,0 +1,99 @@
+{
+  "app": {
+    "name": "LogiAccounting Pro",
+    "tagline": "Logiciel de Comptabilité Professionnel"
+  },
+  "navigation": {
+    "dashboard": "Tableau de Bord",
+    "invoices": "Factures",
+    "clients": "Clients",
+    "products": "Produits",
+    "reports": "Rapports",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "logout": "Déconnexion"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "export": "Exporter",
+    "import": "Importer",
+    "print": "Imprimer",
+    "download": "Télécharger",
+    "upload": "Téléverser",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "reset": "Réinitialiser",
+    "clear": "Effacer",
+    "close": "Fermer",
+    "refresh": "Actualiser",
+    "retry": "Réessayer"
+  },
+  "status": {
+    "active": "Actif",
+    "inactive": "Inactif",
+    "pending": "En attente",
+    "completed": "Terminé",
+    "cancelled": "Annulé",
+    "draft": "Brouillon",
+    "published": "Publié",
+    "archived": "Archivé"
+  },
+  "messages": {
+    "loading": "Chargement...",
+    "saving": "Enregistrement...",
+    "success": "Opération réussie",
+    "error": "Une erreur s'est produite",
+    "confirm_delete": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+    "no_results": "Aucun résultat trouvé",
+    "required_field": "Ce champ est obligatoire",
+    "invalid_email": "Veuillez saisir une adresse e-mail valide",
+    "invalid_format": "Format invalide",
+    "changes_saved": "Modifications enregistrées avec succès",
+    "changes_discarded": "Modifications annulées",
+    "session_expired": "Votre session a expiré. Veuillez vous reconnecter."
+  },
+  "time": {
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "tomorrow": "Demain",
+    "this_week": "Cette semaine",
+    "last_week": "La semaine dernière",
+    "this_month": "Ce mois-ci",
+    "last_month": "Le mois dernier",
+    "this_year": "Cette année",
+    "last_year": "L'année dernière"
+  },
+  "items": {
+    "count": {
+      "zero": "Aucun élément",
+      "one": "{{count}} élément",
+      "other": "{{count}} éléments"
+    }
+  },
+  "pagination": {
+    "page": "Page",
+    "of": "sur",
+    "showing": "Affichage de",
+    "to": "à",
+    "entries": "entrées",
+    "per_page": "par page"
+  },
+  "errors": {
+    "not_found": "Ressource non trouvée",
+    "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action",
+    "forbidden": "Accès refusé",
+    "server_error": "Erreur serveur. Veuillez réessayer plus tard.",
+    "network_error": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "validation_error": "Veuillez corriger les erreurs ci-dessous"
+  }
+}

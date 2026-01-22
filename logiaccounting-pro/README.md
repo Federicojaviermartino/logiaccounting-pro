@@ -16,6 +16,39 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Payment Management**: Track payables and receivables with due dates
 - **Cash Flow Reports**: Visualize financial performance over time
 
+### Internationalization & Localization (Phase 21)
+
+#### Multi-Language Support
+- **11 Languages**: English, Spanish, German, French, Italian, Portuguese, Dutch, Polish, Japanese, Chinese, Arabic
+- **Translation Service**: Namespace-based translations with interpolation and pluralization
+- **CLDR Pluralization**: Correct plural forms for all supported languages
+- **RTL Support**: Full right-to-left support for Arabic and Hebrew
+- **Dynamic Loading**: Load translations on demand for optimal performance
+
+#### Multi-Currency System
+- **24 Currencies**: USD, EUR, GBP, JPY, CHF, CAD, AUD, CNY, and more
+- **Real-Time Exchange Rates**: ECB and OpenExchangeRates integration
+- **Currency Conversion**: Automatic conversion with rate caching
+- **Locale-Aware Formatting**: Symbol position, decimal separators per locale
+
+#### Regional Tax Engine
+- **EU VAT**: All 27 EU member states with standard and reduced rates
+- **US Sales Tax**: All 50 states plus DC with local tax support
+- **VAT Validation**: Format validation and VIES online verification
+- **Tax Categories**: Automatic rate selection based on product category
+- **B2B Support**: Reverse charge for intra-EU transactions
+
+#### Date/Time & Number Formatting
+- **Locale-Specific Formats**: Date, time, and number formatting per locale
+- **Timezone Support**: 15+ common timezones with conversion utilities
+- **Relative Time**: "2 hours ago" in all supported languages
+- **Compact Numbers**: 1.5K, 2.3M formatting
+
+#### Localized Documents
+- **Invoice Templates**: Multi-language invoice generation
+- **Address Formatting**: Country-specific address formats
+- **RTL Layout**: Proper layout for RTL languages
+
 ### Performance & Scalability (Phase 20)
 
 #### Multi-Layer Caching
@@ -232,6 +265,15 @@ logiaccounting-pro/
 │   │   │   │   ├── payments/       # Payment optimizer
 │   │   │   │   └── anomaly/        # Anomaly detection
 │   │   │   └── routes/       # AI API endpoints
+│   │   ├── i18n/             # Internationalization (Phase 21)
+│   │   │   ├── config.py     # Languages, currencies, namespaces
+│   │   │   ├── core/         # Context, locale, middleware
+│   │   │   ├── translation/  # Service, loader, interpolation, pluralization
+│   │   │   ├── currency/     # Config, exchange, converter, formatter
+│   │   │   ├── tax/          # EU VAT, US Sales Tax, validation
+│   │   │   ├── datetime/     # Formatters, numbers, timezone
+│   │   │   ├── templates/    # Localized document templates
+│   │   │   └── api/          # i18n API routes
 │   │   ├── performance/      # Performance & Scalability (Phase 20)
 │   │   │   ├── caching/      # Multi-layer caching
 │   │   │   │   ├── redis_client.py   # Redis connection
@@ -273,6 +315,12 @@ logiaccounting-pro/
 │   │   │       ├── PaymentOptimizer.jsx
 │   │   │       ├── AnomalyDashboard.jsx
 │   │   │       └── AIUsageStats.jsx
+│   │   ├── i18n/             # Internationalization (Phase 21)
+│   │   │   ├── config.js     # Language and currency configuration
+│   │   │   ├── LocaleContext.jsx  # React context provider
+│   │   │   ├── translations/ # EN, ES, DE, FR translations
+│   │   │   ├── hooks/        # useFormatters, useLocale
+│   │   │   └── components/   # LanguageSelector, FormattedNumber, RTLProvider
 │   │   ├── lib/
 │   │   │   └── performance/  # Frontend Performance (Phase 20)
 │   │   │       ├── cache.ts          # API caching
@@ -420,6 +468,21 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `GET /api/v1/ai/usage/costs` - Usage costs
 - `GET /api/v1/ai/config` - Get AI configuration
 - `GET /api/v1/ai/health` - Check AI services health
+
+### Internationalization (Phase 21)
+- `GET /api/v1/i18n/languages` - List supported languages
+- `GET /api/v1/i18n/languages/{code}` - Get language details
+- `GET /api/v1/i18n/translations/{language}/{namespace}` - Get translations
+- `GET /api/v1/i18n/currencies` - List supported currencies
+- `GET /api/v1/i18n/currencies/{code}` - Get currency details
+- `GET /api/v1/i18n/exchange-rate` - Get exchange rate
+- `POST /api/v1/i18n/convert` - Convert currency amount
+- `GET /api/v1/i18n/tax/eu-vat-rates` - Get EU VAT rates
+- `GET /api/v1/i18n/tax/us-sales-tax-rates` - Get US sales tax rates
+- `POST /api/v1/i18n/tax/calculate/eu-vat` - Calculate EU VAT
+- `POST /api/v1/i18n/tax/calculate/us-sales` - Calculate US sales tax
+- `POST /api/v1/i18n/tax/validate-vat` - Validate VAT number
+- `GET /api/v1/i18n/timezones` - Get common timezones
 
 ### Health & Metrics (Phase 20)
 - `GET /health` - Full health check with all components

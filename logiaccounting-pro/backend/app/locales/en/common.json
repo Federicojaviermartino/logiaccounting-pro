@@ -1,0 +1,99 @@
+{
+  "app": {
+    "name": "LogiAccounting Pro",
+    "tagline": "Professional Accounting Software"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "invoices": "Invoices",
+    "clients": "Clients",
+    "products": "Products",
+    "reports": "Reports",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "print": "Print",
+    "download": "Download",
+    "upload": "Upload",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "reset": "Reset",
+    "clear": "Clear",
+    "close": "Close",
+    "refresh": "Refresh",
+    "retry": "Retry"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "draft": "Draft",
+    "published": "Published",
+    "archived": "Archived"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "success": "Operation completed successfully",
+    "error": "An error occurred",
+    "confirm_delete": "Are you sure you want to delete this item?",
+    "no_results": "No results found",
+    "required_field": "This field is required",
+    "invalid_email": "Please enter a valid email address",
+    "invalid_format": "Invalid format",
+    "changes_saved": "Changes saved successfully",
+    "changes_discarded": "Changes discarded",
+    "session_expired": "Your session has expired. Please log in again."
+  },
+  "time": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "this_week": "This week",
+    "last_week": "Last week",
+    "this_month": "This month",
+    "last_month": "Last month",
+    "this_year": "This year",
+    "last_year": "Last year"
+  },
+  "items": {
+    "count": {
+      "zero": "No items",
+      "one": "{{count}} item",
+      "other": "{{count}} items"
+    }
+  },
+  "pagination": {
+    "page": "Page",
+    "of": "of",
+    "showing": "Showing",
+    "to": "to",
+    "entries": "entries",
+    "per_page": "per page"
+  },
+  "errors": {
+    "not_found": "Resource not found",
+    "unauthorized": "You are not authorized to perform this action",
+    "forbidden": "Access denied",
+    "server_error": "Server error. Please try again later.",
+    "network_error": "Network error. Please check your connection.",
+    "validation_error": "Please correct the errors below"
+  }
+}

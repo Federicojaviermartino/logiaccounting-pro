@@ -1,0 +1,121 @@
+{
+  "title": "Facturas",
+  "invoice": "Factura",
+  "new_invoice": "Nueva Factura",
+  "edit_invoice": "Editar Factura",
+  "invoice_number": "Número de Factura",
+  "invoice_date": "Fecha de Factura",
+  "due_date": "Fecha de Vencimiento",
+  "issue_date": "Fecha de Emisión",
+  "status": {
+    "draft": "Borrador",
+    "pending": "Pendiente",
+    "sent": "Enviada",
+    "paid": "Pagada",
+    "overdue": "Vencida",
+    "cancelled": "Cancelada",
+    "partially_paid": "Parcialmente Pagada",
+    "refunded": "Reembolsada"
+  },
+  "client": {
+    "title": "Cliente",
+    "name": "Nombre del Cliente",
+    "email": "Correo del Cliente",
+    "address": "Dirección del Cliente",
+    "select": "Seleccionar Cliente"
+  },
+  "items": {
+    "title": "Artículos",
+    "description": "Descripción",
+    "quantity": "Cantidad",
+    "unit_price": "Precio Unitario",
+    "amount": "Importe",
+    "add_item": "Añadir Artículo",
+    "remove_item": "Eliminar Artículo",
+    "count": {
+      "zero": "Sin artículos",
+      "one": "{{count}} artículo",
+      "other": "{{count}} artículos"
+    }
+  },
+  "totals": {
+    "subtotal": "Subtotal",
+    "tax": "Impuesto",
+    "discount": "Descuento",
+    "total": "Total",
+    "amount_due": "Importe Pendiente",
+    "amount_paid": "Importe Pagado",
+    "balance": "Saldo"
+  },
+  "tax": {
+    "rate": "Tasa de Impuesto",
+    "amount": "Importe del Impuesto",
+    "exempt": "Exento de Impuestos",
+    "included": "Impuesto Incluido",
+    "vat": "IVA",
+    "vat_number": "Número de IVA"
+  },
+  "payment": {
+    "title": "Pago",
+    "method": "Método de Pago",
+    "terms": "Términos de Pago",
+    "received": "Pago Recibido",
+    "date": "Fecha de Pago",
+    "reference": "Referencia de Pago",
+    "methods": {
+      "bank_transfer": "Transferencia Bancaria",
+      "credit_card": "Tarjeta de Crédito",
+      "cash": "Efectivo",
+      "check": "Cheque",
+      "paypal": "PayPal",
+      "other": "Otro"
+    },
+    "terms_options": {
+      "due_on_receipt": "Pago al Recibir",
+      "net_15": "Neto 15 días",
+      "net_30": "Neto 30 días",
+      "net_45": "Neto 45 días",
+      "net_60": "Neto 60 días"
+    }
+  },
+  "notes": {
+    "title": "Notas",
+    "internal": "Notas Internas",
+    "public": "Notas para el Cliente"
+  },
+  "actions": {
+    "send": "Enviar Factura",
+    "mark_paid": "Marcar como Pagada",
+    "mark_sent": "Marcar como Enviada",
+    "duplicate": "Duplicar",
+    "void": "Anular Factura",
+    "download_pdf": "Descargar PDF",
+    "preview": "Vista Previa",
+    "record_payment": "Registrar Pago"
+  },
+  "messages": {
+    "created": "Factura creada con éxito",
+    "updated": "Factura actualizada con éxito",
+    "deleted": "Factura eliminada con éxito",
+    "sent": "Factura enviada con éxito",
+    "marked_paid": "Factura marcada como pagada",
+    "payment_recorded": "Pago registrado con éxito",
+    "confirm_delete": "¿Está seguro de que desea eliminar esta factura?",
+    "confirm_void": "¿Está seguro de que desea anular esta factura?"
+  },
+  "filters": {
+    "all": "Todas las Facturas",
+    "draft": "Borradores",
+    "pending": "Pendientes",
+    "paid": "Pagadas",
+    "overdue": "Vencidas",
+    "date_range": "Rango de Fechas"
+  },
+  "template": {
+    "header": "Factura",
+    "bill_to": "Facturar a",
+    "ship_to": "Enviar a",
+    "from": "De",
+    "thank_you": "¡Gracias por su confianza!"
+  }
+}

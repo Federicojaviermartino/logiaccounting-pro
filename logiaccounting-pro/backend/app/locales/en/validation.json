@@ -1,0 +1,39 @@
+{
+  "required": "This field is required",
+  "email": "Please enter a valid email address",
+  "min_length": "Must be at least {{min}} characters",
+  "max_length": "Must be no more than {{max}} characters",
+  "min_value": "Must be at least {{min}}",
+  "max_value": "Must be no more than {{max}}",
+  "pattern": "Invalid format",
+  "unique": "This value already exists",
+  "numeric": "Must be a number",
+  "integer": "Must be a whole number",
+  "positive": "Must be a positive number",
+  "date": "Please enter a valid date",
+  "date_future": "Date must be in the future",
+  "date_past": "Date must be in the past",
+  "url": "Please enter a valid URL",
+  "phone": "Please enter a valid phone number",
+  "password": {
+    "min_length": "Password must be at least {{min}} characters",
+    "uppercase": "Password must contain at least one uppercase letter",
+    "lowercase": "Password must contain at least one lowercase letter",
+    "number": "Password must contain at least one number",
+    "special": "Password must contain at least one special character",
+    "match": "Passwords do not match"
+  },
+  "file": {
+    "required": "Please select a file",
+    "max_size": "File size must be less than {{max}}",
+    "type": "Invalid file type. Allowed types: {{types}}"
+  },
+  "vat": {
+    "invalid": "Invalid VAT number",
+    "format": "VAT number format is incorrect for {{country}}"
+  },
+  "currency": {
+    "invalid": "Invalid currency code",
+    "amount": "Invalid amount"
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "title": "Rechnungen",
+  "invoice": "Rechnung",
+  "new_invoice": "Neue Rechnung",
+  "edit_invoice": "Rechnung bearbeiten",
+  "invoice_number": "Rechnungsnummer",
+  "invoice_date": "Rechnungsdatum",
+  "due_date": "Fälligkeitsdatum",
+  "issue_date": "Ausstellungsdatum",
+  "status": {
+    "draft": "Entwurf",
+    "pending": "Ausstehend",
+    "sent": "Gesendet",
+    "paid": "Bezahlt",
+    "overdue": "Überfällig",
+    "cancelled": "Storniert",
+    "partially_paid": "Teilweise bezahlt",
+    "refunded": "Erstattet"
+  },
+  "client": {
+    "title": "Kunde",
+    "name": "Kundenname",
+    "email": "Kunden-E-Mail",
+    "address": "Kundenadresse",
+    "select": "Kunde auswählen"
+  },
+  "items": {
+    "title": "Positionen",
+    "description": "Beschreibung",
+    "quantity": "Menge",
+    "unit_price": "Einzelpreis",
+    "amount": "Betrag",
+    "add_item": "Position hinzufügen",
+    "remove_item": "Position entfernen",
+    "count": {
+      "zero": "Keine Positionen",
+      "one": "{{count}} Position",
+      "other": "{{count}} Positionen"
+    }
+  },
+  "totals": {
+    "subtotal": "Zwischensumme",
+    "tax": "Steuer",
+    "discount": "Rabatt",
+    "total": "Gesamtbetrag",
+    "amount_due": "Offener Betrag",
+    "amount_paid": "Bezahlter Betrag",
+    "balance": "Saldo"
+  },
+  "tax": {
+    "rate": "Steuersatz",
+    "amount": "Steuerbetrag",
+    "exempt": "Steuerfrei",
+    "included": "Steuer enthalten",
+    "vat": "MwSt.",
+    "vat_number": "USt-IdNr."
+  },
+  "payment": {
+    "title": "Zahlung",
+    "method": "Zahlungsmethode",
+    "terms": "Zahlungsbedingungen",
+    "received": "Zahlung erhalten",
+    "date": "Zahlungsdatum",
+    "reference": "Zahlungsreferenz",
+    "methods": {
+      "bank_transfer": "Banküberweisung",
+      "credit_card": "Kreditkarte",
+      "cash": "Bargeld",
+      "check": "Scheck",
+      "paypal": "PayPal",
+      "other": "Sonstige"
+    },
+    "terms_options": {
+      "due_on_receipt": "Zahlbar bei Erhalt",
+      "net_15": "Netto 15 Tage",
+      "net_30": "Netto 30 Tage",
+      "net_45": "Netto 45 Tage",
+      "net_60": "Netto 60 Tage"
+    }
+  },
+  "notes": {
+    "title": "Anmerkungen",
+    "internal": "Interne Notizen",
+    "public": "Hinweise für den Kunden"
+  },
+  "actions": {
+    "send": "Rechnung senden",
+    "mark_paid": "Als bezahlt markieren",
+    "mark_sent": "Als gesendet markieren",
+    "duplicate": "Duplizieren",
+    "void": "Rechnung stornieren",
+    "download_pdf": "PDF herunterladen",
+    "preview": "Vorschau",
+    "record_payment": "Zahlung erfassen"
+  },
+  "messages": {
+    "created": "Rechnung erfolgreich erstellt",
+    "updated": "Rechnung erfolgreich aktualisiert",
+    "deleted": "Rechnung erfolgreich gelöscht",
+    "sent": "Rechnung erfolgreich gesendet",
+    "marked_paid": "Rechnung als bezahlt markiert",
+    "payment_recorded": "Zahlung erfolgreich erfasst",
+    "confirm_delete": "Sind Sie sicher, dass Sie diese Rechnung löschen möchten?",
+    "confirm_void": "Sind Sie sicher, dass Sie diese Rechnung stornieren möchten?"
+  },
+  "filters": {
+    "all": "Alle Rechnungen",
+    "draft": "Entwürfe",
+    "pending": "Ausstehend",
+    "paid": "Bezahlt",
+    "overdue": "Überfällig",
+    "date_range": "Datumsbereich"
+  },
+  "template": {
+    "header": "Rechnung",
+    "bill_to": "Rechnungsempfänger",
+    "ship_to": "Lieferadresse",
+    "from": "Von",
+    "thank_you": "Vielen Dank für Ihren Auftrag!"
+  }
+}
