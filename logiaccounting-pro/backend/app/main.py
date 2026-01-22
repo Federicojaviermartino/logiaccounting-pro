@@ -37,6 +37,15 @@ from app.routes import (
     # Phase 16 - Multi-Tenancy
     tenant
 )
+# Phase 19 - Advanced AI Features
+from app.ai.routes import (
+    cashflow_router as ai_cashflow,
+    invoice_router as ai_invoice,
+    assistant_router as ai_assistant,
+    payments_router as ai_payments,
+    anomaly_router as ai_anomaly,
+    usage_router as ai_usage,
+)
 from app.models.store import init_database
 from app.models.tenant_store import init_tenant_database
 from app.models.gateway_store import init_gateway_database
@@ -167,6 +176,14 @@ app.include_router(compliance.router, prefix="/api/v1/compliance", tags=["Compli
 
 # Phase 16 - Multi-Tenancy
 app.include_router(tenant.router, prefix="/api/v1/tenant", tags=["Multi-Tenancy"])
+
+# Phase 19 - Advanced AI Features
+app.include_router(ai_cashflow, prefix="/api/v1/ai/cashflow", tags=["AI Cash Flow Predictor"])
+app.include_router(ai_invoice, prefix="/api/v1/ai/invoice", tags=["AI Invoice OCR"])
+app.include_router(ai_assistant, prefix="/api/v1/ai/assistant", tags=["AI Profitability Assistant"])
+app.include_router(ai_payments, prefix="/api/v1/ai/payments", tags=["AI Payment Optimizer"])
+app.include_router(ai_anomaly, prefix="/api/v1/ai/anomaly", tags=["AI Anomaly Detection"])
+app.include_router(ai_usage, prefix="/api/v1/ai", tags=["AI Usage & Config"])
 
 
 @app.get("/health")

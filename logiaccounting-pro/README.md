@@ -16,12 +16,48 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Payment Management**: Track payables and receivables with due dates
 - **Cash Flow Reports**: Visualize financial performance over time
 
-### AI-Powered Features
-- **Smart Invoice OCR**: Extract data from invoices using Tesseract + AI
-- **Cash Flow Predictor**: 30-60-90 day predictions using Prophet ML
-- **Profitability Assistant**: NLP chatbot for financial queries
-- **Anomaly Detection**: Fraud prevention and duplicate detection
-- **Payment Scheduler**: Optimized payment scheduling
+### AI-Powered Features (Phase 19)
+
+#### Advanced AI Infrastructure
+- **LLM Integration**: Unified client supporting Anthropic Claude and OpenAI GPT
+- **Model Tiers**: Fast, Balanced, and Powerful options for different use cases
+- **Usage Tracking**: Token consumption, costs, and latency monitoring
+
+#### Smart Invoice OCR
+- **Document Processing**: Tesseract OCR for images and PDFs
+- **LLM-Enhanced Extraction**: AI-powered field extraction with schema hints
+- **Auto-Categorization**: 13 expense categories with confidence scores
+- **GL Account Suggestions**: Automatic account mapping
+- **Validation Workflow**: Review, correct, and approve extracted data
+
+#### Cash Flow Predictor
+- **Prophet ML Model**: Time-series forecasting with seasonal patterns
+- **Fallback Statistical Model**: Z-score based when Prophet unavailable
+- **Risk Assessment**: Balance predictions with risk factors
+- **Actionable Insights**: Recommendations based on forecasted trends
+- **Configurable Horizons**: 30, 60, 90 day predictions
+
+#### Profitability Assistant
+- **NLP Chatbot**: Natural language queries about financial data
+- **Business Tools Integration**: Revenue, expenses, profitability metrics
+- **Conversation History**: Multi-turn conversations with context
+- **Quick Actions**: Pre-built queries for common questions
+- **Feedback System**: Thumbs up/down for response quality
+
+#### Payment Optimizer
+- **Early Discount Detection**: Identify discount opportunities with ROI
+- **Batch Payment Suggestions**: Combine payments to same vendor
+- **Timing Optimization**: Align payments with expected inflows
+- **Priority Payments**: Flag critical vendor relationships
+- **Savings Tracking**: Monitor realized vs potential savings
+
+#### Anomaly Detection
+- **Statistical Analysis**: Z-score based unusual amount detection
+- **Frequency Monitoring**: Detect unusual transaction volumes
+- **Timing Alerts**: Flag transactions outside business hours
+- **Duplicate Detection**: Identify potential duplicate entries
+- **Custom Rules Engine**: Configurable detection rules
+- **Resolution Workflow**: Resolve, dismiss, or investigate anomalies
 
 ### Enterprise Features
 
@@ -153,6 +189,17 @@ logiaccounting-pro/
 │   │   │   ├── handlers/     # Event handlers
 │   │   │   ├── services/     # Notification, activity
 │   │   │   └── routes/       # REST endpoints
+│   │   ├── ai/               # Advanced AI Features (Phase 19)
+│   │   │   ├── config.py     # AI configuration
+│   │   │   ├── models/       # AI data models
+│   │   │   ├── services/     # AI services
+│   │   │   │   ├── llm_client.py   # LLM integration
+│   │   │   │   ├── cashflow/       # Cash flow predictor
+│   │   │   │   ├── invoice/        # Invoice OCR
+│   │   │   │   ├── assistant/      # Chat assistant
+│   │   │   │   ├── payments/       # Payment optimizer
+│   │   │   │   └── anomaly/        # Anomaly detection
+│   │   │   └── routes/       # AI API endpoints
 │   │   └── utils/            # Auth utilities
 │   └── requirements.txt
 ├── frontend/
@@ -161,10 +208,17 @@ logiaccounting-pro/
 │   │   ├── pages/            # Page components
 │   │   ├── contexts/         # Auth context
 │   │   ├── features/
-│   │   │   └── realtime/     # Real-time collaboration
-│   │   │       ├── context/  # RealtimeContext
-│   │   │       ├── hooks/    # usePresence, useRoom, etc.
-│   │   │       └── components/ # UI components
+│   │   │   ├── realtime/     # Real-time collaboration
+│   │   │   │   ├── context/  # RealtimeContext
+│   │   │   │   ├── hooks/    # usePresence, useRoom, etc.
+│   │   │   │   └── components/ # UI components
+│   │   │   └── ai/           # AI Features (Phase 19)
+│   │   │       ├── CashFlowForecast.jsx
+│   │   │       ├── InvoiceScanner.jsx
+│   │   │       ├── AIChatAssistant.jsx
+│   │   │       ├── PaymentOptimizer.jsx
+│   │   │       ├── AnomalyDashboard.jsx
+│   │   │       └── AIUsageStats.jsx
 │   │   └── services/         # API client
 │   └── package.json
 ├── skills/                   # Agent Skills
@@ -242,6 +296,55 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `cursor:moved` - Cursor position updates
 - `notification:new` - New notification
 - `activity` - New activity logged
+
+### AI Cash Flow (Phase 19)
+- `POST /api/v1/ai/cashflow/forecast` - Generate forecast
+- `GET /api/v1/ai/cashflow/forecast/{id}` - Get forecast
+- `GET /api/v1/ai/cashflow/forecasts` - List forecasts
+- `GET /api/v1/ai/cashflow/summary` - Get summary
+
+### AI Invoice OCR (Phase 19)
+- `POST /api/v1/ai/invoice/scan` - Scan invoice
+- `GET /api/v1/ai/invoice/scans` - List scans
+- `GET /api/v1/ai/invoice/scans/{id}` - Get scan
+- `PUT /api/v1/ai/invoice/scans/{id}/correct` - Submit corrections
+- `POST /api/v1/ai/invoice/scans/{id}/approve` - Approve scan
+- `GET /api/v1/ai/invoice/categories` - Get categories
+
+### AI Assistant (Phase 19)
+- `POST /api/v1/ai/assistant/chat` - Send message
+- `GET /api/v1/ai/assistant/conversations` - List conversations
+- `GET /api/v1/ai/assistant/conversations/{id}` - Get conversation
+- `POST /api/v1/ai/assistant/conversations/{id}/archive` - Archive
+- `POST /api/v1/ai/assistant/messages/{id}/feedback` - Submit feedback
+- `GET /api/v1/ai/assistant/capabilities` - Get capabilities
+
+### AI Payment Optimizer (Phase 19)
+- `POST /api/v1/ai/payments/optimize` - Analyze invoices
+- `GET /api/v1/ai/payments/recommendations` - List recommendations
+- `GET /api/v1/ai/payments/recommendations/{id}` - Get recommendation
+- `POST /api/v1/ai/payments/recommendations/{id}/accept` - Accept
+- `POST /api/v1/ai/payments/recommendations/{id}/reject` - Reject
+- `GET /api/v1/ai/payments/calendar` - Payment calendar
+- `GET /api/v1/ai/payments/savings` - Savings summary
+
+### AI Anomaly Detection (Phase 19)
+- `POST /api/v1/ai/anomaly/detect` - Detect anomalies
+- `GET /api/v1/ai/anomaly/anomalies` - List anomalies
+- `GET /api/v1/ai/anomaly/anomalies/{id}` - Get anomaly
+- `POST /api/v1/ai/anomaly/anomalies/{id}/resolve` - Resolve
+- `POST /api/v1/ai/anomaly/anomalies/{id}/dismiss` - Dismiss
+- `GET /api/v1/ai/anomaly/stats` - Get statistics
+- `GET /api/v1/ai/anomaly/rules` - Get detection rules
+- `POST /api/v1/ai/anomaly/rules/{id}/enable` - Enable rule
+- `POST /api/v1/ai/anomaly/rules/{id}/disable` - Disable rule
+
+### AI Usage & Config (Phase 19)
+- `GET /api/v1/ai/usage` - Get usage stats
+- `GET /api/v1/ai/usage/by-feature` - Usage by feature
+- `GET /api/v1/ai/usage/costs` - Usage costs
+- `GET /api/v1/ai/config` - Get AI configuration
+- `GET /api/v1/ai/health` - Check AI services health
 
 ## License
 
