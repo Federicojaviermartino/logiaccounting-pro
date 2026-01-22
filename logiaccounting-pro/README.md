@@ -16,6 +16,50 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Payment Management**: Track payables and receivables with due dates
 - **Cash Flow Reports**: Visualize financial performance over time
 
+### Advanced Workflow Automation (Phase 22)
+
+#### Visual Workflow Designer
+- **Drag-and-Drop Editor**: React Flow-based visual workflow builder
+- **Node Types**: Trigger, Action, Condition, Parallel, Delay, End nodes
+- **Auto Layout**: Automatic node arrangement using dagre algorithm
+- **Undo/Redo**: Full history management with keyboard shortcuts
+- **Validation**: Real-time workflow validation with error highlighting
+
+#### Trigger System
+- **Entity Events**: Invoice, payment, project, inventory entity triggers
+- **Scheduled Triggers**: Cron-based scheduling with timezone support
+- **Manual Triggers**: User-initiated workflows with parameters
+- **Webhook Triggers**: External system integration
+
+#### Action Executors
+- **Email Actions**: Template-based emails with variable interpolation
+- **Notification Actions**: In-app and push notifications
+- **Webhook Actions**: HTTP calls to external APIs with retry logic
+- **Entity Actions**: Create, update, delete entities automatically
+- **Approval Actions**: Multi-step approval workflows
+- **Delay Actions**: Timed delays with duration configuration
+- **Script Actions**: Sandboxed Python script execution
+
+#### Business Rules Engine
+- **Condition Evaluation**: Complex AND/OR condition groups
+- **Expression Language**: 22+ built-in functions (UPPER, LOWER, DATE_ADD, etc.)
+- **Variable Interpolation**: Dynamic values from context
+- **Rule Prioritization**: Execution order based on priority
+- **Rule Testing**: Test rules before activation
+
+#### Execution Monitoring
+- **Real-Time Status**: Pending, running, waiting, completed, failed states
+- **Execution History**: Full audit trail of workflow runs
+- **Step-by-Step Logs**: Detailed logging for each workflow step
+- **Retry Failed**: One-click retry for failed executions
+- **Cancel Running**: Graceful cancellation of running workflows
+- **Statistics Dashboard**: Success rate, execution count, performance metrics
+
+#### Workflow Templates
+- **Built-in Templates**: Invoice approval, payment reminder, low stock alert, project progress
+- **Custom Templates**: Save and reuse workflow configurations
+- **Version Control**: Track workflow versions with rollback capability
+
 ### Internationalization & Localization (Phase 21)
 
 #### Multi-Language Support
@@ -187,9 +231,10 @@ When payments are marked as paid, all relevant parties (admin, client, supplier)
 
 ## Tech Stack
 
-- **Frontend**: React 18, Vite, Chart.js, Axios, Socket.IO Client
+- **Frontend**: React 18, Vite, Chart.js, Axios, Socket.IO Client, React Flow, Zustand
 - **Backend**: FastAPI, Pydantic, PyJWT, bcrypt, Socket.IO
 - **Real-Time**: Socket.IO with Redis adapter for horizontal scaling
+- **Workflow Engine**: Event-driven automation with rule evaluation
 - **Database**: PostgreSQL with read replicas, connection pooling
 - **Caching**: Redis Cluster with Sentinel for high availability
 - **Observability**: Prometheus, Grafana, Jaeger, OpenTelemetry
@@ -265,6 +310,15 @@ logiaccounting-pro/
 │   │   │   │   ├── payments/       # Payment optimizer
 │   │   │   │   └── anomaly/        # Anomaly detection
 │   │   │   └── routes/       # AI API endpoints
+│   │   ├── workflows/        # Workflow Automation (Phase 22)
+│   │   │   ├── config.py     # Workflow configuration
+│   │   │   ├── models/       # Workflow, execution, rule models
+│   │   │   ├── engine/       # Workflow engine core and executor
+│   │   │   ├── triggers/     # Event, schedule, manual triggers
+│   │   │   ├── actions/      # Email, webhook, entity, approval actions
+│   │   │   ├── rules/        # Expression evaluator and functions
+│   │   │   ├── routes/       # API endpoints
+│   │   │   └── integration.py # Entity event hooks
 │   │   ├── i18n/             # Internationalization (Phase 21)
 │   │   │   ├── config.py     # Languages, currencies, namespaces
 │   │   │   ├── core/         # Context, locale, middleware
@@ -308,13 +362,21 @@ logiaccounting-pro/
 │   │   │   │   ├── context/  # RealtimeContext
 │   │   │   │   ├── hooks/    # usePresence, useRoom, etc.
 │   │   │   │   └── components/ # UI components
-│   │   │   └── ai/           # AI Features (Phase 19)
-│   │   │       ├── CashFlowForecast.jsx
-│   │   │       ├── InvoiceScanner.jsx
-│   │   │       ├── AIChatAssistant.jsx
-│   │   │       ├── PaymentOptimizer.jsx
-│   │   │       ├── AnomalyDashboard.jsx
-│   │   │       └── AIUsageStats.jsx
+│   │   │   ├── ai/           # AI Features (Phase 19)
+│   │   │   │   ├── CashFlowForecast.jsx
+│   │   │   │   ├── InvoiceScanner.jsx
+│   │   │   │   ├── AIChatAssistant.jsx
+│   │   │   │   ├── PaymentOptimizer.jsx
+│   │   │   │   ├── AnomalyDashboard.jsx
+│   │   │   │   └── AIUsageStats.jsx
+│   │   │   └── workflows/    # Workflow Automation (Phase 22)
+│   │   │       ├── api/      # API layer
+│   │   │       ├── stores/   # Zustand stores
+│   │   │       ├── hooks/    # React hooks
+│   │   │       ├── constants/ # Node types, triggers, actions
+│   │   │       ├── components/
+│   │   │       │   └── nodes/ # React Flow node components
+│   │   │       └── pages/    # List, editor, executions pages
 │   │   ├── i18n/             # Internationalization (Phase 21)
 │   │   │   ├── config.js     # Language and currency configuration
 │   │   │   ├── LocaleContext.jsx  # React context provider
@@ -468,6 +530,39 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `GET /api/v1/ai/usage/costs` - Usage costs
 - `GET /api/v1/ai/config` - Get AI configuration
 - `GET /api/v1/ai/health` - Check AI services health
+
+### Workflow Automation (Phase 22)
+- `GET /api/v1/workflows` - List workflows
+- `POST /api/v1/workflows` - Create workflow
+- `GET /api/v1/workflows/{id}` - Get workflow
+- `PUT /api/v1/workflows/{id}` - Update workflow
+- `DELETE /api/v1/workflows/{id}` - Delete workflow
+- `POST /api/v1/workflows/{id}/activate` - Activate workflow
+- `POST /api/v1/workflows/{id}/pause` - Pause workflow
+- `POST /api/v1/workflows/{id}/trigger` - Manually trigger workflow
+- `POST /api/v1/workflows/{id}/test` - Test workflow with sample data
+- `GET /api/v1/workflows/{id}/versions` - Get version history
+- `POST /api/v1/workflows/{id}/rollback/{version}` - Rollback to version
+
+### Workflow Executions (Phase 22)
+- `GET /api/v1/executions` - List executions
+- `GET /api/v1/executions/{id}` - Get execution details
+- `GET /api/v1/executions/{id}/steps` - Get execution steps
+- `GET /api/v1/executions/{id}/logs` - Get execution logs
+- `POST /api/v1/executions/{id}/cancel` - Cancel running execution
+- `POST /api/v1/executions/{id}/retry` - Retry failed execution
+- `GET /api/v1/executions/stats` - Get execution statistics
+
+### Business Rules (Phase 22)
+- `GET /api/v1/rules` - List rules
+- `POST /api/v1/rules` - Create rule
+- `GET /api/v1/rules/{id}` - Get rule
+- `PUT /api/v1/rules/{id}` - Update rule
+- `DELETE /api/v1/rules/{id}` - Delete rule
+- `POST /api/v1/rules/{id}/activate` - Activate rule
+- `POST /api/v1/rules/{id}/pause` - Pause rule
+- `POST /api/v1/rules/{id}/test` - Test rule with sample data
+- `POST /api/v1/rules/evaluate` - Evaluate rules for entity
 
 ### Internationalization (Phase 21)
 - `GET /api/v1/i18n/languages` - List supported languages
