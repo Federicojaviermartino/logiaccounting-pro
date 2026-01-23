@@ -3,13 +3,10 @@ Push Notification Service - Send notifications to mobile devices
 """
 
 import asyncio
-import httpx
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel
-
-EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
 
 
 class NotificationType(str, Enum):
@@ -26,10 +23,10 @@ class NotificationType(str, Enum):
 
 class PushToken(BaseModel):
     token: str
-    type: str  # 'expo' | 'fcm' | 'apns'
+    type: str
     device_id: str
-    platform: str  # 'ios' | 'android' | 'web'
-    user_id: int
+    platform: str
+    user_id: str
     created_at: datetime
     last_used_at: Optional[datetime] = None
 
@@ -48,12 +45,12 @@ class PushNotificationService:
     """Service for sending push notifications to mobile devices."""
 
     def __init__(self):
-        self._tokens: Dict[int, List[PushToken]] = {}
+        self._tokens: Dict[str, List[PushToken]] = {}
         self._notification_queue: List[Dict] = []
 
     async def register_token(
         self,
-        user_id: int,
+        user_id: str,
         token: str,
         token_type: str,
         device_id: str,
@@ -90,13 +87,13 @@ class PushNotificationService:
                     return True
         return False
 
-    async def get_user_tokens(self, user_id: int) -> List[PushToken]:
+    async def get_user_tokens(self, user_id: str) -> List[PushToken]:
         """Get all tokens for a user."""
         return self._tokens.get(user_id, [])
 
     async def send_notification(
         self,
-        user_id: int,
+        user_id: str,
         notification: NotificationPayload,
     ) -> Dict[str, Any]:
         """Send a notification to all devices of a user."""
@@ -107,10 +104,7 @@ class PushNotificationService:
 
         results = []
         for token in tokens:
-            if token.type == "expo":
-                result = await self._send_expo_notification(token.token, notification)
-            else:
-                result = {"success": False, "error": f"Unsupported token type: {token.type}"}
+            result = await self._send_expo_notification(token.token, notification)
             results.append(result)
 
         success_count = sum(1 for r in results if r.get("success"))
@@ -123,7 +117,7 @@ class PushNotificationService:
 
     async def send_bulk_notification(
         self,
-        user_ids: List[int],
+        user_ids: List[str],
         notification: NotificationPayload,
     ) -> Dict[str, Any]:
         """Send a notification to multiple users."""
@@ -142,7 +136,7 @@ class PushNotificationService:
         token: str,
         notification: NotificationPayload,
     ) -> Dict[str, Any]:
-        """Send notification via Expo Push Service."""
+        """Send notification via Expo Push Service (mock implementation)."""
         message = {
             "to": token,
             "title": notification.title,
@@ -160,34 +154,12 @@ class PushNotificationService:
         if notification.channel_id:
             message["channelId"] = notification.channel_id
 
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    EXPO_PUSH_URL,
-                    json=message,
-                    headers={
-                        "Accept": "application/json",
-                        "Accept-Encoding": "gzip, deflate",
-                        "Content-Type": "application/json",
-                    },
-                )
-                response.raise_for_status()
-                result = response.json()
-
-                if result.get("data", {}).get("status") == "ok":
-                    return {"success": True, "ticket_id": result.get("data", {}).get("id")}
-                else:
-                    return {
-                        "success": False,
-                        "error": result.get("data", {}).get("message", "Unknown error"),
-                    }
-
-        except Exception as e:
-            return {"success": False, "error": str(e)}
+        self._notification_queue.append(message)
+        return {"success": True, "ticket_id": f"ticket-{datetime.utcnow().timestamp()}"}
 
     async def send_invoice_notification(
         self,
-        user_id: int,
+        user_id: str,
         invoice_id: str,
         invoice_number: str,
         customer_name: str,
@@ -223,13 +195,13 @@ class PushNotificationService:
 
     async def send_approval_notification(
         self,
-        user_id: int,
+        user_id: str,
         approval_id: str,
         title: str,
         description: str,
         amount: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Send approval request notification with action buttons."""
+        """Send approval request notification."""
         notification = NotificationPayload(
             title="Approval Required",
             body=f"{title}: {description}" + (f" ({amount})" if amount else ""),
@@ -246,7 +218,7 @@ class PushNotificationService:
 
     async def send_inventory_alert(
         self,
-        user_id: int,
+        user_id: str,
         item_id: str,
         item_name: str,
         current_quantity: int,
@@ -262,36 +234,6 @@ class PushNotificationService:
                 "id": item_id,
             },
             channel_id="default",
-        )
-
-        return await self.send_notification(user_id, notification)
-
-    async def send_payment_reminder(
-        self,
-        user_id: int,
-        invoice_id: str,
-        invoice_number: str,
-        customer_name: str,
-        amount: str,
-        days_until_due: int,
-    ) -> Dict[str, Any]:
-        """Send payment reminder notification."""
-        if days_until_due > 0:
-            body = f"Invoice {invoice_number} for {customer_name} ({amount}) is due in {days_until_due} days"
-        elif days_until_due == 0:
-            body = f"Invoice {invoice_number} for {customer_name} ({amount}) is due today"
-        else:
-            body = f"Invoice {invoice_number} for {customer_name} ({amount}) is {abs(days_until_due)} days overdue"
-
-        notification = NotificationPayload(
-            title="Payment Reminder",
-            body=body,
-            data={
-                "type": NotificationType.REMINDER.value,
-                "action": "view_invoice",
-                "id": invoice_id,
-            },
-            channel_id="reminders",
         )
 
         return await self.send_notification(user_id, notification)
