@@ -32,7 +32,7 @@ class KBCategory:
 class KBArticle:
     """Knowledge base article"""
 
-    def __init__(self, tenant_id: str, category_id: str, title: str, content: str, excerpt: str = None):
+    def __init__(self, tenant_id: str, category_id: str, title: str, content: str, excerpt: str = None, tags: List[str] = None):
         self.id = f"kba_{uuid4().hex[:12]}"
         self.tenant_id = tenant_id
         self.category_id = category_id
@@ -41,7 +41,7 @@ class KBArticle:
         self.content = content
         self.excerpt = excerpt or content[:200]
         self.status = "published"
-        self.tags = []
+        self.tags = tags or []
         self.view_count = 0
         self.helpful_yes = 0
         self.helpful_no = 0
@@ -94,7 +94,6 @@ class KnowledgeService:
 
         for art_data in articles:
             article = KBArticle(tenant_id=tenant_id, **art_data)
-            article.tags = art_data.get("tags", [])
             self._articles[article.id] = article
             if article.category_id in self._categories:
                 self._categories[article.category_id].article_count += 1
