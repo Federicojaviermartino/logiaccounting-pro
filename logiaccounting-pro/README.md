@@ -16,6 +16,68 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Payment Management**: Track payables and receivables with due dates
 - **Cash Flow Reports**: Visualize financial performance over time
 
+### CRM & Sales Pipeline (Phase 25)
+
+#### Lead Management
+- **Lead Capture**: Multi-source lead tracking (website, referral, campaign, cold call)
+- **BANT Scoring**: Automatic lead scoring based on Budget, Authority, Need, Timeline
+- **Lead Rating**: Hot, warm, cold classification based on engagement
+- **Lead Conversion**: One-click conversion to contact and opportunity
+- **Bulk Import**: CSV/Excel lead import with validation
+- **Source Analytics**: Lead source performance metrics
+
+#### Contact Management
+- **Contact 360 View**: Complete view with activities, deals, history
+- **Contact Roles**: Decision maker, influencer, champion classification
+- **Communication Preferences**: Do not call, do not email flags
+- **Contact Merge**: Deduplicate contacts with merge tool
+- **Contact Import/Export**: Bulk operations with CSV
+
+#### Company/Account Management
+- **Health Scoring**: Automatic account health calculation
+- **Company Hierarchy**: Parent/subsidiary relationships
+- **Industry Classification**: 17 industry categories
+- **Client Linking**: Link CRM companies to accounting clients
+- **At-Risk Detection**: Identify accounts needing attention
+- **Top Accounts**: Revenue-based account ranking
+
+#### Sales Pipeline
+- **Kanban Board**: Drag-and-drop deal management
+- **Multiple Pipelines**: Custom pipelines per team/product
+- **Stage Configuration**: Customizable stages with probabilities
+- **Win/Loss Tracking**: Outcome tracking with reasons
+- **Pipeline Statistics**: Value, velocity, conversion metrics
+- **Stage Automation**: Auto-update probability on stage change
+
+#### Opportunity Management
+- **Deal Tracking**: Amount, probability, expected close date
+- **Win/Lose Actions**: Capture win/loss reasons and competitors
+- **Deal Reopen**: Reopen closed deals for new attempts
+- **Forecast View**: Pipeline and weighted revenue forecast
+- **Win/Loss Analysis**: Competitor and reason analysis
+
+#### Activity Management
+- **Activity Types**: Calls, emails, meetings, tasks, notes
+- **Call Logging**: Outcome tracking with duration
+- **Email Tracking**: Open and click tracking
+- **Meeting Scheduling**: Calendar integration
+- **Task Management**: Due dates, priorities, overdue alerts
+- **Activity Statistics**: Team activity metrics
+
+#### Email Templates
+- **Merge Fields**: Contact, company, opportunity, sender variables
+- **Template Categories**: Prospecting, follow-up, proposals
+- **Template Rendering**: Variable substitution preview
+- **Usage Tracking**: Template performance metrics
+
+#### Quote Management
+- **Quote Builder**: Line items with quantities and discounts
+- **Approval Workflow**: Submit, approve, reject flow
+- **Quote to Invoice**: Convert accepted quotes to invoices
+- **Quote Expiration**: Automatic expiry tracking
+- **Customer Portal**: Public quote viewing and acceptance
+- **E-Signature**: Customer signature capture
+
 ### Advanced Reporting & Business Intelligence (Phase 24)
 
 #### Visual Report Designer
@@ -299,8 +361,9 @@ When payments are marked as paid, all relevant parties (admin, client, supplier)
 
 ## Tech Stack
 
-- **Frontend**: React 18, Vite, Chart.js, Axios, Socket.IO Client, React Flow, Zustand, @dnd-kit
+- **Frontend**: React 18, Vite, Chart.js, Axios, Socket.IO Client, React Flow, Zustand, @dnd-kit, lucide-react
 - **Backend**: FastAPI, Pydantic, PyJWT, bcrypt, Socket.IO
+- **CRM**: Lead scoring, pipeline management, activity tracking, quote workflow
 - **Real-Time**: Socket.IO with Redis adapter for horizontal scaling
 - **Workflow Engine**: Event-driven automation with rule evaluation
 - **BI & Reporting**: Chart.js visualizations, semantic metrics layer, cron scheduling
@@ -389,9 +452,18 @@ logiaccounting-pro/
 │   │   │   ├── routes/       # API endpoints
 │   │   │   └── integration.py # Entity event hooks
 │   │   ├── services/
-│   │   │   └── bi/           # Business Intelligence (Phase 24)
-│   │   │       ├── scheduler_service.py  # Report scheduling
-│   │   │       └── metrics_service.py    # Semantic metrics layer
+│   │   │   ├── bi/           # Business Intelligence (Phase 24)
+│   │   │   │   ├── scheduler_service.py  # Report scheduling
+│   │   │   │   └── metrics_service.py    # Semantic metrics layer
+│   │   │   └── crm/          # CRM Services (Phase 25)
+│   │   │       ├── lead_service.py       # Lead management
+│   │   │       ├── contact_service.py    # Contact management
+│   │   │       ├── company_service.py    # Company management
+│   │   │       ├── opportunity_service.py # Deal management
+│   │   │       ├── pipeline_service.py   # Pipeline config
+│   │   │       ├── activity_service.py   # Activity tracking
+│   │   │       ├── email_template_service.py
+│   │   │       └── quote_service.py      # Quote workflow
 │   │   ├── i18n/             # Internationalization (Phase 21)
 │   │   │   ├── config.py     # Languages, currencies, namespaces
 │   │   │   ├── core/         # Context, locale, middleware
@@ -450,9 +522,21 @@ logiaccounting-pro/
 │   │   │   │   ├── components/
 │   │   │   │   │   └── nodes/ # React Flow node components
 │   │   │   │   └── pages/    # List, editor, executions pages
-│   │   │   └── bi/           # Business Intelligence (Phase 24)
-│   │   │       ├── context/  # ReportDesignerContext
-│   │   │       └── components/
+│   │   │   ├── bi/           # Business Intelligence (Phase 24)
+│   │   │   │   ├── context/  # ReportDesignerContext
+│   │   │   │   └── components/
+│   │   │   └── crm/          # CRM Module (Phase 25)
+│   │   │       ├── components/
+│   │   │       │   ├── PipelineBoard.jsx # Kanban board
+│   │   │       │   ├── StageColumn.jsx   # Pipeline stage
+│   │   │       │   ├── DealCard.jsx      # Draggable deal card
+│   │   │       │   ├── DealModal.jsx     # Deal create/edit
+│   │   │       │   ├── LeadConversion.jsx # Lead wizard
+│   │   │       │   └── CRMSidebar.jsx    # Navigation
+│   │   │       ├── pages/
+│   │   │       │   └── CRMDashboard.jsx  # Sales dashboard
+│   │   │       ├── CRMLayout.jsx         # Module layout
+│   │   │       └── routes.jsx            # CRM routing
 │   │   │           ├── DataSourcePanel.jsx
 │   │   │           ├── FieldsPanel.jsx
 │   │   │           ├── FilterBuilder.jsx
@@ -740,6 +824,95 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `POST /api/v1/reports/metrics/{id}/calculate` - Calculate metric value
 - `GET /api/v1/reports/metrics/categories` - Get metric categories
 
+### CRM Leads (Phase 25)
+- `GET /api/v1/crm/leads` - List leads with filters
+- `POST /api/v1/crm/leads` - Create lead
+- `GET /api/v1/crm/leads/{id}` - Get lead details
+- `PUT /api/v1/crm/leads/{id}` - Update lead
+- `DELETE /api/v1/crm/leads/{id}` - Delete lead
+- `POST /api/v1/crm/leads/{id}/convert` - Convert to contact/opportunity
+- `POST /api/v1/crm/leads/{id}/assign` - Assign to user
+- `PUT /api/v1/crm/leads/{id}/status` - Change status
+- `POST /api/v1/crm/leads/bulk-assign` - Bulk assign leads
+- `POST /api/v1/crm/leads/import` - Import leads
+- `GET /api/v1/crm/leads/sources/stats` - Source statistics
+
+### CRM Contacts (Phase 25)
+- `GET /api/v1/crm/contacts` - List contacts
+- `POST /api/v1/crm/contacts` - Create contact
+- `GET /api/v1/crm/contacts/{id}` - Get contact
+- `GET /api/v1/crm/contacts/{id}/360` - Get 360 view
+- `PUT /api/v1/crm/contacts/{id}` - Update contact
+- `DELETE /api/v1/crm/contacts/{id}` - Delete contact
+- `POST /api/v1/crm/contacts/merge` - Merge contacts
+- `PUT /api/v1/crm/contacts/{id}/preferences` - Update preferences
+- `GET /api/v1/crm/contacts/export` - Export to CSV
+
+### CRM Companies (Phase 25)
+- `GET /api/v1/crm/companies` - List companies
+- `POST /api/v1/crm/companies` - Create company
+- `GET /api/v1/crm/companies/{id}` - Get company
+- `GET /api/v1/crm/companies/{id}/summary` - Get summary
+- `PUT /api/v1/crm/companies/{id}` - Update company
+- `DELETE /api/v1/crm/companies/{id}` - Delete company
+- `POST /api/v1/crm/companies/{id}/parent` - Set parent
+- `GET /api/v1/crm/companies/{id}/subsidiaries` - Get subsidiaries
+- `POST /api/v1/crm/companies/{id}/link-client` - Link to client
+- `GET /api/v1/crm/companies/top` - Top accounts
+- `GET /api/v1/crm/companies/at-risk` - At-risk accounts
+
+### CRM Opportunities (Phase 25)
+- `GET /api/v1/crm/opportunities` - List opportunities
+- `POST /api/v1/crm/opportunities` - Create opportunity
+- `GET /api/v1/crm/opportunities/{id}` - Get opportunity
+- `PUT /api/v1/crm/opportunities/{id}` - Update opportunity
+- `DELETE /api/v1/crm/opportunities/{id}` - Delete opportunity
+- `POST /api/v1/crm/opportunities/{id}/move` - Move to stage
+- `POST /api/v1/crm/opportunities/{id}/win` - Mark as won
+- `POST /api/v1/crm/opportunities/{id}/lose` - Mark as lost
+- `POST /api/v1/crm/opportunities/{id}/reopen` - Reopen deal
+- `GET /api/v1/crm/opportunities/board` - Get Kanban board
+- `GET /api/v1/crm/opportunities/forecast` - Get forecast
+- `GET /api/v1/crm/opportunities/win-loss` - Win/loss analysis
+- `GET /api/v1/crm/opportunities/pipelines` - List pipelines
+- `POST /api/v1/crm/opportunities/pipelines` - Create pipeline
+
+### CRM Activities (Phase 25)
+- `GET /api/v1/crm/activities` - List activities
+- `POST /api/v1/crm/activities` - Create activity
+- `GET /api/v1/crm/activities/{id}` - Get activity
+- `PUT /api/v1/crm/activities/{id}` - Update activity
+- `DELETE /api/v1/crm/activities/{id}` - Delete activity
+- `POST /api/v1/crm/activities/{id}/complete` - Complete activity
+- `POST /api/v1/crm/activities/{id}/cancel` - Cancel activity
+- `POST /api/v1/crm/activities/{id}/reschedule` - Reschedule
+- `POST /api/v1/crm/activities/log-call` - Log call
+- `POST /api/v1/crm/activities/log-email` - Log email
+- `POST /api/v1/crm/activities/schedule-meeting` - Schedule meeting
+- `POST /api/v1/crm/activities/create-task` - Create task
+- `GET /api/v1/crm/activities/upcoming` - Upcoming activities
+- `GET /api/v1/crm/activities/overdue` - Overdue tasks
+- `GET /api/v1/crm/activities/stats` - Activity statistics
+
+### CRM Quotes (Phase 25)
+- `GET /api/v1/crm/quotes` - List quotes
+- `POST /api/v1/crm/quotes` - Create quote
+- `GET /api/v1/crm/quotes/{id}` - Get quote
+- `PUT /api/v1/crm/quotes/{id}` - Update quote
+- `DELETE /api/v1/crm/quotes/{id}` - Delete quote
+- `POST /api/v1/crm/quotes/{id}/duplicate` - Duplicate quote
+- `POST /api/v1/crm/quotes/{id}/items` - Add line item
+- `PUT /api/v1/crm/quotes/{id}/items/{item_id}` - Update item
+- `DELETE /api/v1/crm/quotes/{id}/items/{item_id}` - Remove item
+- `POST /api/v1/crm/quotes/{id}/submit` - Submit for approval
+- `POST /api/v1/crm/quotes/{id}/approve` - Approve quote
+- `POST /api/v1/crm/quotes/{id}/reject` - Reject quote
+- `POST /api/v1/crm/quotes/{id}/send` - Send to customer
+- `POST /api/v1/crm/quotes/{id}/accept` - Accept (customer)
+- `POST /api/v1/crm/quotes/{id}/decline` - Decline (customer)
+- `POST /api/v1/crm/quotes/{id}/convert` - Convert to invoice
+- `GET /api/v1/crm/quotes/public/{id}` - Public quote view
+
 ### Health & Metrics (Phase 20)
 - `GET /health` - Full health check with all components
 - `GET /health/live` - Kubernetes liveness probe
@@ -785,6 +958,42 @@ kubectl -n logiaccounting get hpa
 # Port forward for local testing
 kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 ```
+
+## Roadmap
+
+### Completed Phases
+
+| Phase | Name | Status |
+|-------|------|--------|
+| 1-7 | Core Platform | Completed |
+| 8 | Supplier Module | Completed |
+| 9 | Client Module | Completed |
+| 10 | Project Management | Completed |
+| 11 | Invoice System | Completed |
+| 12 | Payment Processing | Completed |
+| 13 | Dashboard & Analytics | Completed |
+| 14 | External Integrations | Completed |
+| 15 | Audit & Compliance | Completed |
+| 16 | Multi-Tenancy | Completed |
+| 17 | API Gateway & Webhooks | Completed |
+| 18 | Real-Time Collaboration | Completed |
+| 19 | AI-Powered Features | Completed |
+| 20 | Performance & Scalability | Completed |
+| 21 | Internationalization | Completed |
+| 22 | Workflow Automation | Completed |
+| 23 | Mobile App & PWA | Completed |
+| 24 | Advanced BI & Reporting | Completed |
+| 25 | CRM & Sales Pipeline | Completed |
+
+### Upcoming Phases
+
+| Phase | Name | Description |
+|-------|------|-------------|
+| 26 | Advanced Workflow Engine | Visual workflow builder, complex automation |
+| 27 | Customer Portal v2 | Self-service CRM portal for clients |
+| 28 | Mobile CRM App | Dedicated mobile CRM experience |
+| 29 | AI Sales Assistant | Deal coaching, email suggestions |
+| 30 | Integration Marketplace | Custom integrations framework |
 
 ## License
 
