@@ -3,11 +3,15 @@
   "short_name": "LogiAccounting",
   "description": "Enterprise Logistics and Accounting Platform with AI-powered features",
   "start_url": "/",
-  "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#667eea",
-  "orientation": "portrait-primary",
   "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1a1a2e",
+  "theme_color": "#667eea",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["business", "finance", "productivity"],
+
   "icons": [
     {
       "src": "/icons/icon-72x72.png",
@@ -58,29 +62,100 @@
       "purpose": "maskable any"
     }
   ],
-  "categories": ["business", "finance", "productivity"],
-  "screenshots": [],
+
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard-wide.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard Overview"
+    },
+    {
+      "src": "/screenshots/dashboard-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile Dashboard"
+    }
+  ],
+
   "shortcuts": [
     {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "description": "View your dashboard",
-      "url": "/dashboard",
+      "name": "New Invoice",
+      "short_name": "Invoice",
+      "description": "Create a new invoice",
+      "url": "/invoices/new",
       "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {
-      "name": "Inventory",
-      "short_name": "Inventory",
-      "description": "Manage inventory",
-      "url": "/inventory",
+      "name": "Scan Receipt",
+      "short_name": "Scan",
+      "description": "Scan and upload a receipt",
+      "url": "/scan",
       "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {
-      "name": "Transactions",
-      "short_name": "Transactions",
-      "description": "View transactions",
-      "url": "/transactions",
+      "name": "Approvals",
+      "short_name": "Approve",
+      "description": "View pending approvals",
+      "url": "/approvals",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Stock Take",
+      "short_name": "Stock",
+      "description": "Start stock take",
+      "url": "/inventory/stock-take",
       "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     }
-  ]
+  ],
+
+  "share_target": {
+    "action": "/share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "documents",
+          "accept": ["image/*", "application/pdf"]
+        }
+      ]
+    }
+  },
+
+  "protocol_handlers": [
+    {
+      "protocol": "web+logiaccounting",
+      "url": "/handle-protocol?url=%s"
+    }
+  ],
+
+  "file_handlers": [
+    {
+      "action": "/import",
+      "accept": {
+        "text/csv": [".csv"],
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"]
+      }
+    }
+  ],
+
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.logiaccounting.pro",
+      "id": "com.logiaccounting.pro"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/logiaccounting-pro/id123456789"
+    }
+  ],
+
+  "prefer_related_applications": false
 }

@@ -16,6 +16,36 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Payment Management**: Track payables and receivables with due dates
 - **Cash Flow Reports**: Visualize financial performance over time
 
+### Mobile Application & PWA (Phase 23)
+
+#### Progressive Web App (PWA)
+- **Service Worker**: Workbox-powered caching with background sync
+- **Offline Support**: Full offline functionality with IndexedDB storage
+- **Install Prompt**: Native app-like installation on desktop and mobile
+- **Push Notifications**: Web Push API with notification actions
+- **App Manifest**: Shortcuts, share target, protocol handlers, file handlers
+
+#### React Native Mobile App
+- **Expo Framework**: Cross-platform iOS and Android support
+- **Tab Navigation**: Dashboard, Invoices, Scanner, Inventory, Settings
+- **Biometric Authentication**: Face ID and Fingerprint login
+- **Barcode Scanner**: Product barcode and QR code scanning
+- **Document Scanner**: Receipt and invoice capture with OCR
+- **SQLite Database**: Local offline data storage
+- **Bidirectional Sync**: Conflict resolution with merge strategies
+
+#### Mobile Features
+- **Dashboard**: KPI cards, quick actions, recent invoices
+- **Invoice Management**: Create, view, search, filter invoices
+- **Inventory Tracking**: Stock levels, low stock alerts, barcode lookup
+- **Settings**: Profile, biometric toggle, sync status, notifications
+
+#### Backend Mobile API
+- **Sync Endpoints**: Pull/push changes with conflict detection
+- **Push Service**: Expo notifications with channel support
+- **Mobile Dashboard**: Optimized KPI and activity endpoints
+- **Global Search**: Cross-entity search for mobile
+
 ### Advanced Workflow Automation (Phase 22)
 
 #### Visual Workflow Designer
@@ -390,7 +420,31 @@ logiaccounting-pro/
 │   │   │       ├── virtualization.ts # Virtual scrolling
 │   │   │       ├── lazy-loading.ts   # Component lazy loading
 │   │   │       └── metrics.ts        # Web Vitals tracking
+│   │   ├── pwa/              # PWA Features (Phase 23)
+│   │   │   ├── registerSW.js # Service Worker registration
+│   │   │   ├── useInstallPrompt.js # Install prompt hook
+│   │   │   ├── storage/      # IndexedDB layer
+│   │   │   ├── sync/         # Offline sync queue
+│   │   │   ├── notifications/ # Push notification service
+│   │   │   ├── hooks/        # useSync, useOffline
+│   │   │   └── components/   # Install banner, network status
 │   │   └── services/         # API client
+│   ├── workbox-config.js     # Workbox PWA configuration
+│   └── package.json
+├── mobile/                    # React Native App (Phase 23)
+│   ├── app.json              # Expo configuration
+│   ├── src/
+│   │   ├── app/              # Expo Router screens
+│   │   │   ├── (auth)/       # Auth stack (login, register)
+│   │   │   └── (tabs)/       # Tab navigator (dashboard, invoices, etc.)
+│   │   ├── components/       # Reusable UI components
+│   │   │   └── ui/           # KPICard, Button, Badge, Card
+│   │   ├── services/         # API client, auth, invoices
+│   │   ├── store/            # Zustand auth store
+│   │   ├── storage/          # SQLite database
+│   │   ├── sync/             # Sync engine, conflict resolver
+│   │   ├── scanner/          # Barcode and document scanners
+│   │   └── notifications/    # Push notification service
 │   └── package.json
 ├── k8s/                      # Kubernetes manifests (Phase 20)
 │   ├── namespace.yaml        # Namespace definition
@@ -578,6 +632,29 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `POST /api/v1/i18n/tax/calculate/us-sales` - Calculate US sales tax
 - `POST /api/v1/i18n/tax/validate-vat` - Validate VAT number
 - `GET /api/v1/i18n/timezones` - Get common timezones
+
+### Mobile Sync (Phase 23)
+- `GET /api/v1/sync/{entity_type}` - Get changes since timestamp
+- `POST /api/v1/sync/{entity_type}/push` - Push local changes
+- `POST /api/v1/sync/resolve-conflict` - Resolve sync conflict
+- `GET /api/v1/sync/status` - Get sync status
+
+### Push Notifications (Phase 23)
+- `POST /api/v1/push/register` - Register device for push
+- `POST /api/v1/push/unregister` - Unregister device
+- `GET /api/v1/push/devices` - List registered devices
+- `POST /api/v1/push/send` - Send notification
+- `POST /api/v1/push/test` - Send test notification
+- `GET /api/v1/push/settings` - Get notification settings
+- `PATCH /api/v1/push/settings` - Update notification settings
+
+### Mobile Dashboard (Phase 23)
+- `GET /api/v1/mobile/dashboard` - Get optimized dashboard data
+- `GET /api/v1/mobile/kpis` - Get key performance indicators
+- `GET /api/v1/mobile/invoices/recent` - Get recent invoices
+- `GET /api/v1/mobile/inventory/alerts` - Get inventory alerts
+- `GET /api/v1/mobile/activity` - Get recent activity feed
+- `GET /api/v1/mobile/search` - Global search
 
 ### Health & Metrics (Phase 20)
 - `GET /health` - Full health check with all components

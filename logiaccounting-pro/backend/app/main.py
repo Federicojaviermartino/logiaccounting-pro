@@ -35,7 +35,9 @@ from app.routes import (
     # Phase 15 - Audit & Compliance
     compliance,
     # Phase 16 - Multi-Tenancy
-    tenant
+    tenant,
+    # Phase 23 - Mobile Application & PWA
+    mobile_sync, push_notifications, mobile_dashboard
 )
 # Phase 19 - Advanced AI Features
 from app.ai.routes import (
@@ -184,6 +186,11 @@ app.include_router(ai_assistant, prefix="/api/v1/ai/assistant", tags=["AI Profit
 app.include_router(ai_payments, prefix="/api/v1/ai/payments", tags=["AI Payment Optimizer"])
 app.include_router(ai_anomaly, prefix="/api/v1/ai/anomaly", tags=["AI Anomaly Detection"])
 app.include_router(ai_usage, prefix="/api/v1/ai", tags=["AI Usage & Config"])
+
+# Phase 23 - Mobile Application & PWA
+app.include_router(mobile_sync.router, prefix="/api/v1", tags=["Mobile Sync"])
+app.include_router(push_notifications.router, prefix="/api/v1", tags=["Push Notifications"])
+app.include_router(mobile_dashboard.router, prefix="/api/v1", tags=["Mobile Dashboard"])
 
 
 @app.get("/health")
