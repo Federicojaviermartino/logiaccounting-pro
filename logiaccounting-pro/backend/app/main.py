@@ -39,6 +39,8 @@ from app.routes import (
     # Phase 23 - Mobile Application & PWA
     mobile_sync, push_notifications, mobile_dashboard
 )
+# Phase 27 - Customer Portal v2
+from app.routes.portal_v2 import router as portal_v2_router
 # Phase 19 - Advanced AI Features
 from app.ai.routes import (
     cashflow_router as ai_cashflow,
@@ -191,6 +193,9 @@ app.include_router(ai_usage, prefix="/api/v1/ai", tags=["AI Usage & Config"])
 app.include_router(mobile_sync.router, prefix="/api/v1", tags=["Mobile Sync"])
 app.include_router(push_notifications.router, prefix="/api/v1", tags=["Push Notifications"])
 app.include_router(mobile_dashboard.router, prefix="/api/v1", tags=["Mobile Dashboard"])
+
+# Phase 27 - Customer Portal v2 (Self-Service Hub)
+app.include_router(portal_v2_router, prefix="/api/v1", tags=["Customer Portal v2"])
 
 
 @app.get("/health")
