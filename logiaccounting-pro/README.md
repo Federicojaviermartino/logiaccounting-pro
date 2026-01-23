@@ -16,6 +16,44 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Payment Management**: Track payables and receivables with due dates
 - **Cash Flow Reports**: Visualize financial performance over time
 
+### Advanced Reporting & Business Intelligence (Phase 24)
+
+#### Visual Report Designer
+- **Drag-and-Drop Builder**: @dnd-kit powered canvas with grid snapping
+- **Component Library**: Charts, KPIs, tables, text, images, shapes
+- **Multi-Select**: Select and manipulate multiple components
+- **Zoom Controls**: 25%-200% zoom with keyboard shortcuts
+- **Undo/Redo**: 50-state history with Ctrl+Z/Ctrl+Y support
+- **Real-Time Preview**: Live data binding preview
+
+#### Chart Components
+- **Line Charts**: Time series with multiple datasets, area fills
+- **Bar Charts**: Vertical/horizontal, stacked, grouped
+- **Pie Charts**: Pie and donut variants with labels
+- **KPI Cards**: Big numbers, trends, sparklines, target progress
+- **Data Tables**: Sortable, filterable, paginated with CSV export
+- **Pivot Tables**: Interactive aggregation with sum, avg, count, min, max
+
+#### Semantic Layer (Metrics Catalog)
+- **12 System Metrics**: Revenue, expenses, profit margin, invoice count, etc.
+- **Custom Metrics**: User-defined metrics with formulas
+- **Metric Certification**: Organization-wide certified metrics
+- **Formula Engine**: Calculated metrics with dependencies
+- **Category Organization**: Financial, operational, inventory, projects
+
+#### Report Scheduling
+- **Cron Expressions**: Flexible scheduling (daily, weekly, monthly)
+- **Multiple Formats**: PDF, Excel, CSV, HTML, PowerPoint export
+- **Email Distribution**: Template-based emails with attachments
+- **Execution History**: Full audit trail with retry capability
+- **Status Monitoring**: Running, completed, failed states
+
+#### Data Sources & Filtering
+- **Internal Tables**: Invoices, payments, projects, inventory, clients, vendors
+- **Field Browser**: Browse and select fields with aggregations
+- **Filter Builder**: Complex AND/OR filter groups
+- **Parameter Support**: Runtime parameters for dynamic reports
+
 ### Mobile Application & PWA (Phase 23)
 
 #### Progressive Web App (PWA)
@@ -261,10 +299,11 @@ When payments are marked as paid, all relevant parties (admin, client, supplier)
 
 ## Tech Stack
 
-- **Frontend**: React 18, Vite, Chart.js, Axios, Socket.IO Client, React Flow, Zustand
+- **Frontend**: React 18, Vite, Chart.js, Axios, Socket.IO Client, React Flow, Zustand, @dnd-kit
 - **Backend**: FastAPI, Pydantic, PyJWT, bcrypt, Socket.IO
 - **Real-Time**: Socket.IO with Redis adapter for horizontal scaling
 - **Workflow Engine**: Event-driven automation with rule evaluation
+- **BI & Reporting**: Chart.js visualizations, semantic metrics layer, cron scheduling
 - **Database**: PostgreSQL with read replicas, connection pooling
 - **Caching**: Redis Cluster with Sentinel for high availability
 - **Observability**: Prometheus, Grafana, Jaeger, OpenTelemetry
@@ -349,6 +388,10 @@ logiaccounting-pro/
 │   │   │   ├── rules/        # Expression evaluator and functions
 │   │   │   ├── routes/       # API endpoints
 │   │   │   └── integration.py # Entity event hooks
+│   │   ├── services/
+│   │   │   └── bi/           # Business Intelligence (Phase 24)
+│   │   │       ├── scheduler_service.py  # Report scheduling
+│   │   │       └── metrics_service.py    # Semantic metrics layer
 │   │   ├── i18n/             # Internationalization (Phase 21)
 │   │   │   ├── config.py     # Languages, currencies, namespaces
 │   │   │   ├── core/         # Context, locale, middleware
@@ -399,14 +442,26 @@ logiaccounting-pro/
 │   │   │   │   ├── PaymentOptimizer.jsx
 │   │   │   │   ├── AnomalyDashboard.jsx
 │   │   │   │   └── AIUsageStats.jsx
-│   │   │   └── workflows/    # Workflow Automation (Phase 22)
-│   │   │       ├── api/      # API layer
-│   │   │       ├── stores/   # Zustand stores
-│   │   │       ├── hooks/    # React hooks
-│   │   │       ├── constants/ # Node types, triggers, actions
-│   │   │       ├── components/
-│   │   │       │   └── nodes/ # React Flow node components
-│   │   │       └── pages/    # List, editor, executions pages
+│   │   │   ├── workflows/    # Workflow Automation (Phase 22)
+│   │   │   │   ├── api/      # API layer
+│   │   │   │   ├── stores/   # Zustand stores
+│   │   │   │   ├── hooks/    # React hooks
+│   │   │   │   ├── constants/ # Node types, triggers, actions
+│   │   │   │   ├── components/
+│   │   │   │   │   └── nodes/ # React Flow node components
+│   │   │   │   └── pages/    # List, editor, executions pages
+│   │   │   └── bi/           # Business Intelligence (Phase 24)
+│   │   │       ├── context/  # ReportDesignerContext
+│   │   │       └── components/
+│   │   │           ├── DataSourcePanel.jsx
+│   │   │           ├── FieldsPanel.jsx
+│   │   │           ├── FilterBuilder.jsx
+│   │   │           ├── ReportCanvas.jsx
+│   │   │           ├── ReportComponent.jsx
+│   │   │           ├── ComponentPalette.jsx
+│   │   │           ├── PropertyPanel.jsx
+│   │   │           ├── ReportPreview.jsx
+│   │   │           └── charts/     # Chart components library
 │   │   ├── i18n/             # Internationalization (Phase 21)
 │   │   │   ├── config.js     # Language and currency configuration
 │   │   │   ├── LocaleContext.jsx  # React context provider
@@ -655,6 +710,35 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `GET /api/v1/mobile/inventory/alerts` - Get inventory alerts
 - `GET /api/v1/mobile/activity` - Get recent activity feed
 - `GET /api/v1/mobile/search` - Global search
+
+### BI Reports (Phase 24)
+- `GET /api/v1/reports` - List reports with pagination
+- `POST /api/v1/reports` - Create new report
+- `GET /api/v1/reports/{id}` - Get report details
+- `PUT /api/v1/reports/{id}` - Update report
+- `DELETE /api/v1/reports/{id}` - Delete report
+- `POST /api/v1/reports/{id}/execute` - Execute report
+- `GET /api/v1/reports/{id}/export/{format}` - Export report (pdf, xlsx, csv, html, pptx)
+- `POST /api/v1/reports/{id}/favorite` - Toggle favorite
+- `GET /api/v1/reports/user/favorites` - Get user favorites
+- `GET /api/v1/reports/user/recent` - Get recent reports
+- `GET /api/v1/reports/categories` - Get report categories
+
+### Report Scheduling (Phase 24)
+- `GET /api/v1/reports/{id}/schedules` - List report schedules
+- `POST /api/v1/reports/{id}/schedules` - Create schedule
+- `PUT /api/v1/reports/{id}/schedules/{schedule_id}` - Update schedule
+- `DELETE /api/v1/reports/{id}/schedules/{schedule_id}` - Delete schedule
+- `POST /api/v1/reports/{id}/schedules/{schedule_id}/run` - Run schedule now
+
+### Metrics Catalog (Phase 24)
+- `GET /api/v1/reports/metrics` - List metrics
+- `POST /api/v1/reports/metrics` - Create custom metric
+- `GET /api/v1/reports/metrics/{id}` - Get metric details
+- `PUT /api/v1/reports/metrics/{id}` - Update metric
+- `DELETE /api/v1/reports/metrics/{id}` - Delete metric
+- `POST /api/v1/reports/metrics/{id}/calculate` - Calculate metric value
+- `GET /api/v1/reports/metrics/categories` - Get metric categories
 
 ### Health & Metrics (Phase 20)
 - `GET /health` - Full health check with all components
