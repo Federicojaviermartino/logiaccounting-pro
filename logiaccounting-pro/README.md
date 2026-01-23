@@ -146,6 +146,47 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Mobile Dashboard**: Optimized KPI and activity endpoints
 - **Global Search**: Cross-entity search for mobile
 
+### Advanced Workflow Engine v2 (Phase 26)
+
+#### CRM Workflow Integration
+- **CRM Event Triggers**: Lead created/converted, deal stage changes, deal won/lost, quote events
+- **CRM Actions**: Create leads, deals, activities; assign owners; update scores; convert leads
+- **Threshold Triggers**: Metric-based triggers for overdue invoices, unassigned leads, pipeline value
+- **CRM Conditions**: Complex condition evaluation with nested AND/OR rules
+
+#### Sub-Workflows & Error Handling
+- **Sub-Workflow Node**: Call workflows from other workflows as reusable components
+- **Recursion Prevention**: Circular reference detection with max depth limits
+- **Try-Catch Blocks**: Error handling with try, catch, finally steps
+- **Retry Policies**: Configurable retry with fixed, exponential, linear backoff
+- **Fallback Actions**: Execute alternative actions on failure
+- **Circuit Breaker**: Prevent cascading failures with circuit breaker pattern
+
+#### Workflow Versioning
+- **Version History**: Track all workflow changes with snapshots
+- **Version Comparison**: Compare changes between versions
+- **Rollback Capability**: Restore previous workflow versions
+
+#### AI-Powered Features
+- **Workflow Suggestions**: AI-powered workflow recommendations
+- **Natural Language to Workflow**: Describe workflow in plain English, AI builds it
+- **Workflow Explanation**: AI generates human-readable workflow descriptions
+- **AI Actions**: Text generation, data extraction, classification, sentiment analysis
+
+#### Template Marketplace
+- **Built-in Templates**: Invoice reminders, lead assignment, deal notifications
+- **Template Categories**: Financial, CRM, operations, notifications, integrations
+- **Template Installation**: One-click install with customization
+- **Template Publishing**: Share custom workflows as templates
+- **Template Rating**: Community ratings and install counts
+
+#### Live Execution Monitor
+- **Real-Time Updates**: WebSocket-based live execution tracking
+- **Execution Timeline**: Step-by-step execution visualization
+- **Step Inspector**: View input/output data for each step
+- **Cancel/Retry**: Cancel running executions, retry failed ones
+- **Dashboard Analytics**: Success rates, execution counts, top workflows
+
 ### Advanced Workflow Automation (Phase 22)
 
 #### Visual Workflow Designer
@@ -984,12 +1025,12 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 23 | Mobile App & PWA | Completed |
 | 24 | Advanced BI & Reporting | Completed |
 | 25 | CRM & Sales Pipeline | Completed |
+| 26 | Advanced Workflow Engine v2 | Completed |
 
 ### Upcoming Phases
 
 | Phase | Name | Description |
 |-------|------|-------------|
-| 26 | Advanced Workflow Engine | Visual workflow builder, complex automation |
 | 27 | Customer Portal v2 | Self-service CRM portal for clients |
 | 28 | Mobile CRM App | Dedicated mobile CRM experience |
 | 29 | AI Sales Assistant | Deal coaching, email suggestions |
