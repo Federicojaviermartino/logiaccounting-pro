@@ -89,7 +89,7 @@ async def logout(request: Request):
     auth_header = request.headers.get("authorization", "")
     if auth_header.startswith("Bearer "):
         token = auth_header[7:]
-        from app.utils.jwt import decode_token
+        from app.utils.auth import decode_token
         try:
             payload = decode_token(token)
             session_id = payload.get("session_id")

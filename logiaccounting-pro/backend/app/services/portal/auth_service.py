@@ -10,8 +10,7 @@ import secrets
 import logging
 
 from app.models.crm_store import crm_store
-from app.utils.jwt import create_access_token, create_refresh_token
-from app.utils.password import verify_password, hash_password
+from app.utils.auth import create_access_token, create_refresh_token, verify_password, get_password_hash
 
 
 logger = logging.getLogger(__name__)
@@ -61,7 +60,7 @@ class PortalAuthService:
         portal_user = {
             "id": f"pu_{uuid4().hex[:12]}",
             "email": email,
-            "password_hash": hash_password(password),
+            "password_hash": get_password_hash(password),
             "contact_id": contact_id,
             "company_id": company_id,
             "tenant_id": tenant_id,
@@ -352,7 +351,7 @@ class PortalAuthService:
         if not verify_password(current_password, portal_user["password_hash"]):
             raise ValueError("Current password is incorrect")
 
-        portal_user["password_hash"] = hash_password(new_password)
+        portal_user["password_hash"] = get_password_hash(new_password)
         logger.info(f"Portal password changed: {email}")
 
 

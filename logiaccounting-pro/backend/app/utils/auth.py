@@ -38,11 +38,24 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None, expires_minutes: Optional[int] = None) -> str:
     """Create a JWT access token"""
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(hours=settings.access_token_expire_hours))
+    if expires_minutes:
+        expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
+    elif expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(hours=settings.access_token_expire_hours)
     to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
+
+
+def create_refresh_token(data: dict, expires_days: int = 7) -> str:
+    """Create a JWT refresh token with longer expiration"""
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(days=expires_days)
+    to_encode.update({"exp": expire, "token_type": "refresh"})
     return jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
 
 
