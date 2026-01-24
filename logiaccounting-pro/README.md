@@ -1026,13 +1026,13 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 24 | Advanced BI & Reporting | Completed |
 | 25 | CRM & Sales Pipeline | Completed |
 | 26 | Advanced Workflow Engine v2 | Completed |
+| 27 | Customer Portal v2 | Completed |
+| 28 | Mobile API & PWA | Completed |
 
 ### Upcoming Phases
 
 | Phase | Name | Description |
 |-------|------|-------------|
-| 27 | Customer Portal v2 | Self-service CRM portal for clients |
-| 28 | Mobile CRM App | Dedicated mobile CRM experience |
 | 29 | AI Sales Assistant | Deal coaching, email suggestions |
 | 30 | Integration Marketplace | Custom integrations framework |
 
