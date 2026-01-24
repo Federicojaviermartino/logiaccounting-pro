@@ -167,6 +167,41 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Zapier Integration**: 7 triggers (invoice, payment, customer events) + 5 actions
 - **Slack Integration**: OAuth 2.0 auth, messaging, slash commands (/invoice, /customer, /project)
 
+### Workflow Automation v3 (Phase 30)
+
+#### Core Workflow Engine
+- **Async Execution**: Python asyncio-based workflow execution with state machine
+- **Node Types**: Action, condition, loop, parallel, delay, sub-workflow nodes
+- **Variable Resolution**: Template system with `{{variable}}` syntax and pipe functions
+- **Expression Evaluation**: Built-in functions (upper, lower, currency, date, etc.)
+- **Condition Builder**: Complex conditions with AND/OR groups and operators
+- **Retry Logic**: Exponential backoff with configurable retry policies
+
+#### Trigger System
+- **Event Triggers**: Entity events (invoice, payment, customer, project)
+- **Schedule Triggers**: Cron-based scheduling with timezone support
+- **Manual Triggers**: User-initiated workflows with parameters
+- **Webhook Triggers**: External system integration with HMAC verification
+
+#### Actions Library
+- **Communication**: Email, SMS, Slack, push notifications
+- **Data Operations**: Create, read, update, delete records with calculations
+- **Integrations**: HTTP requests, Stripe, QuickBooks, Zapier webhooks
+- **Flow Control**: Delay, wait until, stop, set variable, approval gates
+
+#### Visual Workflow Builder
+- **Drag-and-Drop Canvas**: React-based visual editor with node connections
+- **Node Palette**: Categorized action selection with search
+- **Configuration Panel**: Dynamic forms for node-specific settings
+- **Undo/Redo**: Full history management with keyboard shortcuts
+- **Zoom Controls**: Canvas zoom and pan functionality
+
+#### Execution Monitoring
+- **Execution History**: Full audit trail with step-by-step details
+- **Status Tracking**: Pending, running, completed, failed states
+- **Error Display**: Detailed error messages with step context
+- **Duration Metrics**: Per-step and total execution timing
+
 ### Advanced Workflow Engine v2 (Phase 26)
 
 #### CRM Workflow Integration
@@ -1050,13 +1085,14 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 27 | Customer Portal v2 | Completed |
 | 28 | Mobile API & PWA | Completed |
 | 29 | Integration Hub | Completed |
+| 30 | Workflow Automation v3 | Completed |
 
 ### Upcoming Phases
 
 | Phase | Name | Description |
 |-------|------|-------------|
-| 30 | AI Sales Assistant | Deal coaching, email suggestions |
-| 31 | Advanced Analytics v2 | Predictive insights, ML models |
+| 31 | AI Sales Assistant | Deal coaching, email suggestions |
+| 32 | Advanced Analytics v2 | Predictive insights, ML models |
 
 ## License
 

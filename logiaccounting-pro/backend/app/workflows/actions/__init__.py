@@ -1,82 +1,50 @@
 """
-Action executor factory and base class.
+Workflow Actions Module
+Registers all available actions
 """
-from typing import Dict, Any, Optional, Type
-from abc import ABC, abstractmethod
-import logging
 
-
-logger = logging.getLogger(__name__)
-
-
-class ActionExecutor(ABC):
-    """Base class for action executors."""
-
-    @abstractmethod
-    async def execute(
-        self,
-        config: Dict[str, Any],
-        variables: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """
-        Execute the action.
-
-        Args:
-            config: Action configuration
-            variables: Current workflow variables
-
-        Returns:
-            Action result
-        """
-        pass
-
-    def validate_config(self, config: Dict[str, Any]) -> bool:
-        """Validate action configuration."""
-        return True
-
-
-class ActionExecutorFactory:
-    """Factory for creating action executors."""
-
-    _executors: Dict[str, Type[ActionExecutor]] = {}
-
-    @classmethod
-    def register(cls, action_type: str, executor_class: Type[ActionExecutor]):
-        """Register an action executor."""
-        cls._executors[action_type] = executor_class
-
-    @classmethod
-    def get(cls, action_type: str) -> ActionExecutor:
-        """Get an action executor instance."""
-        executor_class = cls._executors.get(action_type)
-        if not executor_class:
-            raise ValueError(f"Unknown action type: {action_type}")
-        return executor_class()
-
-    @classmethod
-    def list_actions(cls) -> list:
-        """List all registered action types."""
-        return list(cls._executors.keys())
-
-
-from app.workflows.actions.email_action import EmailActionExecutor
-from app.workflows.actions.notification_action import NotificationActionExecutor
-from app.workflows.actions.webhook_action import WebhookActionExecutor
-from app.workflows.actions.entity_actions import (
-    UpdateEntityExecutor,
-    CreateEntityExecutor,
-    DeleteEntityExecutor
+from app.workflows.actions.base import (
+    BaseAction,
+    ActionCategory,
+    ActionInput,
+    ActionOutput,
+    action_registry,
+    register_action,
 )
-from app.workflows.actions.approval_action import ApprovalActionExecutor
-from app.workflows.actions.delay_action import DelayActionExecutor
-from app.workflows.actions.script_action import ScriptActionExecutor
 
-ActionExecutorFactory.register("send_email", EmailActionExecutor)
-ActionExecutorFactory.register("notification", NotificationActionExecutor)
-ActionExecutorFactory.register("webhook", WebhookActionExecutor)
-ActionExecutorFactory.register("update_entity", UpdateEntityExecutor)
-ActionExecutorFactory.register("create_entity", CreateEntityExecutor)
-ActionExecutorFactory.register("delete_entity", DeleteEntityExecutor)
-ActionExecutorFactory.register("approval", ApprovalActionExecutor)
-ActionExecutorFactory.register("delay", DelayActionExecutor)
-ActionExecutorFactory.register("script", ScriptActionExecutor)
+# Import action modules to register them
+from app.workflows.actions import communication
+from app.workflows.actions import data
+from app.workflows.actions import integration
+from app.workflows.actions import flow
+
+
+__all__ = [
+    'BaseAction',
+    'ActionCategory',
+    'ActionInput',
+    'ActionOutput',
+    'action_registry',
+    'register_action',
+]
+
+
+def register_default_actions(engine):
+    """Register action handlers with the workflow engine."""
+    for action_id, action in action_registry._actions.items():
+        async def handler(config, context, action=action):
+            return await action.execute(config, context)
+
+        engine.register_action(action_id, handler)
+
+    print(f"[Workflows] Registered {len(action_registry._actions)} actions")
+
+
+def get_action(action_id: str) -> BaseAction:
+    """Get action by ID."""
+    return action_registry.get(action_id)
+
+
+def list_actions() -> list:
+    """List all registered actions."""
+    return action_registry.list_all()
