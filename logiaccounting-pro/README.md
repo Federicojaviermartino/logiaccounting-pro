@@ -167,6 +167,45 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Zapier Integration**: 7 triggers (invoice, payment, customer events) + 5 actions
 - **Slack Integration**: OAuth 2.0 auth, messaging, slash commands (/invoice, /customer, /project)
 
+### Advanced Security (Phase 32)
+
+#### Multi-Factor Authentication
+- **TOTP Authentication**: Time-based one-time passwords with QR code setup
+- **SMS Verification**: Phone number verification with rate limiting
+- **Email Verification**: Secure email-based verification codes
+- **Backup Codes**: Recovery codes for account access
+- **MFA Enforcement**: Per-role MFA requirements
+
+#### OAuth 2.0 & SSO
+- **OAuth Providers**: Google, Microsoft, GitHub integration
+- **PKCE Support**: Proof Key for Code Exchange for mobile apps
+- **Token Management**: Secure access and refresh token handling
+- **Session Management**: Device tracking, concurrent session limits
+
+#### Role-Based Access Control (RBAC)
+- **System Roles**: Super Admin, Admin, Manager, Accountant, Project Manager, Client, Supplier, Read-Only, Guest
+- **Permission System**: Resource and action-level permissions with scopes
+- **Policy Engine**: Time-based, IP-based, and ownership policies
+- **Granular Access**: Customer and team-level permission scoping
+
+#### Encryption & Key Management
+- **AES-256-GCM**: Field-level encryption for sensitive data
+- **Key Rotation**: Automatic and manual key rotation with audit trail
+- **Encrypted Fields**: Transparent encryption for model fields
+- **Secure Key Storage**: Encrypted master key management
+
+#### Security Audit Logging
+- **Event Types**: Authentication, data access, security, system events
+- **Immutable Trail**: Tamper-proof audit log with hashing
+- **Search & Filter**: Advanced filtering by date, user, action, resource
+- **Compliance Reports**: SOX, GDPR, HIPAA audit report generation
+
+#### Protection Services
+- **Rate Limiting**: Sliding window algorithm with per-endpoint rules
+- **IP Filtering**: Allowlist/blocklist with geographic filtering
+- **Input Sanitization**: SQL injection, XSS, command injection detection
+- **Security Headers**: HSTS, CSP, X-Frame-Options middleware
+
 ### Workflow Automation v3 (Phase 30)
 
 #### Core Workflow Engine
@@ -561,6 +600,14 @@ logiaccounting-pro/
 │   │   │       ├── activity_service.py   # Activity tracking
 │   │   │       ├── email_template_service.py
 │   │   │       └── quote_service.py      # Quote workflow
+│   │   ├── security/         # Advanced Security (Phase 32)
+│   │   │   ├── config.py     # Security configuration
+│   │   │   ├── auth/         # Authentication modules
+│   │   │   ├── rbac/         # Role-based access control
+│   │   │   ├── encryption/   # Encryption services
+│   │   │   ├── audit/        # Audit logging
+│   │   │   ├── protection/   # Protection services
+│   │   │   └── middleware/   # Security middleware
 │   │   ├── i18n/             # Internationalization (Phase 21)
 │   │   │   ├── config.py     # Languages, currencies, namespaces
 │   │   │   ├── core/         # Context, locale, middleware
@@ -1010,6 +1057,25 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `POST /api/v1/crm/quotes/{id}/convert` - Convert to invoice
 - `GET /api/v1/crm/quotes/public/{id}` - Public quote view
 
+### Security - MFA (Phase 32)
+- `POST /api/v1/security/mfa/setup` - Initialize MFA setup
+- `POST /api/v1/security/mfa/verify` - Verify MFA code
+- `POST /api/v1/security/mfa/disable` - Disable MFA
+- `POST /api/v1/security/mfa/backup-codes` - Generate backup codes
+- `GET /api/v1/security/mfa/status` - Get MFA status
+
+### Security - Sessions (Phase 32)
+- `GET /api/v1/security/sessions` - List active sessions
+- `DELETE /api/v1/security/sessions/{id}` - Terminate session
+- `DELETE /api/v1/security/sessions` - Terminate all other sessions
+- `GET /api/v1/security/sessions/current` - Get current session
+
+### Security - Audit (Phase 32)
+- `GET /api/v1/security/audit` - Search audit logs
+- `GET /api/v1/security/audit/{id}` - Get audit entry
+- `GET /api/v1/security/audit/statistics` - Get audit statistics
+- `GET /api/v1/security/audit/export` - Export audit logs
+
 ### Health & Metrics (Phase 20)
 - `GET /health` - Full health check with all components
 - `GET /health/live` - Kubernetes liveness probe
@@ -1087,12 +1153,13 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 29 | Integration Hub | Completed |
 | 30 | Workflow Automation v3 | Completed |
 | 31 | AI/ML Features | Completed |
+| 32 | Advanced Security | Completed |
 
 ### Upcoming Phases
 
 | Phase | Name | Description |
 |-------|------|-------------|
-| 32 | Advanced Analytics v2 | Predictive insights, ML models |
+| 33 | Advanced Analytics v2 | Predictive insights, ML models |
 
 ## License
 
