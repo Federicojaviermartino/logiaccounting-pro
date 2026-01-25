@@ -7,9 +7,17 @@ import json
 import time
 from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
+from enum import Enum
 
-from ..config import get_ai_config, LLMProvider, ModelTier
+from ..config import ai_config, AIProvider, MODEL_PRESETS
 from ..models.ai_usage import AIUsage
+
+
+class ModelTier(str, Enum):
+    """Model tiers for different performance/cost tradeoffs."""
+    FAST = "fast"
+    BALANCED = "balanced"
+    POWERFUL = "powerful"
 
 
 @dataclass
@@ -27,7 +35,7 @@ class LLMClient:
     """Unified LLM client supporting multiple providers"""
 
     def __init__(self):
-        self.config = get_ai_config()
+        self.config = ai_config
         self._anthropic_client = None
         self._openai_client = None
 
@@ -37,7 +45,7 @@ class LLMClient:
             try:
                 import anthropic
                 self._anthropic_client = anthropic.Anthropic(
-                    api_key=self.config.llm.anthropic_api_key
+                    api_key=self.config.anthropic_api_key
                 )
             except ImportError:
                 raise RuntimeError("anthropic package not installed")
@@ -49,7 +57,7 @@ class LLMClient:
             try:
                 import openai
                 self._openai_client = openai.OpenAI(
-                    api_key=self.config.llm.openai_api_key
+                    api_key=self.config.openai_api_key
                 )
             except ImportError:
                 raise RuntimeError("openai package not installed")
@@ -57,9 +65,9 @@ class LLMClient:
 
     def _get_model_name(self, tier: ModelTier) -> str:
         """Get model name for tier and provider"""
-        provider = self.config.llm.provider
+        provider = self.config.default_provider
 
-        if provider == LLMProvider.ANTHROPIC:
+        if provider == AIProvider.ANTHROPIC:
             models = {
                 ModelTier.FAST: "claude-3-haiku-20240307",
                 ModelTier.BALANCED: "claude-3-5-sonnet-20241022",
@@ -101,10 +109,10 @@ class LLMClient:
         """
         start_time = time.time()
         model = self._get_model_name(tier)
-        provider = self.config.llm.provider
+        provider = self.config.default_provider
 
         try:
-            if provider == LLMProvider.ANTHROPIC:
+            if provider == AIProvider.ANTHROPIC:
                 response = await self._anthropic_complete(
                     prompt=prompt,
                     system_prompt=system_prompt,
@@ -246,10 +254,10 @@ class LLMClient:
         """
         start_time = time.time()
         model = self._get_model_name(tier)
-        provider = self.config.llm.provider
+        provider = self.config.default_provider
 
         try:
-            if provider == LLMProvider.ANTHROPIC:
+            if provider == AIProvider.ANTHROPIC:
                 response = await self._anthropic_chat(
                     messages=messages,
                     system_prompt=system_prompt,
