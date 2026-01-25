@@ -8,9 +8,9 @@ import json
 from typing import Optional, Dict, Any, List
 from datetime import datetime
 
-from ...config import get_ai_config, ModelTier
+from ...config import get_ai_config
 from ...models.conversation import AIConversation, AIMessage
-from ..llm_client import get_llm_client
+from ..llm_client import get_llm_client, ModelTier
 from .tools import AssistantTools
 
 logger = logging.getLogger(__name__)
