@@ -103,6 +103,11 @@ class AIConfig:
 ai_config = AIConfig()
 
 
+def get_ai_config() -> AIConfig:
+    """Get the global AI configuration instance."""
+    return ai_config
+
+
 # Model presets for different use cases
 MODEL_PRESETS = {
     "fast": ModelConfig(
