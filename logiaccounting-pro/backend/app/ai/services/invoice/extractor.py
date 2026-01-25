@@ -10,9 +10,9 @@ from datetime import datetime
 import re
 import json
 
-from ...config import get_ai_config, ModelTier
+from ...config import get_ai_config
 from ...models.scanned_invoice import ScannedInvoice
-from ..llm_client import get_llm_client
+from ..llm_client import get_llm_client, ModelTier
 
 logger = logging.getLogger(__name__)
 
