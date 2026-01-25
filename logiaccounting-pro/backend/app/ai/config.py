@@ -1,131 +1,141 @@
 """
-AI Service Configuration
-Centralized configuration for all AI features
+AI Configuration
+Central configuration for all AI/ML features
 """
 
-import os
-from dataclasses import dataclass
-from typing import Optional
+from typing import Dict, Any, Optional
+from dataclasses import dataclass, field
 from enum import Enum
+import os
 
 
-class LLMProvider(str, Enum):
-    """Supported LLM providers"""
-    ANTHROPIC = 'anthropic'
-    OPENAI = 'openai'
+class AIProvider(str, Enum):
+    """Supported AI providers."""
+    OPENAI = "openai"
+    ANTHROPIC = "anthropic"
+    LOCAL = "local"
 
 
-class ModelTier(str, Enum):
-    """Model tiers for different use cases"""
-    FAST = 'fast'
-    BALANCED = 'balanced'
-    POWERFUL = 'powerful'
+class ModelType(str, Enum):
+    """Model types for different tasks."""
+    CHAT = "chat"
+    EMBEDDING = "embedding"
+    VISION = "vision"
+    COMPLETION = "completion"
 
 
 @dataclass
-class LLMConfig:
-    """LLM configuration"""
-    provider: LLMProvider
-    model_fast: str
-    model_balanced: str
-    model_powerful: str
-    api_key: str
+class ModelConfig:
+    """Configuration for an AI model."""
+    provider: AIProvider
+    model_name: str
     max_tokens: int = 4096
-    temperature: float = 0.1
-
-    def get_model(self, tier: ModelTier) -> str:
-        """Get model name for tier"""
-        if tier == ModelTier.FAST:
-            return self.model_fast
-        elif tier == ModelTier.BALANCED:
-            return self.model_balanced
-        return self.model_powerful
+    temperature: float = 0.7
+    timeout: int = 30
+    retry_attempts: int = 3
+    rate_limit_rpm: int = 60
 
 
 @dataclass
-class OCRConfig:
-    """OCR configuration"""
-    tesseract_path: str
-    language: str = 'eng'
-    dpi: int = 300
-    psm: int = 3
-
-
-@dataclass
-class CashFlowConfig:
-    """Cash flow prediction configuration"""
-    min_history_days: int = 90
-    forecast_horizons: list = None
-    seasonality_mode: str = 'multiplicative'
-    confidence_interval: float = 0.95
-
-    def __post_init__(self):
-        if self.forecast_horizons is None:
-            self.forecast_horizons = [30, 60, 90]
-
-
-@dataclass
-class AnomalyConfig:
-    """Anomaly detection configuration"""
-    zscore_threshold: float = 3.0
-    min_samples: int = 30
-    duplicate_similarity_threshold: float = 0.9
-    unusual_amount_multiplier: float = 3.0
-
-
 class AIConfig:
-    """Main AI configuration"""
+    """Central AI configuration."""
 
-    def __init__(self):
-        self.llm = self._load_llm_config()
-        self.ocr = self._load_ocr_config()
-        self.cashflow = CashFlowConfig()
-        self.anomaly = AnomalyConfig()
+    # Provider API Keys
+    openai_api_key: str = field(default_factory=lambda: os.getenv("OPENAI_API_KEY", ""))
+    anthropic_api_key: str = field(default_factory=lambda: os.getenv("ANTHROPIC_API_KEY", ""))
 
-        self.rate_limit_requests_per_minute = int(
-            os.getenv('AI_RATE_LIMIT_RPM', '60')
-        )
-        self.rate_limit_tokens_per_minute = int(
-            os.getenv('AI_RATE_LIMIT_TPM', '100000')
-        )
+    # Default provider
+    default_provider: AIProvider = AIProvider.ANTHROPIC
 
-        self.cache_ttl_seconds = int(os.getenv('AI_CACHE_TTL', '3600'))
+    # Model configurations
+    chat_model: ModelConfig = field(default_factory=lambda: ModelConfig(
+        provider=AIProvider.ANTHROPIC,
+        model_name="claude-3-5-sonnet-20241022",
+        max_tokens=4096,
+        temperature=0.7,
+    ))
 
-    def _load_llm_config(self) -> LLMConfig:
-        """Load LLM configuration"""
-        provider = os.getenv('LLM_PROVIDER', 'anthropic')
+    vision_model: ModelConfig = field(default_factory=lambda: ModelConfig(
+        provider=AIProvider.ANTHROPIC,
+        model_name="claude-3-5-sonnet-20241022",
+        max_tokens=4096,
+        temperature=0.3,
+    ))
 
-        if provider == 'anthropic':
-            return LLMConfig(
-                provider=LLMProvider.ANTHROPIC,
-                model_fast='claude-3-haiku-20240307',
-                model_balanced='claude-3-5-sonnet-20241022',
-                model_powerful='claude-3-opus-20240229',
-                api_key=os.getenv('ANTHROPIC_API_KEY', ''),
-            )
-        else:
-            return LLMConfig(
-                provider=LLMProvider.OPENAI,
-                model_fast='gpt-4o-mini',
-                model_balanced='gpt-4o',
-                model_powerful='gpt-4-turbo',
-                api_key=os.getenv('OPENAI_API_KEY', ''),
-            )
+    embedding_model: ModelConfig = field(default_factory=lambda: ModelConfig(
+        provider=AIProvider.OPENAI,
+        model_name="text-embedding-3-small",
+        max_tokens=8191,
+    ))
 
-    def _load_ocr_config(self) -> OCRConfig:
-        """Load OCR configuration"""
-        return OCRConfig(
-            tesseract_path=os.getenv('TESSERACT_PATH', '/usr/bin/tesseract'),
-            language=os.getenv('OCR_LANGUAGE', 'eng'),
-        )
+    # Feature toggles
+    features: Dict[str, bool] = field(default_factory=lambda: {
+        "cashflow_predictor": True,
+        "invoice_ocr": True,
+        "ai_assistant": True,
+        "anomaly_detection": True,
+        "payment_optimizer": True,
+        "recommendations": True,
+    })
+
+    # Cache settings
+    cache_enabled: bool = True
+    cache_ttl_seconds: int = 3600
+
+    # Logging
+    log_requests: bool = True
+    log_responses: bool = False
+
+    def is_feature_enabled(self, feature: str) -> bool:
+        """Check if a feature is enabled."""
+        return self.features.get(feature, False)
+
+    def get_api_key(self, provider: AIProvider) -> str:
+        """Get API key for provider."""
+        if provider == AIProvider.OPENAI:
+            return self.openai_api_key
+        elif provider == AIProvider.ANTHROPIC:
+            return self.anthropic_api_key
+        return ""
 
 
-_config: Optional[AIConfig] = None
+# Global configuration instance
+ai_config = AIConfig()
 
 
-def get_ai_config() -> AIConfig:
-    """Get AI configuration singleton"""
-    global _config
-    if _config is None:
-        _config = AIConfig()
-    return _config
+# Model presets for different use cases
+MODEL_PRESETS = {
+    "fast": ModelConfig(
+        provider=AIProvider.ANTHROPIC,
+        model_name="claude-3-haiku-20240307",
+        max_tokens=2048,
+        temperature=0.5,
+        timeout=15,
+    ),
+    "balanced": ModelConfig(
+        provider=AIProvider.ANTHROPIC,
+        model_name="claude-3-5-sonnet-20241022",
+        max_tokens=4096,
+        temperature=0.7,
+        timeout=30,
+    ),
+    "powerful": ModelConfig(
+        provider=AIProvider.ANTHROPIC,
+        model_name="claude-3-opus-20240229",
+        max_tokens=4096,
+        temperature=0.7,
+        timeout=60,
+    ),
+    "vision": ModelConfig(
+        provider=AIProvider.ANTHROPIC,
+        model_name="claude-3-5-sonnet-20241022",
+        max_tokens=4096,
+        temperature=0.3,
+        timeout=45,
+    ),
+}
+
+
+def get_model_config(preset: str = "balanced") -> ModelConfig:
+    """Get model configuration by preset name."""
+    return MODEL_PRESETS.get(preset, MODEL_PRESETS["balanced"])

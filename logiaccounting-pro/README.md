@@ -1086,12 +1086,12 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 28 | Mobile API & PWA | Completed |
 | 29 | Integration Hub | Completed |
 | 30 | Workflow Automation v3 | Completed |
+| 31 | AI/ML Features | Completed |
 
 ### Upcoming Phases
 
 | Phase | Name | Description |
 |-------|------|-------------|
-| 31 | AI Sales Assistant | Deal coaching, email suggestions |
 | 32 | Advanced Analytics v2 | Predictive insights, ML models |
 
 ## License
