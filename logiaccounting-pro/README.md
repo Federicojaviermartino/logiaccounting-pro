@@ -167,6 +167,54 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Zapier Integration**: 7 triggers (invoice, payment, customer events) + 5 actions
 - **Slack Integration**: OAuth 2.0 auth, messaging, slash commands (/invoice, /customer, /project)
 
+### Full Accounting Module (Phase 33)
+
+#### Chart of Accounts
+- **Account Types**: Asset, Liability, Equity, Revenue, Expense with normal balance rules
+- **Hierarchical Structure**: Parent/child account relationships with unlimited depth
+- **Account Codes**: 4-digit codes with automatic validation
+- **Header Accounts**: Group accounts for subtotals without transactions
+- **Multi-Currency**: Per-account currency support
+
+#### Journal Entries
+- **Double-Entry Bookkeeping**: Enforced debit/credit balance validation
+- **Entry Workflow**: Draft, Pending, Approved, Posted, Reversed, Voided states
+- **Entry Types**: Standard, Adjustment, Closing entries
+- **Batch Operations**: Bulk approve, post, void with audit trail
+- **Auto-Numbering**: Sequential entry numbers with fiscal year reset
+- **Reversing Entries**: Create reversals with linked references
+
+#### General Ledger
+- **Account Ledger View**: Transaction history with running balance
+- **Date Range Filtering**: Flexible period selection
+- **Opening/Closing Balances**: Automatic balance calculations
+- **Debit/Credit Totals**: Period summaries per account
+
+#### Trial Balance
+- **As-of-Date Reporting**: Point-in-time balance snapshots
+- **Zero Balance Toggle**: Include/exclude zero balance accounts
+- **Account Type Grouping**: Organized by account classification
+- **Balance Validation**: Automatic debit/credit comparison
+
+#### Financial Statements
+- **Balance Sheet**: Assets = Liabilities + Equity format with comparative periods
+- **Income Statement**: Revenue - Expenses = Net Income with period comparison
+- **Cash Flow Statement**: Indirect method with operating, investing, financing sections
+- **Export Options**: PDF, Excel, CSV with professional formatting
+
+#### Fiscal Periods
+- **Fiscal Years**: Custom year-end dates with automatic period generation
+- **Monthly Periods**: 12 periods per fiscal year with open/closed status
+- **Period Locking**: Prevent posting to closed periods
+- **Year-End Closing**: Automated closing entries and retained earnings transfer
+
+#### Bank Reconciliation
+- **Statement Import**: CSV and OFX file support
+- **Auto-Matching**: Confidence-based transaction matching algorithm
+- **Match Rules**: Amount, date proximity, reference matching
+- **Reconciliation Workflow**: In-progress, completed, approved states
+- **Discrepancy Detection**: Highlight unmatched transactions
+
 ### Advanced Security (Phase 32)
 
 #### Multi-Factor Authentication
@@ -1076,6 +1124,57 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `GET /api/v1/security/audit/statistics` - Get audit statistics
 - `GET /api/v1/security/audit/export` - Export audit logs
 
+### Accounting - Chart of Accounts (Phase 33)
+- `GET /api/v1/accounting/accounts` - List accounts with filtering
+- `POST /api/v1/accounting/accounts` - Create account
+- `GET /api/v1/accounting/accounts/{id}` - Get account details
+- `PUT /api/v1/accounting/accounts/{id}` - Update account
+- `DELETE /api/v1/accounting/accounts/{id}` - Delete account
+- `GET /api/v1/accounting/accounts/tree` - Get hierarchical account tree
+- `GET /api/v1/accounting/account-types` - List account types
+- `POST /api/v1/accounting/accounts/{id}/toggle-active` - Toggle account status
+
+### Accounting - Journal Entries (Phase 33)
+- `GET /api/v1/accounting/journal-entries` - List entries with filters
+- `POST /api/v1/accounting/journal-entries` - Create journal entry
+- `GET /api/v1/accounting/journal-entries/{id}` - Get entry details
+- `PUT /api/v1/accounting/journal-entries/{id}` - Update entry
+- `DELETE /api/v1/accounting/journal-entries/{id}` - Delete draft entry
+- `POST /api/v1/accounting/journal-entries/{id}/submit` - Submit for approval
+- `POST /api/v1/accounting/journal-entries/{id}/approve` - Approve entry
+- `POST /api/v1/accounting/journal-entries/{id}/reject` - Reject entry
+- `POST /api/v1/accounting/journal-entries/{id}/post` - Post entry
+- `POST /api/v1/accounting/journal-entries/{id}/reverse` - Reverse posted entry
+- `POST /api/v1/accounting/journal-entries/{id}/void` - Void entry
+- `POST /api/v1/accounting/journal-entries/batch` - Batch operations
+
+### Accounting - Ledger & Reports (Phase 33)
+- `GET /api/v1/accounting/ledger/{account_id}` - Get account ledger
+- `GET /api/v1/accounting/trial-balance` - Generate trial balance
+- `GET /api/v1/accounting/balance-sheet` - Generate balance sheet
+- `GET /api/v1/accounting/income-statement` - Generate income statement
+- `GET /api/v1/accounting/cash-flow` - Generate cash flow statement
+
+### Accounting - Fiscal Periods (Phase 33)
+- `GET /api/v1/accounting/fiscal-years` - List fiscal years
+- `POST /api/v1/accounting/fiscal-years` - Create fiscal year
+- `GET /api/v1/accounting/fiscal-years/{id}` - Get fiscal year
+- `POST /api/v1/accounting/fiscal-years/{id}/close` - Close fiscal year
+- `GET /api/v1/accounting/periods` - List fiscal periods
+- `POST /api/v1/accounting/periods/{id}/close` - Close period
+- `POST /api/v1/accounting/periods/{id}/reopen` - Reopen period
+
+### Accounting - Bank Reconciliation (Phase 33)
+- `GET /api/v1/accounting/bank-accounts` - List bank accounts
+- `POST /api/v1/accounting/bank-accounts` - Create bank account
+- `POST /api/v1/accounting/bank-accounts/{id}/import` - Import statement
+- `GET /api/v1/accounting/reconciliations` - List reconciliations
+- `POST /api/v1/accounting/reconciliations` - Start reconciliation
+- `GET /api/v1/accounting/reconciliations/{id}` - Get reconciliation
+- `POST /api/v1/accounting/reconciliations/{id}/match` - Match transactions
+- `POST /api/v1/accounting/reconciliations/{id}/unmatch` - Unmatch transactions
+- `POST /api/v1/accounting/reconciliations/{id}/complete` - Complete reconciliation
+
 ### Health & Metrics (Phase 20)
 - `GET /health` - Full health check with all components
 - `GET /health/live` - Kubernetes liveness probe
@@ -1154,12 +1253,13 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 30 | Workflow Automation v3 | Completed |
 | 31 | AI/ML Features | Completed |
 | 32 | Advanced Security | Completed |
+| 33 | Full Accounting Module | Completed |
 
 ### Upcoming Phases
 
 | Phase | Name | Description |
 |-------|------|-------------|
-| 33 | Advanced Analytics v2 | Predictive insights, ML models |
+| 34 | Advanced Analytics v2 | Predictive insights, ML models |
 
 ## License
 
