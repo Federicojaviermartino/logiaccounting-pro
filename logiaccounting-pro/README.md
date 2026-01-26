@@ -215,6 +215,54 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Reconciliation Workflow**: In-progress, completed, approved states
 - **Discrepancy Detection**: Highlight unmatched transactions
 
+### Inventory & Warehouse Management (Phase 34)
+
+#### Product Catalog
+- **SKU Management**: Unique product identifiers with validation
+- **Categories**: Hierarchical product categorization
+- **Units of Measure**: Configurable UOM with conversion factors
+- **Pricing**: List price and standard cost tracking
+- **Tracking Options**: Inventory, lot, and serial number tracking
+
+#### Multi-Warehouse System
+- **Warehouse Locations**: Zones and bin-level locations with coordinates
+- **Location Types**: Receiving, storage, shipping, quality control areas
+- **Capacity Management**: Location capacity and utilization tracking
+- **Bulk Location Creation**: Generate locations with patterns (A-01-01 format)
+
+#### Stock Management
+- **Real-Time Stock Levels**: Per-location quantity tracking
+- **Lot Tracking**: Expiration dates, manufacturing dates, supplier lots
+- **Serial Numbers**: Individual item tracking with status
+- **Reservations**: Stock reservation for orders and projects
+- **Low Stock Alerts**: Configurable minimum quantity alerts
+
+#### Inventory Valuation
+- **FIFO Method**: First-in-first-out costing
+- **LIFO Method**: Last-in-first-out costing
+- **Average Cost**: Weighted average cost calculation
+- **Valuation Reports**: Stock value by warehouse, category, product
+
+#### Stock Movements
+- **Receipts**: Incoming inventory with cost tracking
+- **Issues**: Outgoing inventory with reason codes
+- **Transfers**: Inter-warehouse and inter-location transfers
+- **Adjustments**: Inventory corrections with variance tracking
+- **Movement Workflow**: Draft, confirmed, cancelled states
+
+#### Physical Inventory Counting
+- **Count Sessions**: Scheduled inventory counts by warehouse/category
+- **Blind Counting**: Optional hide expected quantities
+- **Variance Detection**: Automatic variance calculation
+- **Approval Workflow**: Draft, in-progress, completed, approved states
+- **Adjustment Generation**: Auto-create adjustments from approved counts
+
+#### Reorder Management
+- **Reorder Rules**: Per-product minimum stock and reorder quantity
+- **Automatic Alerts**: Low stock detection and notifications
+- **Purchase Requisitions**: Auto-generate requisitions when below minimum
+- **Requisition Workflow**: Pending, approved, ordered, received states
+
 ### Advanced Security (Phase 32)
 
 #### Multi-Factor Authentication
@@ -1175,6 +1223,55 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `POST /api/v1/accounting/reconciliations/{id}/unmatch` - Unmatch transactions
 - `POST /api/v1/accounting/reconciliations/{id}/complete` - Complete reconciliation
 
+### Inventory - Products (Phase 34)
+- `GET /api/v1/inventory/products` - List products with filtering
+- `POST /api/v1/inventory/products` - Create product
+- `GET /api/v1/inventory/products/{id}` - Get product details
+- `PUT /api/v1/inventory/products/{id}` - Update product
+- `DELETE /api/v1/inventory/products/{id}` - Deactivate product
+- `GET /api/v1/inventory/products/{id}/stock` - Get product stock levels
+- `GET /api/v1/inventory/categories` - List categories
+- `POST /api/v1/inventory/categories` - Create category
+- `GET /api/v1/inventory/uom` - List units of measure
+
+### Inventory - Warehouses (Phase 34)
+- `GET /api/v1/inventory/warehouses` - List warehouses
+- `POST /api/v1/inventory/warehouses` - Create warehouse
+- `GET /api/v1/inventory/warehouses/{id}` - Get warehouse details
+- `GET /api/v1/inventory/warehouses/{id}/locations` - List warehouse locations
+- `POST /api/v1/inventory/warehouses/{id}/locations` - Create location
+- `POST /api/v1/inventory/warehouses/{id}/locations/bulk` - Bulk create locations
+- `GET /api/v1/inventory/warehouses/{id}/zones` - List warehouse zones
+
+### Inventory - Stock (Phase 34)
+- `GET /api/v1/inventory/stock` - Get stock levels with filtering
+- `GET /api/v1/inventory/stock/low` - Get low stock alerts
+- `GET /api/v1/inventory/stock/valuation` - Get stock valuation report
+
+### Inventory - Movements (Phase 34)
+- `GET /api/v1/inventory/movements` - List stock movements
+- `POST /api/v1/inventory/movements/receipt` - Create receipt
+- `POST /api/v1/inventory/movements/issue` - Create issue
+- `POST /api/v1/inventory/movements/transfer` - Create transfer
+- `POST /api/v1/inventory/movements/adjustment` - Create adjustment
+- `POST /api/v1/inventory/movements/{id}/confirm` - Confirm movement
+- `POST /api/v1/inventory/movements/{id}/cancel` - Cancel movement
+
+### Inventory - Counting (Phase 34)
+- `GET /api/v1/inventory/counts` - List inventory counts
+- `POST /api/v1/inventory/counts` - Create count session
+- `POST /api/v1/inventory/counts/{id}/start` - Start counting
+- `POST /api/v1/inventory/counts/lines/{line_id}/record` - Record count
+- `POST /api/v1/inventory/counts/{id}/complete` - Complete count
+- `POST /api/v1/inventory/counts/{id}/approve` - Approve count
+
+### Inventory - Reorder (Phase 34)
+- `GET /api/v1/inventory/reorder/rules` - List reorder rules
+- `POST /api/v1/inventory/reorder/rules` - Create reorder rule
+- `POST /api/v1/inventory/reorder/check` - Check reorder points
+- `GET /api/v1/inventory/requisitions` - List purchase requisitions
+- `POST /api/v1/inventory/requisitions/{id}/approve` - Approve requisition
+
 ### Health & Metrics (Phase 20)
 - `GET /health` - Full health check with all components
 - `GET /health/live` - Kubernetes liveness probe
@@ -1254,12 +1351,7 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 31 | AI/ML Features | Completed |
 | 32 | Advanced Security | Completed |
 | 33 | Full Accounting Module | Completed |
-
-### Upcoming Phases
-
-| Phase | Name | Description |
-|-------|------|-------------|
-| 34 | Advanced Analytics v2 | Predictive insights, ML models |
+| 34 | Inventory & Warehouse Management | Completed |
 
 ## License
 
