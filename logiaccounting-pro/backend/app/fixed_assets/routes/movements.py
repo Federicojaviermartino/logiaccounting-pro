@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.auth.dependencies import get_current_user
-from app.auth.models import User
+from app.models.user import User
 from app.fixed_assets.services.disposal_service import DisposalService
 from app.fixed_assets.schemas.transaction import (
     TransferCreate, RevaluationCreate, ImprovementCreate,

@@ -10,7 +10,7 @@ from sqlalchemy import select, func
 
 from app.database import get_db
 from app.auth.dependencies import get_current_user
-from app.auth.models import User
+from app.models.user import User
 from app.fixed_assets.models.category import AssetCategory, DepreciationProfile
 from app.fixed_assets.schemas.asset import (
     CategoryCreate, CategoryUpdate, CategoryResponse
