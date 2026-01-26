@@ -15,9 +15,9 @@ from app.database import Base
 
 
 class BankAccount(Base):
-    """Bank account linked to GL account."""
+    """Bank account linked to GL account for accounting reconciliation."""
 
-    __tablename__ = "bank_accounts"
+    __tablename__ = "acct_bank_accounts"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     customer_id = Column(UUID(as_uuid=True), ForeignKey("customers.id"), nullable=False)
@@ -42,12 +42,12 @@ class BankAccount(Base):
 
 
 class BankStatement(Base):
-    """Imported bank statement."""
+    """Imported bank statement for accounting reconciliation."""
 
-    __tablename__ = "bank_statements"
+    __tablename__ = "acct_bank_statements"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    bank_account_id = Column(UUID(as_uuid=True), ForeignKey("bank_accounts.id"), nullable=False)
+    bank_account_id = Column(UUID(as_uuid=True), ForeignKey("acct_bank_accounts.id"), nullable=False)
 
     statement_date = Column(Date, nullable=False)
     start_date = Column(Date, nullable=False)
@@ -69,12 +69,12 @@ class BankStatement(Base):
 
 
 class BankTransaction(Base):
-    """Bank transaction from statement."""
+    """Bank transaction from statement for accounting reconciliation."""
 
-    __tablename__ = "bank_transactions"
+    __tablename__ = "acct_bank_transactions"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    statement_id = Column(UUID(as_uuid=True), ForeignKey("bank_statements.id"), nullable=False)
+    statement_id = Column(UUID(as_uuid=True), ForeignKey("acct_bank_statements.id"), nullable=False)
 
     transaction_date = Column(Date, nullable=False)
     post_date = Column(Date)
@@ -107,8 +107,8 @@ class Reconciliation(Base):
     __tablename__ = "reconciliations"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    bank_account_id = Column(UUID(as_uuid=True), ForeignKey("bank_accounts.id"), nullable=False)
-    statement_id = Column(UUID(as_uuid=True), ForeignKey("bank_statements.id"))
+    bank_account_id = Column(UUID(as_uuid=True), ForeignKey("acct_bank_accounts.id"), nullable=False)
+    statement_id = Column(UUID(as_uuid=True), ForeignKey("acct_bank_statements.id"))
 
     reconciliation_date = Column(Date, nullable=False)
     statement_balance = Column(Numeric(15, 2), nullable=False)
