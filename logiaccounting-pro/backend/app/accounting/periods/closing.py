@@ -15,7 +15,6 @@ from sqlalchemy.orm import Session
 from app.accounting.periods.models import FiscalYear, FiscalPeriod
 from app.accounting.chart_of_accounts.models import Account, AccountType
 from app.accounting.journal.models import JournalEntry, JournalLine, EntryTypeEnum, EntryStatusEnum
-from app.accounting.journal.service import JournalEntryService
 from app.accounting.journal.schemas import JournalEntryCreate, JournalLineCreate
 
 logger = logging.getLogger(__name__)
@@ -25,6 +24,9 @@ class YearEndClosingService:
     """Service for year-end closing procedures."""
 
     def __init__(self, db: Session):
+        # Lazy import to avoid circular dependency
+        from app.accounting.journal.service import JournalEntryService
+
         self.db = db
         self.journal_service = JournalEntryService(db)
 
