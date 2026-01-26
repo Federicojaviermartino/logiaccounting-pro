@@ -1438,6 +1438,7 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 33 | Full Accounting Module | Completed |
 | 34 | Inventory & Warehouse Management | Completed |
 | 35 | Purchase Orders & Procurement | Completed |
+| 36 | Sales Orders & Customer Management | Completed |
 
 ## License
 

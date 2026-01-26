@@ -821,6 +821,7 @@ npm run test:e2e
 - [x] Phase 33: Full Accounting Module (Chart of Accounts, Journal Entries, Financial Statements)
 - [x] Phase 34: Inventory & Warehouse Management (Products, Warehouses, Stock, Movements, Counting, Reorder)
 - [x] Phase 35: Purchase Orders & Procurement (Suppliers, Purchase Orders, Goods Receiving, Supplier Invoices)
+- [x] Phase 36: Sales Orders & Customer Management (Customer Master, Sales Orders, Order Fulfillment, Customer Invoices)
 
 ---
 
