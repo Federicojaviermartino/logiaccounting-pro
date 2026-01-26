@@ -1357,6 +1357,66 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `POST /api/v1/purchasing/supplier-invoices/{id}/post` - Post invoice
 - `POST /api/v1/purchasing/supplier-invoices/{id}/payment` - Record payment
 
+### Fixed Assets - Categories (Phase 38)
+- `GET /api/v1/fixed-assets/categories` - List asset categories
+- `GET /api/v1/fixed-assets/categories/tree` - Get category hierarchy
+- `POST /api/v1/fixed-assets/categories` - Create category
+- `GET /api/v1/fixed-assets/categories/{id}` - Get category details
+- `PUT /api/v1/fixed-assets/categories/{id}` - Update category
+- `DELETE /api/v1/fixed-assets/categories/{id}` - Delete category
+- `POST /api/v1/fixed-assets/categories/setup-defaults` - Setup default categories
+
+### Fixed Assets - Asset Register (Phase 38)
+- `GET /api/v1/fixed-assets/assets` - List assets with filtering
+- `GET /api/v1/fixed-assets/assets/summary` - Get asset summary statistics
+- `GET /api/v1/fixed-assets/assets/barcode/{barcode}` - Find asset by barcode
+- `POST /api/v1/fixed-assets/assets` - Create asset
+- `GET /api/v1/fixed-assets/assets/{id}` - Get asset details
+- `PUT /api/v1/fixed-assets/assets/{id}` - Update asset
+- `DELETE /api/v1/fixed-assets/assets/{id}` - Delete draft asset
+- `POST /api/v1/fixed-assets/assets/{id}/activate` - Activate asset
+- `POST /api/v1/fixed-assets/assets/{id}/suspend-depreciation` - Suspend depreciation
+- `POST /api/v1/fixed-assets/assets/{id}/resume-depreciation` - Resume depreciation
+- `GET /api/v1/fixed-assets/assets/{id}/schedule` - Get depreciation schedule
+- `POST /api/v1/fixed-assets/assets/{id}/regenerate-schedule` - Regenerate schedule
+- `POST /api/v1/fixed-assets/assets/import` - Import assets from file
+- `GET /api/v1/fixed-assets/assets/export` - Export assets to Excel
+
+### Fixed Assets - Depreciation (Phase 38)
+- `GET /api/v1/fixed-assets/depreciation/runs` - List depreciation runs
+- `GET /api/v1/fixed-assets/depreciation/runs/{id}` - Get run details
+- `POST /api/v1/fixed-assets/depreciation/runs` - Create depreciation run
+- `POST /api/v1/fixed-assets/depreciation/runs/{id}/post` - Post run to GL
+- `POST /api/v1/fixed-assets/depreciation/runs/{id}/cancel` - Cancel run
+- `POST /api/v1/fixed-assets/depreciation/runs/{id}/reverse` - Reverse posted run
+- `GET /api/v1/fixed-assets/depreciation/entries` - List depreciation entries
+- `POST /api/v1/fixed-assets/depreciation/record-units` - Record units for production method
+- `GET /api/v1/fixed-assets/depreciation/preview` - Preview depreciation calculation
+
+### Fixed Assets - Movements & Disposals (Phase 38)
+- `GET /api/v1/fixed-assets/movements` - List asset movements
+- `GET /api/v1/fixed-assets/movements/{id}` - Get movement details
+- `POST /api/v1/fixed-assets/transfer` - Transfer asset
+- `POST /api/v1/fixed-assets/revalue` - Revalue asset
+- `POST /api/v1/fixed-assets/improve` - Record asset improvement
+- `GET /api/v1/fixed-assets/disposals` - List disposals
+- `GET /api/v1/fixed-assets/disposals/{id}` - Get disposal details
+- `POST /api/v1/fixed-assets/disposals` - Create disposal
+- `POST /api/v1/fixed-assets/disposals/{id}/approve` - Approve disposal
+- `POST /api/v1/fixed-assets/disposals/{id}/post` - Post disposal to GL
+- `POST /api/v1/fixed-assets/disposals/{id}/cancel` - Cancel disposal
+
+### Fixed Assets - Reports (Phase 38)
+- `GET /api/v1/fixed-assets/reports/asset-register` - Asset register report
+- `GET /api/v1/fixed-assets/reports/depreciation-schedule` - Depreciation schedule report
+- `GET /api/v1/fixed-assets/reports/depreciation-summary` - Depreciation summary report
+- `GET /api/v1/fixed-assets/reports/movement-history` - Movement history report
+- `GET /api/v1/fixed-assets/reports/disposal-report` - Disposal report
+- `GET /api/v1/fixed-assets/reports/fully-depreciated` - Fully depreciated assets
+- `GET /api/v1/fixed-assets/reports/insurance-expiry` - Insurance expiry report
+- `GET /api/v1/fixed-assets/reports/warranty-expiry` - Warranty expiry report
+- `GET /api/v1/fixed-assets/reports/category-summary` - Category summary report
+
 ### Health & Metrics (Phase 20)
 - `GET /health` - Full health check with all components
 - `GET /health/live` - Kubernetes liveness probe
@@ -1440,6 +1500,7 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 35 | Purchase Orders & Procurement | Completed |
 | 36 | Sales Orders & Customer Management | Completed |
 | 37 | Banking & Cash Management | Completed |
+| 38 | Fixed Assets & Depreciation | Completed |
 
 ## License
 

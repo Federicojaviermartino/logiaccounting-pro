@@ -45,6 +45,8 @@ from app.routes.portal_v2 import router as portal_v2_router
 from app.accounting.routes import accounting_router
 # Phase 37 - Banking & Cash Management
 from app.banking.routes import banking_router
+# Phase 38 - Fixed Assets & Depreciation
+from app.fixed_assets.routes import router as fixed_assets_router
 # Phase 19 - Advanced AI Features
 from app.ai.routes import (
     cashflow_router as ai_cashflow,
@@ -206,6 +208,9 @@ app.include_router(accounting_router, prefix="/api/v1", tags=["Accounting"])
 
 # Phase 37 - Banking & Cash Management
 app.include_router(banking_router, prefix="/api/v1", tags=["Banking"])
+
+# Phase 38 - Fixed Assets & Depreciation
+app.include_router(fixed_assets_router, prefix="/api/v1", tags=["Fixed Assets"])
 
 
 @app.get("/health")

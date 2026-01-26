@@ -823,6 +823,7 @@ npm run test:e2e
 - [x] Phase 35: Purchase Orders & Procurement (Suppliers, Purchase Orders, Goods Receiving, Supplier Invoices)
 - [x] Phase 36: Sales Orders & Customer Management (Customer Master, Sales Orders, Order Fulfillment, Customer Invoices)
 - [x] Phase 37: Banking & Cash Management (Bank Accounts, Transactions, Reconciliation, Payments, Cash Flow Forecasting)
+- [x] Phase 38: Fixed Assets & Depreciation (Asset Register, Depreciation Methods, Asset Lifecycle, Disposals, GL Integration)
 
 ---
 
