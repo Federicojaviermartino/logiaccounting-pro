@@ -41,6 +41,10 @@ from app.routes import (
 )
 # Phase 27 - Customer Portal v2
 from app.routes.portal_v2 import router as portal_v2_router
+# Phase 33 - Full Accounting Module
+from app.accounting.routes import accounting_router
+# Phase 37 - Banking & Cash Management
+from app.banking.routes import banking_router
 # Phase 19 - Advanced AI Features
 from app.ai.routes import (
     cashflow_router as ai_cashflow,
@@ -196,6 +200,12 @@ app.include_router(mobile_dashboard.router, prefix="/api/v1", tags=["Mobile Dash
 
 # Phase 27 - Customer Portal v2 (Self-Service Hub)
 app.include_router(portal_v2_router, prefix="/api/v1", tags=["Customer Portal v2"])
+
+# Phase 33 - Full Accounting Module
+app.include_router(accounting_router, prefix="/api/v1", tags=["Accounting"])
+
+# Phase 37 - Banking & Cash Management
+app.include_router(banking_router, prefix="/api/v1", tags=["Banking"])
 
 
 @app.get("/health")
