@@ -263,6 +263,43 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 - **Purchase Requisitions**: Auto-generate requisitions when below minimum
 - **Requisition Workflow**: Pending, approved, ordered, received states
 
+### Purchase Orders & Procurement (Phase 35)
+
+#### Supplier Management
+- **Supplier Master Data**: Complete supplier profiles with tax ID, legal name, categories
+- **Supplier Types**: Vendor, contractor, service provider, distributor, manufacturer
+- **Contact Management**: Multiple contacts per supplier with roles and communication preferences
+- **Supplier Approval**: Approval workflow for new suppliers before ordering
+- **Supplier Price Lists**: Product-specific pricing with quantity breaks and validity dates
+- **Lead Time Tracking**: Default and product-specific lead times
+
+#### Purchase Orders
+- **Multi-Line Orders**: Multiple products per order with descriptions and quantities
+- **Auto-Numbering**: Sequential PO numbers with configurable prefix
+- **Order Workflow**: Draft, pending approval, approved, sent, partial, received, cancelled states
+- **Approval Workflow**: Multi-level approval with comments and audit trail
+- **Expected Delivery**: Tracking expected delivery dates per line
+- **Currency Support**: Multi-currency orders with exchange rates
+- **Order Totals**: Automatic calculation of subtotals, taxes, discounts, and totals
+
+#### Goods Receiving
+- **Receipt from PO**: Create receipts linked to purchase orders
+- **Direct Receipts**: Receive goods without prior PO
+- **Partial Receiving**: Receive partial quantities with backorder tracking
+- **Quality Inspection**: Quality status tracking (pending, passed, failed, on hold)
+- **Lot/Serial Capture**: Record lot numbers and serial numbers on receipt
+- **Location Assignment**: Assign received goods to warehouse locations
+- **Variance Detection**: Quantity and price variance tracking
+
+#### Supplier Invoices
+- **Invoice Matching**: 3-way matching (PO, receipt, invoice)
+- **Match Status**: Unmatched, partial, matched, exception states
+- **Price Variance**: Automatic price variance calculation and alerts
+- **Quantity Variance**: Detection of quantity discrepancies
+- **Invoice Workflow**: Draft, pending approval, approved, posted, paid states
+- **AP Aging Report**: Aging analysis by 30/60/90/120+ day buckets
+- **Payment Recording**: Track payments against supplier invoices
+
 ### Advanced Security (Phase 32)
 
 #### Multi-Factor Authentication
@@ -1272,6 +1309,54 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `GET /api/v1/inventory/requisitions` - List purchase requisitions
 - `POST /api/v1/inventory/requisitions/{id}/approve` - Approve requisition
 
+### Purchasing - Suppliers (Phase 35)
+- `GET /api/v1/purchasing/suppliers` - List suppliers with filtering
+- `POST /api/v1/purchasing/suppliers` - Create supplier
+- `GET /api/v1/purchasing/suppliers/{id}` - Get supplier details
+- `PUT /api/v1/purchasing/suppliers/{id}` - Update supplier
+- `GET /api/v1/purchasing/suppliers/summary` - Get suppliers summary
+- `POST /api/v1/purchasing/suppliers/{id}/approve` - Approve supplier
+- `POST /api/v1/purchasing/suppliers/{id}/contacts` - Add supplier contact
+- `PUT /api/v1/purchasing/suppliers/contacts/{id}` - Update contact
+- `DELETE /api/v1/purchasing/suppliers/contacts/{id}` - Delete contact
+- `GET /api/v1/purchasing/suppliers/{id}/prices` - Get supplier price list
+- `POST /api/v1/purchasing/suppliers/{id}/prices` - Add supplier price
+- `GET /api/v1/purchasing/suppliers/products/{id}/suppliers` - Get product suppliers
+
+### Purchasing - Purchase Orders (Phase 35)
+- `GET /api/v1/purchasing/purchase-orders` - List purchase orders
+- `POST /api/v1/purchasing/purchase-orders` - Create purchase order
+- `GET /api/v1/purchasing/purchase-orders/{id}` - Get order details
+- `PUT /api/v1/purchasing/purchase-orders/{id}` - Update order
+- `GET /api/v1/purchasing/purchase-orders/dashboard` - Get PO dashboard
+- `POST /api/v1/purchasing/purchase-orders/{id}/lines` - Add order line
+- `PUT /api/v1/purchasing/purchase-orders/lines/{id}` - Update order line
+- `DELETE /api/v1/purchasing/purchase-orders/lines/{id}` - Delete order line
+- `POST /api/v1/purchasing/purchase-orders/{id}/submit` - Submit for approval
+- `POST /api/v1/purchasing/purchase-orders/{id}/approve` - Approve/reject order
+- `POST /api/v1/purchasing/purchase-orders/{id}/send` - Mark as sent
+- `POST /api/v1/purchasing/purchase-orders/{id}/cancel` - Cancel order
+
+### Purchasing - Goods Receipts (Phase 35)
+- `GET /api/v1/purchasing/goods-receipts` - List goods receipts
+- `GET /api/v1/purchasing/goods-receipts/{id}` - Get receipt details
+- `POST /api/v1/purchasing/goods-receipts/from-po` - Create receipt from PO
+- `POST /api/v1/purchasing/goods-receipts/direct` - Create direct receipt
+- `PUT /api/v1/purchasing/goods-receipts/lines/{id}` - Update receipt line
+- `POST /api/v1/purchasing/goods-receipts/{id}/post` - Post receipt
+- `POST /api/v1/purchasing/goods-receipts/{id}/cancel` - Cancel receipt
+
+### Purchasing - Supplier Invoices (Phase 35)
+- `GET /api/v1/purchasing/supplier-invoices` - List supplier invoices
+- `GET /api/v1/purchasing/supplier-invoices/{id}` - Get invoice details
+- `POST /api/v1/purchasing/supplier-invoices` - Create invoice
+- `POST /api/v1/purchasing/supplier-invoices/from-receipt` - Create from receipt
+- `GET /api/v1/purchasing/supplier-invoices/aging` - Get AP aging report
+- `POST /api/v1/purchasing/supplier-invoices/{id}/match` - Perform 3-way matching
+- `POST /api/v1/purchasing/supplier-invoices/{id}/approve` - Approve invoice
+- `POST /api/v1/purchasing/supplier-invoices/{id}/post` - Post invoice
+- `POST /api/v1/purchasing/supplier-invoices/{id}/payment` - Record payment
+
 ### Health & Metrics (Phase 20)
 - `GET /health` - Full health check with all components
 - `GET /health/live` - Kubernetes liveness probe
@@ -1352,6 +1437,7 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 32 | Advanced Security | Completed |
 | 33 | Full Accounting Module | Completed |
 | 34 | Inventory & Warehouse Management | Completed |
+| 35 | Purchase Orders & Procurement | Completed |
 
 ## License
 
