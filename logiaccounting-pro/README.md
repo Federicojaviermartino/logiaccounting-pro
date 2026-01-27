@@ -628,6 +628,52 @@ Enterprise logistics and accounting platform with multi-role support for adminis
 ### Cross-Role Notifications
 When payments are marked as paid, all relevant parties (admin, client, supplier) receive automatic notifications.
 
+### Budgeting & Financial Planning (Phase 39)
+
+#### Budget Management
+- **Budget Creation**: Annual and quarterly budgets with configurable fiscal periods
+- **Budget Categories**: Income, expense, and capital expenditure categories
+- **Budget Lines**: Detailed line items with monthly/quarterly/annual amounts
+- **Budget Versions**: Draft, submitted, approved, and rejected workflow
+- **Budget vs Actual**: Real-time comparison of budgeted vs actual amounts
+- **Variance Analysis**: Automatic calculation of budget variances with thresholds
+
+#### Financial Forecasting
+- **Revenue Forecasting**: Project future revenue based on historical trends
+- **Expense Projections**: Forecast expenses with growth rate assumptions
+- **Cash Flow Projections**: Forward-looking cash position estimates
+- **Scenario Planning**: Multiple forecast scenarios (optimistic, realistic, pessimistic)
+
+### Payroll & HR Basic (Phase 40)
+
+#### Employee Management
+- **Employee Master Data**: Complete employee profiles with personal, tax, and bank info
+- **Employment Types**: Full-time, part-time, contract, intern support
+- **Employment Status**: Active, on leave, suspended, terminated tracking
+- **Employee Contracts**: Compensation details, benefits, PTO accrual tracking
+- **Tax Information**: W-4/W-9, federal/state filing status, allowances
+- **Employee Termination**: Termination workflow with reason tracking
+
+#### Payroll Processing
+- **Payroll Runs**: Draft, calculate, approve, process payment workflow
+- **Tax Calculations**: Federal income tax (simplified brackets), state tax, Social Security (6.2%), Medicare (1.45%)
+- **Employer Costs**: FUTA (0.6%), SUTA (2.7%), employer SS/Medicare match
+- **Overtime Calculation**: 1.5x rate for overtime hours
+- **YTD Tracking**: Year-to-date earnings and tax accumulation
+- **Pay Period Management**: Weekly, bi-weekly, semi-monthly, monthly periods
+
+#### Deductions & Benefits
+- **Deduction Types**: Pre-tax and post-tax deductions with calculation methods
+- **Benefit Types**: Health, dental, vision, life, disability, retirement, HSA/FSA
+- **Employer Match**: Configurable employer match percentages and caps
+- **Employee Deduction Assignment**: Per-employee deduction tracking
+
+#### Time Off Management
+- **Time Off Types**: Vacation, sick, personal, bereavement, jury duty, parental leave
+- **Request Workflow**: Submit, approve, reject, cancel workflow
+- **Balance Tracking**: Accrued, used, and available balance per employee per type
+- **Balance Adjustments**: Manual balance adjustments with reason tracking
+
 ## Tech Stack
 
 - **Frontend**: React 18, Vite, Chart.js, Axios, Socket.IO Client, React Flow, Zustand, @dnd-kit, lucide-react
@@ -1417,6 +1463,44 @@ Connect via Socket.IO to `/socket.io` with JWT token:
 - `GET /api/v1/fixed-assets/reports/warranty-expiry` - Warranty expiry report
 - `GET /api/v1/fixed-assets/reports/category-summary` - Category summary report
 
+### Payroll - Employees (Phase 40)
+- `GET /api/v1/payroll/employees` - List employees with filtering and search
+- `GET /api/v1/payroll/employees/{id}` - Get employee details
+- `POST /api/v1/payroll/employees` - Create employee
+- `PUT /api/v1/payroll/employees/{id}` - Update employee
+- `PUT /api/v1/payroll/employees/{id}/tax-info` - Update tax information
+- `POST /api/v1/payroll/employees/{id}/terminate` - Terminate employee
+- `GET /api/v1/payroll/employees/{id}/contracts` - List employee contracts
+- `POST /api/v1/payroll/employees/{id}/contracts` - Create contract
+- `PUT /api/v1/payroll/employees/contracts/{id}` - Update contract
+
+### Payroll - Payroll Runs (Phase 40)
+- `GET /api/v1/payroll/payroll/periods` - List pay periods
+- `POST /api/v1/payroll/payroll/periods` - Create pay period
+- `GET /api/v1/payroll/payroll/runs` - List payroll runs
+- `GET /api/v1/payroll/payroll/runs/{id}` - Get payroll run details
+- `POST /api/v1/payroll/payroll/runs` - Create payroll run
+- `POST /api/v1/payroll/payroll/runs/{id}/calculate` - Calculate payroll
+- `POST /api/v1/payroll/payroll/runs/{id}/approve` - Approve payroll
+- `POST /api/v1/payroll/payroll/runs/{id}/process` - Process payments
+
+### Payroll - Deductions & Benefits (Phase 40)
+- `GET /api/v1/payroll/deductions/types` - List deduction types
+- `POST /api/v1/payroll/deductions/types` - Create deduction type
+- `GET /api/v1/payroll/deductions/employee/{id}` - Get employee deductions
+- `POST /api/v1/payroll/deductions/employee/{id}` - Assign deduction to employee
+- `GET /api/v1/payroll/deductions/benefits/types` - List benefit types
+- `POST /api/v1/payroll/deductions/benefits/types` - Create benefit type
+
+### Payroll - Time Off (Phase 40)
+- `GET /api/v1/payroll/time-off/requests` - List time off requests
+- `POST /api/v1/payroll/time-off/requests` - Create time off request
+- `GET /api/v1/payroll/time-off/requests/{id}` - Get request details
+- `POST /api/v1/payroll/time-off/requests/{id}/review` - Approve/reject request
+- `POST /api/v1/payroll/time-off/requests/{id}/cancel` - Cancel request
+- `GET /api/v1/payroll/time-off/balances/{employee_id}` - Get time off balances
+- `POST /api/v1/payroll/time-off/balances/{employee_id}/adjust` - Adjust balance
+
 ### Health & Metrics (Phase 20)
 - `GET /health` - Full health check with all components
 - `GET /health/live` - Kubernetes liveness probe
@@ -1501,6 +1585,8 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 36 | Sales Orders & Customer Management | Completed |
 | 37 | Banking & Cash Management | Completed |
 | 38 | Fixed Assets & Depreciation | Completed |
+| 39 | Budgeting & Financial Planning | Completed |
+| 40 | Payroll & HR Basic | Completed |
 
 ## License
 

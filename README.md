@@ -824,6 +824,8 @@ npm run test:e2e
 - [x] Phase 36: Sales Orders & Customer Management (Customer Master, Sales Orders, Order Fulfillment, Customer Invoices)
 - [x] Phase 37: Banking & Cash Management (Bank Accounts, Transactions, Reconciliation, Payments, Cash Flow Forecasting)
 - [x] Phase 38: Fixed Assets & Depreciation (Asset Register, Depreciation Methods, Asset Lifecycle, Disposals, GL Integration)
+- [x] Phase 39: Budgeting & Financial Planning (Budget Management, Variance Analysis, Revenue Forecasting, Scenario Planning)
+- [x] Phase 40: Payroll & HR Basic (Employee Management, Payroll Processing, Tax Calculations, Deductions & Benefits, Time Off)
 
 ---
 
