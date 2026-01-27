@@ -1,1 +1,0 @@
-# LogiAccounting Pro - Backend Tests
