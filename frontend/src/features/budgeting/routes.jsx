@@ -3,6 +3,7 @@ import { lazy } from 'react';
 const BudgetList = lazy(() => import('./pages/BudgetList'));
 const BudgetDetail = lazy(() => import('./pages/BudgetDetail'));
 const BudgetForm = lazy(() => import('./pages/BudgetForm'));
+const VarianceAnalysis = lazy(() => import('./pages/VarianceAnalysis'));
 
 export const budgetingRoutes = [
   {
@@ -20,6 +21,10 @@ export const budgetingRoutes = [
   {
     path: '/budgeting/:id/edit',
     element: <BudgetForm />,
+  },
+  {
+    path: '/budgeting/:budgetId/variance',
+    element: <VarianceAnalysis />,
   },
 ];
 
