@@ -674,6 +674,37 @@ When payments are marked as paid, all relevant parties (admin, client, supplier)
 - **Balance Tracking**: Accrued, used, and available balance per employee per type
 - **Balance Adjustments**: Manual balance adjustments with reason tracking
 
+### Advanced Reporting & Financial Statements (Phase 41)
+
+#### Report Definitions & Scheduling
+- **Report Types**: Balance Sheet, Income Statement, Cash Flow, Trial Balance, AR/AP Aging, Budget vs Actual, Payroll Summary, General Ledger, Custom
+- **Report Formats**: PDF, Excel, CSV, JSON export support
+- **Report Scheduling**: Daily, weekly, monthly, quarterly, yearly automated generation
+- **Email Distribution**: Scheduled reports with configurable email recipients
+- **Execution History**: Full audit trail of report generation with status tracking
+
+#### Financial Statements
+- **Balance Sheet**: Assets, liabilities, equity with current/non-current classification and prior period comparison
+- **Income Statement (P&L)**: Revenue, COGS, gross profit, operating expenses, net income with margin calculations
+- **Cash Flow Statement**: Indirect method with operating, investing, and financing activities
+- **Trial Balance**: Account-level debit/credit balances with balance validation
+- **Comparative Periods**: Prior period comparison with variance and variance percentage
+
+#### Financial KPI Dashboard
+- **Liquidity Ratios**: Current ratio, quick ratio, cash ratio with status thresholds
+- **Profitability Ratios**: Gross margin, net margin, operating margin, ROA, ROE
+- **Efficiency Metrics**: Days sales outstanding (DSO), days payable outstanding (DPO)
+- **Leverage Ratios**: Debt ratio, debt-to-equity ratio
+- **Revenue & Expense Trends**: Monthly trend charts with 6-month history
+- **Working Capital Analysis**: Cash, AR, AP breakdown with net working capital
+
+#### Report Export & Generation
+- **Excel Reports**: Professional formatting with headers, borders, currency formats (openpyxl)
+- **PDF Reports**: Publication-quality financial statements (ReportLab)
+- **Executive Dashboard**: Interactive charts (Chart.js) with real-time KPI cards
+- **Balance Sheet Page**: Interactive report with date selection, prior period comparison, export options
+- **Income Statement Page**: P&L report with date range, margin percentages, export capabilities
+
 ## Tech Stack
 
 - **Frontend**: React 18, Vite, Chart.js, Axios, Socket.IO Client, React Flow, Zustand, @dnd-kit, lucide-react
@@ -1587,6 +1618,7 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 38 | Fixed Assets & Depreciation | Completed |
 | 39 | Budgeting & Financial Planning | Completed |
 | 40 | Payroll & HR Basic | Completed |
+| 41 | Advanced Reporting & Financial Statements | Completed |
 
 ## License
 
