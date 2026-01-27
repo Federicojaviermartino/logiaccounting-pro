@@ -705,6 +705,33 @@ When payments are marked as paid, all relevant parties (admin, client, supplier)
 - **Balance Sheet Page**: Interactive report with date selection, prior period comparison, export options
 - **Income Statement Page**: P&L report with date range, margin percentages, export capabilities
 
+### Audit Trail & Compliance (Phase 42)
+
+#### Audit Logging
+- **Immutable Audit Logs**: Track all system changes with user, action, resource, and timestamp
+- **Field-Level Change Tracking**: Record individual field changes with old/new values
+- **Entity Snapshots**: Point-in-time entity state capture for recovery
+- **Action Types**: Create, read, update, delete, login, logout, export, import, approve, reject, and more
+- **Severity Levels**: Low, medium, high, critical event classification
+- **User Activity Tracking**: Per-user activity history with configurable periods
+
+#### Compliance Management
+- **Compliance Standards**: SOX, GDPR, HIPAA, PCI-DSS, SOC2, and custom standards
+- **Compliance Rules**: Configurable rules with violation alerts and blocking
+- **Retention Policies**: Data retention with archive and expiry actions
+- **Compliance Violations**: Detection, tracking, and resolution workflow
+- **Compliance Dashboard**: Score calculation, violation summaries, and trend analysis
+
+#### Access Control & Monitoring
+- **Access Logging**: Sensitive data access tracking with PII and financial data flags
+- **Data Classification**: Internal, confidential, restricted classification levels
+- **Access Reports**: Period-based access analysis with top accessor metrics
+- **IP and User Agent Tracking**: Request metadata capture for forensics
+
+#### Frontend
+- **Audit Logs Viewer**: Filterable, searchable audit log table with detail modal
+- **Compliance Dashboard**: Visual compliance score, violation charts, and recent violations
+
 ## Tech Stack
 
 - **Frontend**: React 18, Vite, Chart.js, Axios, Socket.IO Client, React Flow, Zustand, @dnd-kit, lucide-react
@@ -1619,6 +1646,7 @@ kubectl -n logiaccounting port-forward svc/logiaccounting-api 8000:80
 | 39 | Budgeting & Financial Planning | Completed |
 | 40 | Payroll & HR Basic | Completed |
 | 41 | Advanced Reporting & Financial Statements | Completed |
+| 42 | Audit Trail & Compliance | Completed |
 
 ## License
 
