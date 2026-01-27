@@ -1,0 +1,24 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: logiaccounting-api-pdb
+  namespace: logiaccounting
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: logiaccounting-pro
+      component: api
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: logiaccounting-worker-pdb
+  namespace: logiaccounting
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: logiaccounting-pro
+      component: worker

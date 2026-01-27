@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logiaccounting-config
+  namespace: logiaccounting
+data:
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+  LOG_FORMAT: "json"
+
+  # Database
+  DB_POOL_SIZE: "20"
+  DB_MAX_OVERFLOW: "10"
+  DB_POOL_TIMEOUT: "30"
+  DB_POOL_RECYCLE: "1800"
+
+  # Redis
+  REDIS_CLUSTER_ENABLED: "true"
+  REDIS_SENTINEL_ENABLED: "true"
+  REDIS_MAX_CONNECTIONS: "100"
+
+  # Cache
+  CACHE_DEFAULT_TTL: "300"
+  CACHE_L1_MAX_SIZE: "1000"
+  CACHE_L1_TTL: "60"
+
+  # Tracing
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger-collector:4317"
+  OTEL_SERVICE_NAME: "logiaccounting-pro"
+  OTEL_TRACES_SAMPLER: "parentbased_traceidratio"
+  OTEL_TRACES_SAMPLER_ARG: "0.1"
+
+  # Performance
+  WORKERS: "4"
+  MAX_REQUESTS: "1000"
+  MAX_REQUESTS_JITTER: "50"
+  GRACEFUL_TIMEOUT: "30"

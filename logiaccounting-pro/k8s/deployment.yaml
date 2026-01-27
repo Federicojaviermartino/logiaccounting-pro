@@ -1,0 +1,171 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logiaccounting-api
+  namespace: logiaccounting
+  labels:
+    app: logiaccounting-pro
+    component: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: logiaccounting-pro
+      component: api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: logiaccounting-pro
+        component: api
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: logiaccounting-api
+      terminationGracePeriodSeconds: 60
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - logiaccounting-pro
+                topologyKey: kubernetes.io/hostname
+
+      containers:
+        - name: api
+          image: logiaccounting-pro:latest
+          imagePullPolicy: Always
+
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+
+          envFrom:
+            - configMapRef:
+                name: logiaccounting-config
+            - secretRef:
+                name: logiaccounting-secrets
+
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+          startupProbe:
+            httpGet:
+              path: /health/live
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - sleep 10
+
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: logs
+              mountPath: /var/log/app
+
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: logs
+          emptyDir: {}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logiaccounting-worker
+  namespace: logiaccounting
+  labels:
+    app: logiaccounting-pro
+    component: worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: logiaccounting-pro
+      component: worker
+  template:
+    metadata:
+      labels:
+        app: logiaccounting-pro
+        component: worker
+    spec:
+      serviceAccountName: logiaccounting-api
+      terminationGracePeriodSeconds: 120
+
+      containers:
+        - name: worker
+          image: logiaccounting-pro:latest
+          imagePullPolicy: Always
+          command: ["python", "-m", "celery", "-A", "app.worker", "worker", "-l", "info"]
+
+          envFrom:
+            - configMapRef:
+                name: logiaccounting-config
+            - secretRef:
+                name: logiaccounting-secrets
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+
+          livenessProbe:
+            exec:
+              command:
+                - celery
+                - -A
+                - app.worker
+                - inspect
+                - ping
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 10

@@ -1,0 +1,111 @@
+{
+  "name": "LogiAccounting Pro",
+  "short_name": "LogiAcct",
+  "description": "Professional logistics and accounting management platform",
+  "start_url": "/portal",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#3b82f6",
+  "background_color": "#ffffff",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard on mobile"
+    },
+    {
+      "src": "/screenshots/dashboard-desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard on desktop"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your dashboard",
+      "url": "/portal",
+      "icons": [{ "src": "/icons/shortcut-dashboard.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Pay Invoice",
+      "short_name": "Pay",
+      "description": "Pay pending invoices",
+      "url": "/portal/payments",
+      "icons": [{ "src": "/icons/shortcut-pay.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "New Ticket",
+      "short_name": "Support",
+      "description": "Create a support ticket",
+      "url": "/portal/support/new",
+      "icons": [{ "src": "/icons/shortcut-ticket.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Projects",
+      "short_name": "Projects",
+      "description": "View your projects",
+      "url": "/portal/projects",
+      "icons": [{ "src": "/icons/shortcut-projects.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

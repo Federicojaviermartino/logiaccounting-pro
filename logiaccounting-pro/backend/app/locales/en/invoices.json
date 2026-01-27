@@ -1,0 +1,121 @@
+{
+  "title": "Invoices",
+  "invoice": "Invoice",
+  "new_invoice": "New Invoice",
+  "edit_invoice": "Edit Invoice",
+  "invoice_number": "Invoice Number",
+  "invoice_date": "Invoice Date",
+  "due_date": "Due Date",
+  "issue_date": "Issue Date",
+  "status": {
+    "draft": "Draft",
+    "pending": "Pending",
+    "sent": "Sent",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "cancelled": "Cancelled",
+    "partially_paid": "Partially Paid",
+    "refunded": "Refunded"
+  },
+  "client": {
+    "title": "Client",
+    "name": "Client Name",
+    "email": "Client Email",
+    "address": "Client Address",
+    "select": "Select Client"
+  },
+  "items": {
+    "title": "Items",
+    "description": "Description",
+    "quantity": "Quantity",
+    "unit_price": "Unit Price",
+    "amount": "Amount",
+    "add_item": "Add Item",
+    "remove_item": "Remove Item",
+    "count": {
+      "zero": "No items",
+      "one": "{{count}} item",
+      "other": "{{count}} items"
+    }
+  },
+  "totals": {
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "discount": "Discount",
+    "total": "Total",
+    "amount_due": "Amount Due",
+    "amount_paid": "Amount Paid",
+    "balance": "Balance"
+  },
+  "tax": {
+    "rate": "Tax Rate",
+    "amount": "Tax Amount",
+    "exempt": "Tax Exempt",
+    "included": "Tax Included",
+    "vat": "VAT",
+    "vat_number": "VAT Number"
+  },
+  "payment": {
+    "title": "Payment",
+    "method": "Payment Method",
+    "terms": "Payment Terms",
+    "received": "Payment Received",
+    "date": "Payment Date",
+    "reference": "Payment Reference",
+    "methods": {
+      "bank_transfer": "Bank Transfer",
+      "credit_card": "Credit Card",
+      "cash": "Cash",
+      "check": "Check",
+      "paypal": "PayPal",
+      "other": "Other"
+    },
+    "terms_options": {
+      "due_on_receipt": "Due on Receipt",
+      "net_15": "Net 15",
+      "net_30": "Net 30",
+      "net_45": "Net 45",
+      "net_60": "Net 60"
+    }
+  },
+  "notes": {
+    "title": "Notes",
+    "internal": "Internal Notes",
+    "public": "Notes to Client"
+  },
+  "actions": {
+    "send": "Send Invoice",
+    "mark_paid": "Mark as Paid",
+    "mark_sent": "Mark as Sent",
+    "duplicate": "Duplicate",
+    "void": "Void Invoice",
+    "download_pdf": "Download PDF",
+    "preview": "Preview",
+    "record_payment": "Record Payment"
+  },
+  "messages": {
+    "created": "Invoice created successfully",
+    "updated": "Invoice updated successfully",
+    "deleted": "Invoice deleted successfully",
+    "sent": "Invoice sent successfully",
+    "marked_paid": "Invoice marked as paid",
+    "payment_recorded": "Payment recorded successfully",
+    "confirm_delete": "Are you sure you want to delete this invoice?",
+    "confirm_void": "Are you sure you want to void this invoice?"
+  },
+  "filters": {
+    "all": "All Invoices",
+    "draft": "Drafts",
+    "pending": "Pending",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "date_range": "Date Range"
+  },
+  "template": {
+    "header": "Invoice",
+    "bill_to": "Bill To",
+    "ship_to": "Ship To",
+    "from": "From",
+    "thank_you": "Thank you for your business!"
+  }
+}

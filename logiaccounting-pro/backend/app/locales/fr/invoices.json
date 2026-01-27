@@ -1,0 +1,121 @@
+{
+  "title": "Factures",
+  "invoice": "Facture",
+  "new_invoice": "Nouvelle Facture",
+  "edit_invoice": "Modifier la Facture",
+  "invoice_number": "Numéro de Facture",
+  "invoice_date": "Date de Facture",
+  "due_date": "Date d'Échéance",
+  "issue_date": "Date d'Émission",
+  "status": {
+    "draft": "Brouillon",
+    "pending": "En attente",
+    "sent": "Envoyée",
+    "paid": "Payée",
+    "overdue": "En retard",
+    "cancelled": "Annulée",
+    "partially_paid": "Partiellement payée",
+    "refunded": "Remboursée"
+  },
+  "client": {
+    "title": "Client",
+    "name": "Nom du Client",
+    "email": "E-mail du Client",
+    "address": "Adresse du Client",
+    "select": "Sélectionner un Client"
+  },
+  "items": {
+    "title": "Articles",
+    "description": "Description",
+    "quantity": "Quantité",
+    "unit_price": "Prix Unitaire",
+    "amount": "Montant",
+    "add_item": "Ajouter un Article",
+    "remove_item": "Supprimer l'Article",
+    "count": {
+      "zero": "Aucun article",
+      "one": "{{count}} article",
+      "other": "{{count}} articles"
+    }
+  },
+  "totals": {
+    "subtotal": "Sous-total",
+    "tax": "Taxe",
+    "discount": "Remise",
+    "total": "Total",
+    "amount_due": "Montant Dû",
+    "amount_paid": "Montant Payé",
+    "balance": "Solde"
+  },
+  "tax": {
+    "rate": "Taux de Taxe",
+    "amount": "Montant de la Taxe",
+    "exempt": "Exonéré de Taxe",
+    "included": "Taxe Incluse",
+    "vat": "TVA",
+    "vat_number": "Numéro de TVA"
+  },
+  "payment": {
+    "title": "Paiement",
+    "method": "Mode de Paiement",
+    "terms": "Conditions de Paiement",
+    "received": "Paiement Reçu",
+    "date": "Date de Paiement",
+    "reference": "Référence de Paiement",
+    "methods": {
+      "bank_transfer": "Virement Bancaire",
+      "credit_card": "Carte de Crédit",
+      "cash": "Espèces",
+      "check": "Chèque",
+      "paypal": "PayPal",
+      "other": "Autre"
+    },
+    "terms_options": {
+      "due_on_receipt": "Payable à Réception",
+      "net_15": "Net 15 jours",
+      "net_30": "Net 30 jours",
+      "net_45": "Net 45 jours",
+      "net_60": "Net 60 jours"
+    }
+  },
+  "notes": {
+    "title": "Notes",
+    "internal": "Notes Internes",
+    "public": "Notes au Client"
+  },
+  "actions": {
+    "send": "Envoyer la Facture",
+    "mark_paid": "Marquer comme Payée",
+    "mark_sent": "Marquer comme Envoyée",
+    "duplicate": "Dupliquer",
+    "void": "Annuler la Facture",
+    "download_pdf": "Télécharger le PDF",
+    "preview": "Aperçu",
+    "record_payment": "Enregistrer un Paiement"
+  },
+  "messages": {
+    "created": "Facture créée avec succès",
+    "updated": "Facture mise à jour avec succès",
+    "deleted": "Facture supprimée avec succès",
+    "sent": "Facture envoyée avec succès",
+    "marked_paid": "Facture marquée comme payée",
+    "payment_recorded": "Paiement enregistré avec succès",
+    "confirm_delete": "Êtes-vous sûr de vouloir supprimer cette facture ?",
+    "confirm_void": "Êtes-vous sûr de vouloir annuler cette facture ?"
+  },
+  "filters": {
+    "all": "Toutes les Factures",
+    "draft": "Brouillons",
+    "pending": "En attente",
+    "paid": "Payées",
+    "overdue": "En retard",
+    "date_range": "Période"
+  },
+  "template": {
+    "header": "Facture",
+    "bill_to": "Facturer à",
+    "ship_to": "Livrer à",
+    "from": "De",
+    "thank_you": "Merci pour votre confiance !"
+  }
+}

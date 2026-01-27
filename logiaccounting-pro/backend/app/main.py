@@ -1,0 +1,261 @@
+"""
+LogiAccounting Pro - FastAPI Backend
+Enterprise logistics and accounting platform
+"""
+
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
+
+from app.routes import (
+    auth, inventory, projects, movements, transactions, payments,
+    notifications, reports, ocr, cashflow, assistant, anomaly, scheduler, settings,
+    activity, bulk, email, two_factor, report_builder, backup, webhooks,
+    approvals, recurring, budgets, documents, api_keys,
+    # Phase 6 - Ultimate Enterprise Features
+    dashboards, websocket, reconciliation, client_portal, supplier_portal,
+    scheduled_reports, currencies,
+    # Phase 7 - Advanced Analytics & Integrations
+    audit, data_import, comments, tasks, taxes, custom_fields, calendar,
+    # Phase 8 - Payment Gateway Integration
+    gateways, payment_links, checkout, payment_webhooks, refunds, payment_analytics,
+    # Phase 9 - E-commerce Integration
+    ecommerce, ecommerce_sync, ecommerce_webhooks, ecommerce_analytics,
+    # Phase 10 - Advanced Analytics & ML Forecasting
+    analytics,
+    # Phase 12 - Enterprise SSO
+    sso, scim,
+    # Phase 13 - Document Management System
+    documents_v2, signatures,
+    # Phase 14 - External Integrations Hub
+    integrations,
+    # Phase 15 - Audit & Compliance
+    compliance,
+    # Phase 16 - Multi-Tenancy
+    tenant,
+    # Phase 23 - Mobile Application & PWA
+    mobile_sync, push_notifications, mobile_dashboard
+)
+# Phase 27 - Customer Portal v2
+from app.routes.portal_v2 import router as portal_v2_router
+# Phase 33 - Full Accounting Module
+from app.accounting.routes import accounting_router
+# Phase 37 - Banking & Cash Management
+from app.banking.routes import banking_router
+# Phase 38 - Fixed Assets & Depreciation
+from app.fixed_assets.routes import router as fixed_assets_router
+# Phase 19 - Advanced AI Features
+from app.ai.routes import (
+    cashflow_router as ai_cashflow,
+    invoice_router as ai_invoice,
+    assistant_router as ai_assistant,
+    payments_router as ai_payments,
+    anomaly_router as ai_anomaly,
+    usage_router as ai_usage,
+)
+from app.models.store import init_database
+from app.models.tenant_store import init_tenant_database
+from app.models.gateway_store import init_gateway_database
+from app.models.webhook_store import init_webhook_database
+from app.middleware.tenant_context import TenantMiddleware
+from app.middleware.gateway import RequestLoggerMiddleware, GatewayMiddleware
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Initialize database on startup"""
+    init_database()
+    init_tenant_database()
+    init_gateway_database()
+    init_webhook_database()
+    yield
+
+
+app = FastAPI(
+    title="LogiAccounting Pro API",
+    description="Enterprise logistics and accounting platform with AI-powered features",
+    version="2.0.0",
+    lifespan=lifespan
+)
+
+# CORS configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "https://logiaccounting-pro.onrender.com",
+        "*"  # Allow all origins in production (frontend served from same origin)
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Tenant middleware for multi-tenancy support
+app.add_middleware(TenantMiddleware, require_tenant=False)
+
+# Phase 17 - API Gateway middleware for request logging and rate limiting
+app.add_middleware(RequestLoggerMiddleware)
+app.add_middleware(GatewayMiddleware)
+
+# API routes
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
+app.include_router(inventory.router, prefix="/api/v1/inventory", tags=["Inventory"])
+app.include_router(projects.router, prefix="/api/v1/projects", tags=["Projects"])
+app.include_router(movements.router, prefix="/api/v1/movements", tags=["Movements"])
+app.include_router(transactions.router, prefix="/api/v1/transactions", tags=["Transactions"])
+app.include_router(payments.router, prefix="/api/v1/payments", tags=["Payments"])
+app.include_router(notifications.router, prefix="/api/v1/notifications", tags=["Notifications"])
+app.include_router(reports.router, prefix="/api/v1/reports", tags=["Reports"])
+app.include_router(ocr.router, prefix="/api/v1/ocr", tags=["OCR Invoice Processing"])
+
+# AI-Powered Features
+app.include_router(cashflow.router, prefix="/api/v1/cashflow", tags=["Cash Flow Predictor"])
+app.include_router(assistant.router, prefix="/api/v1/assistant", tags=["Profitability Assistant"])
+app.include_router(anomaly.router, prefix="/api/v1/anomaly", tags=["Anomaly Detection"])
+app.include_router(scheduler.router, prefix="/api/v1/scheduler", tags=["Payment Scheduler"])
+app.include_router(settings.router, prefix="/api/v1/settings", tags=["Settings"])
+app.include_router(activity.router, prefix="/api/v1/activity", tags=["Activity"])
+app.include_router(bulk.router, prefix="/api/v1/bulk", tags=["Bulk Operations"])
+app.include_router(email.router, prefix="/api/v1/email", tags=["Email"])
+app.include_router(two_factor.router, prefix="/api/v1/2fa", tags=["Two-Factor Auth"])
+app.include_router(report_builder.router, prefix="/api/v1/report-builder", tags=["Report Builder"])
+app.include_router(backup.router, prefix="/api/v1/backup", tags=["Backup"])
+app.include_router(webhooks.router, prefix="/api/v1/webhooks", tags=["Webhooks"])
+
+# Phase 5 - Enterprise Features
+app.include_router(approvals.router, prefix="/api/v1/approvals", tags=["Approvals"])
+app.include_router(recurring.router, prefix="/api/v1/recurring", tags=["Recurring"])
+app.include_router(budgets.router, prefix="/api/v1/budgets", tags=["Budgets"])
+app.include_router(documents.router, prefix="/api/v1/documents", tags=["Documents"])
+app.include_router(api_keys.router, prefix="/api/v1/api-keys", tags=["API Keys"])
+
+# Phase 6 - Ultimate Enterprise Features
+app.include_router(dashboards.router, prefix="/api/v1/dashboards", tags=["Dashboard Builder"])
+app.include_router(websocket.router, tags=["WebSocket"])
+app.include_router(reconciliation.router, prefix="/api/v1/reconciliation", tags=["Bank Reconciliation"])
+app.include_router(client_portal.router, prefix="/api/v1/portal/client", tags=["Client Portal"])
+app.include_router(supplier_portal.router, prefix="/api/v1/portal/supplier", tags=["Supplier Portal"])
+app.include_router(scheduled_reports.router, prefix="/api/v1/scheduled-reports", tags=["Scheduled Reports"])
+app.include_router(currencies.router, prefix="/api/v1/currencies", tags=["Currencies"])
+
+# Phase 7 - Advanced Analytics & Integrations
+app.include_router(audit.router, prefix="/api/v1/audit", tags=["Audit Trail"])
+app.include_router(data_import.router, prefix="/api/v1/import", tags=["Data Import"])
+app.include_router(comments.router, prefix="/api/v1/comments", tags=["Comments"])
+app.include_router(tasks.router, prefix="/api/v1/tasks", tags=["Tasks"])
+app.include_router(taxes.router, prefix="/api/v1/taxes", tags=["Tax Management"])
+app.include_router(custom_fields.router, prefix="/api/v1/custom-fields", tags=["Custom Fields"])
+app.include_router(calendar.router, prefix="/api/v1/calendar", tags=["Calendar"])
+
+# Phase 8 - Payment Gateway Integration
+app.include_router(gateways.router, prefix="/api/v1/gateways", tags=["Payment Gateways"])
+app.include_router(payment_links.router, prefix="/api/v1/payment-links", tags=["Payment Links"])
+app.include_router(checkout.router, prefix="/api/v1/checkout", tags=["Checkout"])
+app.include_router(payment_webhooks.router, prefix="/api/v1/webhooks/payment", tags=["Payment Webhooks"])
+app.include_router(refunds.router, prefix="/api/v1/refunds", tags=["Refunds"])
+app.include_router(payment_analytics.router, prefix="/api/v1/payment-analytics", tags=["Payment Analytics"])
+
+# Phase 9 - E-commerce Sync Integration (EU/US)
+app.include_router(ecommerce.router, tags=["E-commerce Stores"])
+app.include_router(ecommerce_sync.router, tags=["E-commerce Sync"])
+app.include_router(ecommerce_webhooks.router, tags=["E-commerce Webhooks"])
+app.include_router(ecommerce_analytics.router, tags=["E-commerce Analytics"])
+
+# Phase 10 - Advanced Analytics & ML Forecasting
+app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytics & ML Forecasting"])
+
+# Phase 12 - Enterprise SSO
+app.include_router(sso.router, prefix="/api/v1/sso", tags=["Enterprise SSO"])
+app.include_router(scim.router, prefix="/api/v1/scim", tags=["SCIM 2.0 Provisioning"])
+
+# Phase 13 - Document Management System
+app.include_router(documents_v2.router, prefix="/api/v1/documents-v2", tags=["Document Management v2"])
+app.include_router(signatures.router, prefix="/api/v1/signatures", tags=["Digital Signatures"])
+
+# Phase 14 - External Integrations Hub
+app.include_router(integrations.router, prefix="/api/v1/integrations", tags=["External Integrations"])
+
+# Phase 15 - Audit & Compliance
+app.include_router(compliance.router, prefix="/api/v1/compliance", tags=["Compliance Framework"])
+
+# Phase 16 - Multi-Tenancy
+app.include_router(tenant.router, prefix="/api/v1/tenant", tags=["Multi-Tenancy"])
+
+# Phase 19 - Advanced AI Features
+app.include_router(ai_cashflow, prefix="/api/v1/ai/cashflow", tags=["AI Cash Flow Predictor"])
+app.include_router(ai_invoice, prefix="/api/v1/ai/invoice", tags=["AI Invoice OCR"])
+app.include_router(ai_assistant, prefix="/api/v1/ai/assistant", tags=["AI Profitability Assistant"])
+app.include_router(ai_payments, prefix="/api/v1/ai/payments", tags=["AI Payment Optimizer"])
+app.include_router(ai_anomaly, prefix="/api/v1/ai/anomaly", tags=["AI Anomaly Detection"])
+app.include_router(ai_usage, prefix="/api/v1/ai", tags=["AI Usage & Config"])
+
+# Phase 23 - Mobile Application & PWA
+app.include_router(mobile_sync.router, prefix="/api/v1", tags=["Mobile Sync"])
+app.include_router(push_notifications.router, prefix="/api/v1", tags=["Push Notifications"])
+app.include_router(mobile_dashboard.router, prefix="/api/v1", tags=["Mobile Dashboard"])
+
+# Phase 27 - Customer Portal v2 (Self-Service Hub)
+app.include_router(portal_v2_router, prefix="/api/v1", tags=["Customer Portal v2"])
+
+# Phase 33 - Full Accounting Module
+app.include_router(accounting_router, prefix="/api/v1", tags=["Accounting"])
+
+# Phase 37 - Banking & Cash Management
+app.include_router(banking_router, prefix="/api/v1", tags=["Banking"])
+
+# Phase 38 - Fixed Assets & Depreciation
+app.include_router(fixed_assets_router, prefix="/api/v1", tags=["Fixed Assets"])
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {"status": "healthy", "service": "LogiAccounting Pro API"}
+
+
+@app.get("/api/v1/info")
+async def api_info():
+    """API information"""
+    return {
+        "name": "LogiAccounting Pro",
+        "version": "2.0.0",
+        "description": "Enterprise logistics and accounting platform with AI-powered features",
+        "ai_features": {
+            "ocr_invoice_processing": "Smart Invoice OCR + Auto-Categorization (Tesseract + OpenAI Vision)",
+            "cash_flow_predictor": "Intelligent 30-60-90 day cash flow prediction (Prophet ML)",
+            "profitability_assistant": "NLP chatbot for financial queries (Claude API)",
+            "anomaly_detection": "Fraud prevention & duplicate detection (Statistical ML + Isolation Forest)",
+            "payment_scheduler": "Optimized payment scheduling (Constraint optimization)"
+        },
+        "demo_credentials": {
+            "admin": "admin@logiaccounting.demo / Demo2024!Admin",
+            "client": "client@logiaccounting.demo / Demo2024!Client",
+            "supplier": "supplier@logiaccounting.demo / Demo2024!Supplier"
+        }
+    }
+
+
+# Serve React frontend in production
+frontend_dist = os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist")
+if os.path.exists(frontend_dist):
+    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
+    
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        """Serve React SPA for all non-API routes"""
+        file_path = os.path.join(frontend_dist, full_path)
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(frontend_dist, "index.html"))
+
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", 5000))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=True)

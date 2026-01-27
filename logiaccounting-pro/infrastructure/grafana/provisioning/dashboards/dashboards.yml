@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: 'LogiAccounting Dashboards'
+    orgId: 1
+    folder: 'LogiAccounting'
+    folderUid: 'logiaccounting'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/json
