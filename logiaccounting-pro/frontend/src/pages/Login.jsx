@@ -3,13 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ssoAPI } from '../services/ssoApi';
 
-const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
-
-const credentials = DEMO_MODE ? {
-  admin: { email: import.meta.env.VITE_DEMO_ADMIN_EMAIL || '', password: import.meta.env.VITE_DEMO_ADMIN_PASS || '' },
-  client: { email: import.meta.env.VITE_DEMO_CLIENT_EMAIL || '', password: import.meta.env.VITE_DEMO_CLIENT_PASS || '' },
-  supplier: { email: import.meta.env.VITE_DEMO_SUPPLIER_EMAIL || '', password: import.meta.env.VITE_DEMO_SUPPLIER_PASS || '' }
-} : null;
+const demoCredentials = {
+  admin: { email: 'admin@logiaccounting.demo', password: 'Demo2024!Admin', label: 'Admin' },
+  client: { email: 'client@logiaccounting.demo', password: 'Demo2024!Client', label: 'Client' },
+  supplier: { email: 'supplier@logiaccounting.demo', password: 'Demo2024!Supplier', label: 'Supplier' },
+};
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -80,11 +78,22 @@ export default function Login() {
     }
   };
 
-  const quickLogin = (role) => {
-    if (!credentials?.[role]) return;
-    setEmail(credentials[role].email);
-    setPassword(credentials[role].password);
+  const quickLogin = async (role) => {
+    const cred = demoCredentials[role];
+    if (!cred) return;
+    setEmail(cred.email);
+    setPassword(cred.password);
     setSsoConnection(null);
+    setError('');
+    setLoading(true);
+    try {
+      await login(cred.email, cred.password);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Login failed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -161,22 +170,22 @@ export default function Login() {
           </button>
         </form>
 
-        {DEMO_MODE && credentials && (
-          <div className="demo-section">
-            <div className="demo-title">Demo Credentials - Click to autofill:</div>
-            <div className="quick-login-btns">
-              <button type="button" className="quick-btn" onClick={() => quickLogin('admin')}>
-                Admin
+        <div className="demo-section">
+          <div className="demo-title">Demo Access - Click to login:</div>
+          <div className="quick-login-btns">
+            {Object.entries(demoCredentials).map(([role, cred]) => (
+              <button
+                key={role}
+                type="button"
+                className="quick-btn"
+                onClick={() => quickLogin(role)}
+                disabled={loading}
+              >
+                {cred.label}
               </button>
-              <button type="button" className="quick-btn" onClick={() => quickLogin('client')}>
-                Client
-              </button>
-              <button type="button" className="quick-btn" onClick={() => quickLogin('supplier')}>
-                Supplier
-              </button>
-            </div>
+            ))}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
