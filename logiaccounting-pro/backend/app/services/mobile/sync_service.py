@@ -9,6 +9,8 @@ from uuid import uuid4
 from enum import Enum
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -55,7 +57,7 @@ class OfflineSyncService:
     def process_sync(self, contact_id: str, customer_id: str, last_sync: Optional[str], pending_actions: List[Dict]) -> Dict[str, Any]:
         """Process sync request from mobile client."""
         sync_token = f"sync_{uuid4().hex[:16]}"
-        server_time = datetime.utcnow()
+        server_time = utc_now()
 
         # Process pending offline actions
         results = []
@@ -107,7 +109,7 @@ class OfflineSyncService:
 
             action.server_id = server_id
             action.status = "success"
-            action.processed_at = datetime.utcnow()
+            action.processed_at = utc_now()
             self._processed_actions.append(action)
 
             return SyncResult(

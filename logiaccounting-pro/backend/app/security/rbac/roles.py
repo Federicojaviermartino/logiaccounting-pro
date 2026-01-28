@@ -7,6 +7,8 @@ from dataclasses import dataclass, field
 from typing import Optional, Set, Dict, List, Any
 from datetime import datetime
 
+from app.utils.datetime_utils import utc_now
+
 
 class SystemRole(str, Enum):
     """System-defined roles with hierarchical permissions."""
@@ -48,8 +50,8 @@ class RoleDefinition:
     permissions: Set[str] = field(default_factory=set)
     inherits_from: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
-    created_at: datetime = field(default_factory=datetime.utcnow)
-    updated_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
+    updated_at: datetime = field(default_factory=utc_now)
 
 
 DEFAULT_ROLE_DEFINITIONS: Dict[str, RoleDefinition] = {
@@ -276,7 +278,7 @@ class RoleManager:
             role.description = description
         if permissions is not None:
             role.permissions = permissions
-        role.updated_at = datetime.utcnow()
+        role.updated_at = utc_now()
 
         return role
 

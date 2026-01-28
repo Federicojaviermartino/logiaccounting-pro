@@ -6,6 +6,7 @@ Handles real-time inventory synchronization
 from datetime import datetime
 from typing import Dict, List, Optional
 import uuid
+from app.utils.datetime_utils import utc_now
 
 
 class InventorySyncService:
@@ -43,7 +44,7 @@ class InventorySyncService:
                 "sku": item["sku"],
                 "quantity": item["quantity"],
                 "platform": adapter.platform_name,
-                "updated_at": datetime.utcnow().isoformat() + "Z"
+                "updated_at": utc_now().isoformat() + "Z"
             }
             stats["updated"] += 1
 
@@ -58,7 +59,7 @@ class InventorySyncService:
                     "threshold": threshold,
                     "platform": adapter.platform_name,
                     "severity": "critical" if item["quantity"] == 0 else "warning",
-                    "created_at": datetime.utcnow().isoformat() + "Z"
+                    "created_at": utc_now().isoformat() + "Z"
                 }
                 self._low_stock_alerts.append(alert)
                 stats["alerts_created"] += 1
@@ -69,7 +70,7 @@ class InventorySyncService:
             "store_id": store_id,
             "action": "pull",
             "stats": stats,
-            "timestamp": datetime.utcnow().isoformat() + "Z"
+            "timestamp": utc_now().isoformat() + "Z"
         })
 
         return {"success": True, "stats": stats}
@@ -90,7 +91,7 @@ class InventorySyncService:
             if cache_key in self._inventory_cache:
                 self._inventory_cache[cache_key]["quantity"] = quantity
                 self._inventory_cache[cache_key]["updated_at"] = (
-                    datetime.utcnow().isoformat() + "Z"
+                    utc_now().isoformat() + "Z"
                 )
 
             self._sync_log.append({
@@ -100,7 +101,7 @@ class InventorySyncService:
                 "product_id": product_id,
                 "new_quantity": quantity,
                 "reason": reason,
-                "timestamp": datetime.utcnow().isoformat() + "Z"
+                "timestamp": utc_now().isoformat() + "Z"
             })
 
         return result

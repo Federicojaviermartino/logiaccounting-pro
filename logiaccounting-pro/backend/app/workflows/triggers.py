@@ -4,11 +4,11 @@ Event and schedule trigger system
 """
 
 from typing import Dict, Any, List, Optional, Callable
-from datetime import datetime
 from enum import Enum
 import logging
 import asyncio
 
+from app.utils.datetime_utils import utc_now
 from app.workflows.models import Workflow, TriggerType
 
 logger = logging.getLogger(__name__)
@@ -277,7 +277,7 @@ def init_trigger_handlers():
             if workflow and workflow.status.value == "active":
                 trigger_data = {
                     "event": event_type,
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": utc_now().isoformat(),
                     **payload,
                 }
                 asyncio.create_task(

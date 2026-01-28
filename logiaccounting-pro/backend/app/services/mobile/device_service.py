@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -25,9 +27,9 @@ class Device:
         self.app_version = None
         self.push_enabled = True
         self.is_active = True
-        self.last_active_at = datetime.utcnow()
-        self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.last_active_at = utc_now()
+        self.created_at = utc_now()
+        self.updated_at = utc_now()
 
 
 class DeviceService:
@@ -44,8 +46,8 @@ class DeviceService:
         if existing:
             # Update existing device
             existing.contact_id = contact_id
-            existing.last_active_at = datetime.utcnow()
-            existing.updated_at = datetime.utcnow()
+            existing.last_active_at = utc_now()
+            existing.updated_at = utc_now()
             existing.is_active = True
 
             if "device_name" in data:
@@ -90,7 +92,7 @@ class DeviceService:
         device = self._devices.get(device_id)
         if device and device.contact_id == contact_id:
             device.is_active = False
-            device.updated_at = datetime.utcnow()
+            device.updated_at = utc_now()
             logger.info(f"Unregistered device {device_id}")
             return True
         return False
@@ -121,14 +123,14 @@ class DeviceService:
         if "push_enabled" in data:
             device.push_enabled = data["push_enabled"]
 
-        device.updated_at = datetime.utcnow()
+        device.updated_at = utc_now()
         return self._device_to_dict(device)
 
     def update_activity(self, device_id: str) -> bool:
         """Update device last activity timestamp."""
         device = self._devices.get(device_id)
         if device:
-            device.last_active_at = datetime.utcnow()
+            device.last_active_at = utc_now()
             return True
         return False
 
@@ -142,7 +144,7 @@ class DeviceService:
 
     def cleanup_inactive_devices(self, days: int = 90):
         """Remove devices inactive for specified days."""
-        threshold = datetime.utcnow() - timedelta(days=days)
+        threshold = utc_now() - timedelta(days=days)
         removed = 0
 
         for device_id, device in list(self._devices.items()):

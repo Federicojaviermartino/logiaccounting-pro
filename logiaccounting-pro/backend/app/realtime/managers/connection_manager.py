@@ -9,6 +9,7 @@ from typing import Dict, Optional, List, Set
 from datetime import datetime
 from jose import jwt, JWTError
 
+from app.utils.datetime_utils import utc_now
 from app.realtime.models.connection import Connection
 
 logger = logging.getLogger(__name__)
@@ -71,7 +72,7 @@ class ConnectionManager:
             tenant_id=user_data['tenant_id'],
             user_name=user_data['user_name'],
             user_email=user_data.get('user_email', ''),
-            connected_at=datetime.utcnow(),
+            connected_at=utc_now(),
             device_type=device_type,
             browser=browser,
             ip_address=ip_address,

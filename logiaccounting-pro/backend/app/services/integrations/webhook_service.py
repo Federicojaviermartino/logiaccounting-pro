@@ -6,6 +6,7 @@ Handles incoming and outgoing webhooks
 from typing import Dict, Any, List, Optional, Callable
 from datetime import datetime
 from uuid import uuid4
+from app.utils.datetime_utils import utc_now
 import hmac
 import hashlib
 import logging
@@ -24,7 +25,7 @@ class WebhookSubscription:
         self.events = events
         self.secret = uuid4().hex
         self.is_active = True
-        self.created_at = datetime.utcnow()
+        self.created_at = utc_now()
         self.last_triggered_at: Optional[datetime] = None
         self.failure_count = 0
 
@@ -41,7 +42,7 @@ class WebhookDelivery:
         self.attempts = 0
         self.response_code: Optional[int] = None
         self.response_body: Optional[str] = None
-        self.created_at = datetime.utcnow()
+        self.created_at = utc_now()
         self.delivered_at: Optional[datetime] = None
         self.next_retry_at: Optional[datetime] = None
 
@@ -208,8 +209,8 @@ class WebhookService:
 
                         if response.status < 300:
                             delivery.status = "delivered"
-                            delivery.delivered_at = datetime.utcnow()
-                            subscription.last_triggered_at = datetime.utcnow()
+                            delivery.delivered_at = utc_now()
+                            subscription.last_triggered_at = utc_now()
                             subscription.failure_count = 0
                             logger.info(f"Webhook {delivery.id} delivered successfully")
                             return
@@ -223,7 +224,7 @@ class WebhookService:
             # Retry logic
             if delivery.attempts < max_retries:
                 delay = retry_delays[delivery.attempts - 1]
-                delivery.next_retry_at = datetime.utcnow()
+                delivery.next_retry_at = utc_now()
                 await asyncio.sleep(delay)
 
         # Mark as failed after all retries

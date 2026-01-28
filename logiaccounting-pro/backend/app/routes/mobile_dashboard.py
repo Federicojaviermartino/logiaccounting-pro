@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 
 from app.utils.auth import get_current_user
+from app.utils.datetime_utils import utc_now
 from app.models.store import db
 
 router = APIRouter(prefix="/mobile", tags=["Mobile Dashboard"])
@@ -75,7 +76,7 @@ async def get_mobile_dashboard(
         recent_invoices=recent_invoices,
         inventory_alerts=inventory_alerts,
         quick_stats=quick_stats,
-        last_sync=datetime.utcnow().isoformat(),
+        last_sync=utc_now().isoformat(),
     )
 
 
@@ -130,7 +131,7 @@ async def get_recent_activity(
             "type": "payment_created" if payment.get("status") != "paid" else "payment_received",
             "title": "Payment " + ("Received" if payment.get("status") == "paid" else "Created"),
             "description": f"Payment for {payment.get('description', 'Invoice')}",
-            "timestamp": payment.get("created_at", datetime.utcnow().isoformat()),
+            "timestamp": payment.get("created_at", utc_now().isoformat()),
             "icon": "cash",
         })
 
@@ -230,7 +231,7 @@ def _get_recent_invoices(limit: int = 10, status: Optional[str] = None) -> List[
             customer_name=p.get("description", "Customer"),
             total=p.get("amount", 0),
             status=p.get("status", "pending"),
-            due_date=p.get("due_date", datetime.utcnow().isoformat()),
+            due_date=p.get("due_date", utc_now().isoformat()),
             currency="USD",
         )
         for p in payments

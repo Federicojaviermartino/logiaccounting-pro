@@ -8,6 +8,8 @@ from typing import Dict, Optional, List
 from datetime import datetime
 import hashlib
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -45,7 +47,7 @@ class CursorPosition:
         self.column = column
         self.selection_start = selection_start
         self.selection_end = selection_end
-        self.last_update = datetime.utcnow()
+        self.last_update = utc_now()
 
     def to_dict(self) -> dict:
         return {

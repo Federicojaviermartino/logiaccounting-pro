@@ -5,6 +5,7 @@ Extend entities with user-defined fields
 
 from datetime import datetime
 from typing import Dict, List, Optional, Any
+from app.utils.datetime_utils import utc_now
 
 
 class CustomFieldsService:
@@ -73,7 +74,7 @@ class CustomFieldsService:
             "searchable": searchable,
             "show_in_list": show_in_list,
             "active": True,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
 
         self._fields[field_id] = field

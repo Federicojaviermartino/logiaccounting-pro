@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException, Depends, Request, status, Query
 from pydantic import BaseModel, Field
 
 from app.utils.auth import get_current_user, require_roles
+from app.utils.datetime_utils import utc_now
 
 
 router = APIRouter()
@@ -97,7 +98,7 @@ class SessionStore:
         ttl_minutes: int = 60,
     ) -> Dict[str, Any]:
         """Create a new session."""
-        now = datetime.utcnow()
+        now = utc_now()
         device_info = self._parse_user_agent(user_agent or "")
 
         session = {
@@ -129,7 +130,7 @@ class SessionStore:
         session = self._sessions.get(session_id)
         if session:
             expires_at = datetime.fromisoformat(session["expires_at"])
-            if datetime.utcnow() > expires_at:
+            if utc_now() > expires_at:
                 self.revoke_session(session_id)
                 return None
         return session
@@ -148,7 +149,7 @@ class SessionStore:
         """Update last activity timestamp for a session."""
         session = self._sessions.get(session_id)
         if session:
-            session["last_activity"] = datetime.utcnow().isoformat()
+            session["last_activity"] = utc_now().isoformat()
 
     def revoke_session(self, session_id: str) -> bool:
         """Revoke a session."""
@@ -260,7 +261,7 @@ class SessionStore:
             self._activities[session_id] = []
 
         self._activities[session_id].append({
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": utc_now().isoformat(),
             "action": action,
             "details": details,
         })

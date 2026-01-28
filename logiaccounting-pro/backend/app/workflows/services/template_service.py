@@ -3,9 +3,10 @@ Workflow Template Marketplace Service
 """
 
 from typing import Dict, Any, Optional, List
-from datetime import datetime
 from uuid import uuid4
 import logging
+
+from app.utils.datetime_utils import utc_now
 
 
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ class WorkflowTemplate:
         self.tenant_id = None
         self.tags = tags or []
         self.parameters = parameters or []
-        self.created_at = datetime.utcnow()
+        self.created_at = utc_now()
         self.install_count = 0
         self.rating = 0.0
         self.rating_count = 0

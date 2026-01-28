@@ -7,6 +7,7 @@ import logging
 from typing import Dict, Optional, List
 from datetime import datetime, timedelta
 
+from app.utils.datetime_utils import utc_now
 from app.realtime.models.presence import PresenceData, PresenceStatus
 
 logger = logging.getLogger(__name__)
@@ -35,7 +36,7 @@ class PresenceManager:
             user_name=user_name,
             tenant_id=tenant_id,
             status=PresenceStatus.ONLINE,
-            last_active_at=datetime.utcnow(),
+            last_active_at=utc_now(),
             current_page=current_page,
             device_type=device_type,
         )
@@ -133,7 +134,7 @@ class PresenceManager:
 
     def check_inactive_users(self, tenant_id: str) -> List[str]:
         """Check for users that should be marked as away"""
-        cutoff = datetime.utcnow() - timedelta(seconds=self.AWAY_TIMEOUT_SECONDS)
+        cutoff = utc_now() - timedelta(seconds=self.AWAY_TIMEOUT_SECONDS)
 
         away_users = []
 

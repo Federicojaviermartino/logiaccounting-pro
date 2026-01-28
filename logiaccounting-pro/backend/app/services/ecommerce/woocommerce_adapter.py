@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import random
 from app.services.ecommerce.base_adapter import BaseEcommerceAdapter
+from app.utils.datetime_utils import utc_now
 
 
 class WooCommerceAdapter(BaseEcommerceAdapter):
@@ -118,8 +119,8 @@ class WooCommerceAdapter(BaseEcommerceAdapter):
             "stock_status": "instock",
             "categories": [{"id": 1, "name": product_data.get("category", "General")}],
             "images": [],
-            "date_created": datetime.utcnow().isoformat(),
-            "date_modified": datetime.utcnow().isoformat()
+            "date_created": utc_now().isoformat(),
+            "date_modified": utc_now().isoformat()
         }
         self._demo_products.append(new_product)
         return self.normalize_product(new_product)
@@ -136,7 +137,7 @@ class WooCommerceAdapter(BaseEcommerceAdapter):
                     product["regular_price"] = str(product_data["price"])
                 if "stock" in product_data:
                     product["stock_quantity"] = product_data["stock"]
-                product["date_modified"] = datetime.utcnow().isoformat()
+                product["date_modified"] = utc_now().isoformat()
                 return self.normalize_product(product)
         return {"error": "Product not found"}
 
@@ -240,8 +241,8 @@ class WooCommerceAdapter(BaseEcommerceAdapter):
                 "number": f"WC-{2001 + i}",
                 "status": random.choice(statuses),
                 "currency": "EUR",
-                "date_created": (datetime.utcnow() - timedelta(days=i)).isoformat(),
-                "date_modified": (datetime.utcnow() - timedelta(days=i)).isoformat(),
+                "date_created": (utc_now() - timedelta(days=i)).isoformat(),
+                "date_modified": (utc_now() - timedelta(days=i)).isoformat(),
                 "total": f"{subtotal + vat:.2f}",
                 "total_tax": f"{vat:.2f}",
                 "billing": {

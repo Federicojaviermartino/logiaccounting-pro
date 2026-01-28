@@ -7,6 +7,7 @@ import logging
 from typing import Optional, Dict, Any, List
 from datetime import datetime
 
+from app.utils.datetime_utils import utc_now
 from app.realtime.server import get_socketio
 from app.realtime.managers.connection_manager import get_connection_manager
 from app.realtime.managers.presence_manager import get_presence_manager
@@ -92,7 +93,7 @@ class RealtimeService:
                 'entity_id': entity_id,
                 'action': action,
                 'data': data,
-                'timestamp': datetime.utcnow().isoformat(),
+                'timestamp': utc_now().isoformat(),
             }
         )
 
@@ -113,6 +114,6 @@ class RealtimeService:
                 'entity_id': entity_id,
                 'change_type': change_type,
                 'changed_by': changed_by,
-                'timestamp': datetime.utcnow().isoformat(),
+                'timestamp': utc_now().isoformat(),
             }
         )

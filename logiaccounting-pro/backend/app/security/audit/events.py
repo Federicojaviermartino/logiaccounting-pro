@@ -8,6 +8,8 @@ from typing import Optional, Dict, List, Any
 from datetime import datetime
 from uuid import uuid4
 
+from app.utils.datetime_utils import utc_now
+
 
 class AuditEventType(str, Enum):
     """Types of auditable events."""
@@ -237,7 +239,7 @@ class AuditEvent:
     severity: AuditSeverity = AuditSeverity.INFO
     category: AuditCategory = AuditCategory.SYSTEM
     id: str = field(default_factory=lambda: str(uuid4()))
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=utc_now)
     actor: Optional[AuditActor] = None
     target: Optional[AuditTarget] = None
     changes: Optional[AuditChanges] = None
@@ -293,7 +295,7 @@ class AuditEvent:
             outcome=AuditOutcome(data.get("outcome", "success")),
             severity=AuditSeverity(data.get("severity", "info")),
             category=AuditCategory(data.get("category", "system")),
-            timestamp=datetime.fromisoformat(data["timestamp"]) if data.get("timestamp") else datetime.utcnow(),
+            timestamp=datetime.fromisoformat(data["timestamp"]) if data.get("timestamp") else utc_now(),
             actor=actor,
             target=target,
             changes=changes,

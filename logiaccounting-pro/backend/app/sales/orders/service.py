@@ -10,6 +10,8 @@ from uuid import UUID
 import uuid
 
 from sqlalchemy import select, func, and_, or_
+
+from app.utils.datetime_utils import utc_now
 from sqlalchemy.orm import Session, selectinload
 from fastapi import Depends, HTTPException, status
 
@@ -150,7 +152,7 @@ class SalesOrderService:
                 value = value.value
             setattr(order, field, value)
 
-        order.updated_at = datetime.utcnow()
+        order.updated_at = utc_now()
         order.recalculate_totals()
 
         self.db.commit()
@@ -378,7 +380,7 @@ class SalesOrderService:
 
         order.status = SOStatusEnum.CONFIRMED.value
         order.confirmed_by = confirmed_by
-        order.confirmed_at = datetime.utcnow()
+        order.confirmed_at = utc_now()
 
         if request.auto_allocate:
             self._auto_allocate_order(order)
@@ -413,7 +415,7 @@ class SalesOrderService:
             order.status = SOStatusEnum.ON_HOLD.value
             order.hold_reason = request.reason
             order.hold_by = user_id
-            order.hold_at = datetime.utcnow()
+            order.hold_at = utc_now()
         else:
             if order.status != SOStatusEnum.ON_HOLD.value:
                 raise HTTPException(

@@ -6,6 +6,7 @@ Handles MercadoPago payment processing for LATAM
 from datetime import datetime
 from typing import Dict, Optional
 import secrets
+from app.utils.datetime_utils import utc_now
 
 
 class MercadoPagoService:
@@ -48,7 +49,7 @@ class MercadoPagoService:
             "total_amount": total,
             "init_point": f"https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id={pref_id}",
             "sandbox_init_point": f"https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id={pref_id}",
-            "date_created": datetime.utcnow().isoformat() + ".000-04:00"
+            "date_created": utc_now().isoformat() + ".000-04:00"
         }
 
         self._preferences[pref_id] = preference
@@ -81,8 +82,8 @@ class MercadoPagoService:
             "currency_id": "ARS",
             "installments": installments,
             "external_reference": preference["external_reference"],
-            "date_created": datetime.utcnow().isoformat() + ".000-04:00",
-            "date_approved": datetime.utcnow().isoformat() + ".000-04:00",
+            "date_created": utc_now().isoformat() + ".000-04:00",
+            "date_approved": utc_now().isoformat() + ".000-04:00",
             "payer": preference.get("payer", {}),
             "fee_details": [{
                 "type": "mercadopago_fee",
@@ -118,7 +119,7 @@ class MercadoPagoService:
             "payment_id": payment_id,
             "amount": refund_amount,
             "status": "approved",
-            "date_created": datetime.utcnow().isoformat() + ".000-04:00"
+            "date_created": utc_now().isoformat() + ".000-04:00"
         }
 
         # Update payment status

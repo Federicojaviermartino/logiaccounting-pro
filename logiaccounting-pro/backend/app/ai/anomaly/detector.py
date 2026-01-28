@@ -10,6 +10,7 @@ from enum import Enum
 import numpy as np
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.ai.base import Anomaly, AlertSeverity, BaseDetector, AIResult
 from app.ai.utils import calculate_z_scores, detect_outliers
 
@@ -105,7 +106,7 @@ class AnomalyDetector(BaseDetector):
                 "transaction_count": len(historical_data),
                 "vendors": set(t.get("vendor", "") for t in historical_data),
                 "recent_transactions": historical_data[-100:],
-                "trained_at": datetime.utcnow(),
+                "trained_at": utc_now(),
             }
 
             return AIResult.ok({

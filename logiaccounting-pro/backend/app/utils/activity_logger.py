@@ -9,6 +9,8 @@ from datetime import datetime
 from typing import Optional, Dict, Any
 from functools import wraps
 
+from app.utils.datetime_utils import utc_now
+
 
 class ActivityLogger:
     """Centralized activity logging service"""
@@ -39,7 +41,7 @@ class ActivityLogger:
         self._counter += 1
         activity = {
             "id": f"ACT-{self._counter:06d}",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": utc_now().isoformat(),
             "user_id": user_id,
             "user_email": user_email,
             "user_role": user_role,
@@ -95,7 +97,7 @@ class ActivityLogger:
     def get_stats(self, days: int = 30) -> Dict:
         """Get activity statistics"""
         from datetime import timedelta
-        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        cutoff = (utc_now() - timedelta(days=days)).isoformat()
 
         recent = [a for a in self._activities if a["timestamp"] >= cutoff]
 

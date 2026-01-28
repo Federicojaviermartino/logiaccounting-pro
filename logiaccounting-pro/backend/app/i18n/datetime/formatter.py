@@ -6,6 +6,7 @@ from typing import Optional, Union
 from enum import Enum
 
 from app.i18n.core.context import get_locale
+from app.utils.datetime_utils import utc_now
 from app.i18n.core.locale import LocaleContext
 
 
@@ -292,7 +293,7 @@ class DateTimeFormatter:
         if not dt:
             return str(value)
 
-        ref = reference or datetime.utcnow()
+        ref = reference or utc_now()
         if dt.tzinfo:
             ref = ref.replace(tzinfo=dt.tzinfo)
 

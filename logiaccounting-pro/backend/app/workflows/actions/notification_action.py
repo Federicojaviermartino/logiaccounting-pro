@@ -3,11 +3,11 @@ In-app notification action executor.
 Creates notifications for users.
 """
 from typing import Dict, Any, List
-from datetime import datetime
 import logging
 import re
 import uuid
 
+from app.utils.datetime_utils import utc_now
 from app.workflows.actions import ActionExecutor
 
 
@@ -60,7 +60,7 @@ class NotificationActionExecutor(ActionExecutor):
                 "priority": priority,
                 "link": link,
                 "read": False,
-                "created_at": datetime.utcnow().isoformat()
+                "created_at": utc_now().isoformat()
             }
 
             notification_id = await self._create_notification(notification, channels)

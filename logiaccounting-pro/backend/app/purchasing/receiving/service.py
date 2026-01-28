@@ -2,11 +2,13 @@
 Goods Receipt Service
 """
 
-from datetime import datetime, date
+from datetime import date
 from decimal import Decimal
 from typing import List, Optional, Tuple
 from uuid import UUID
 import logging
+
+from app.utils.datetime_utils import utc_now
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
@@ -30,7 +32,7 @@ class GoodsReceiptService:
         self.db = db
 
     def _generate_receipt_number(self, customer_id: UUID) -> str:
-        year = datetime.utcnow().strftime("%y")
+        year = utc_now().strftime("%y")
 
         last = self.db.query(GoodsReceipt).filter(
             GoodsReceipt.customer_id == customer_id,
@@ -252,7 +254,7 @@ class GoodsReceiptService:
 
         receipt.status = ReceiptStatusEnum.POSTED.value
         receipt.posted_by = posted_by
-        receipt.posted_at = datetime.utcnow()
+        receipt.posted_at = utc_now()
 
         self.db.commit()
         self.db.refresh(receipt)

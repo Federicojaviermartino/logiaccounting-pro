@@ -12,6 +12,8 @@ import logging
 from sqlalchemy import func, and_
 from sqlalchemy.orm import Session
 
+from app.utils.datetime_utils import utc_now
+
 from app.accounting.reconciliation.models import (
     BankAccount, BankStatement, BankTransaction, Reconciliation
 )
@@ -198,7 +200,7 @@ class ReconciliationService:
         else:
             recon.status = "discrepancy"
 
-        recon.completed_at = datetime.utcnow()
+        recon.completed_at = utc_now()
         recon.completed_by = completed_by
         recon.notes = notes
 

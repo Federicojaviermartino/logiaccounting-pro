@@ -6,6 +6,7 @@ Generate and manage payment links
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import secrets
+from app.utils.datetime_utils import utc_now
 import hashlib
 import base64
 
@@ -86,7 +87,7 @@ class PaymentLinkService:
 
             # Settings
             "gateways": gateways or ["stripe", "paypal"],
-            "expires_at": (datetime.utcnow() + timedelta(days=expires_in_days)).isoformat(),
+            "expires_at": (utc_now() + timedelta(days=expires_in_days)).isoformat(),
             "single_use": single_use,
             "send_receipt": send_receipt,
 
@@ -103,7 +104,7 @@ class PaymentLinkService:
 
             # Metadata
             "created_by": created_by,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
 
         self._links[link_id] = link
@@ -139,7 +140,7 @@ class PaymentLinkService:
             links = [l for l in links if l["payment_id"] == payment_id]
 
         # Check for expired links
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         for link in links:
             if link["status"] == "active" and link["expires_at"] < now:
                 link["status"] = "expired"
@@ -187,7 +188,7 @@ class PaymentLinkService:
             return None
 
         link["status"] = "paid"
-        link["paid_at"] = datetime.utcnow().isoformat()
+        link["paid_at"] = utc_now().isoformat()
         link["paid_amount"] = amount
         link["paid_via"] = gateway
         link["transaction_id"] = transaction_id
@@ -223,7 +224,7 @@ class PaymentLinkService:
             return None
 
         # Check if expired
-        if link["expires_at"] < datetime.utcnow().isoformat():
+        if link["expires_at"] < utc_now().isoformat():
             link["status"] = "expired"
 
         # Return only public data

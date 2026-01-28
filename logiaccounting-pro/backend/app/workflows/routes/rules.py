@@ -2,9 +2,9 @@
 Business rules API routes.
 """
 from typing import List, Optional
-from datetime import datetime
 from fastapi import APIRouter, HTTPException, Depends, Query
 
+from app.utils.datetime_utils import utc_now
 from app.routes.auth import get_current_user
 from app.workflows.models.rule import BusinessRule, RuleCreate, RuleUpdate
 from app.workflows.models.store import workflow_store
@@ -111,7 +111,7 @@ async def update_rule(
         rule.actions = updates.actions
 
     rule.version += 1
-    rule.updated_at = datetime.utcnow()
+    rule.updated_at = utc_now()
     rule.updated_by = current_user["id"]
 
     workflow_store.save_rule(rule)

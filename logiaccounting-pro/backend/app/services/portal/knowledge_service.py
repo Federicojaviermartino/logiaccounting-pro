@@ -9,6 +9,7 @@ from uuid import uuid4
 import logging
 import re
 
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ class KBCategory:
         self.sort_order = 0
         self.is_public = True
         self.article_count = 0
-        self.created_at = datetime.utcnow()
+        self.created_at = utc_now()
 
 
 class KBArticle:
@@ -45,8 +46,8 @@ class KBArticle:
         self.view_count = 0
         self.helpful_yes = 0
         self.helpful_no = 0
-        self.published_at = datetime.utcnow()
-        self.created_at = datetime.utcnow()
+        self.published_at = utc_now()
+        self.created_at = utc_now()
 
     def _generate_slug(self, title: str) -> str:
         slug = title.lower()

@@ -6,6 +6,7 @@ Handles data synchronization between LogiAccounting and integrations
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 from uuid import uuid4
+from app.utils.datetime_utils import utc_now
 from enum import Enum
 import logging
 import asyncio
@@ -149,7 +150,7 @@ class SyncService:
     async def _execute_sync(self, job: SyncJob, connection: Connection, config: SyncConfig):
         """Execute sync job."""
         job.status = "running"
-        job.started_at = datetime.utcnow()
+        job.started_at = utc_now()
 
         try:
             # Get integration instance
@@ -172,8 +173,8 @@ class SyncService:
                     job.result = result
 
             job.status = "completed"
-            config.last_sync_at = datetime.utcnow()
-            connection.last_sync_at = datetime.utcnow()
+            config.last_sync_at = utc_now()
+            connection.last_sync_at = utc_now()
 
             logger.info(f"Sync job {job.id} completed successfully")
 
@@ -183,7 +184,7 @@ class SyncService:
             logger.error(f"Sync job {job.id} failed: {e}")
 
         finally:
-            job.completed_at = datetime.utcnow()
+            job.completed_at = utc_now()
 
             # Remove from running jobs
             job_key = f"{connection.id}:{job.entity_type}"
@@ -214,7 +215,7 @@ class SyncService:
         if task:
             task.cancel()
             job.status = "cancelled"
-            job.completed_at = datetime.utcnow()
+            job.completed_at = utc_now()
             del self._running_jobs[job_key]
             return True
 

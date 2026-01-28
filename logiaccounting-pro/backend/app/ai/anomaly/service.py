@@ -8,6 +8,7 @@ from datetime import datetime
 from uuid import uuid4
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.ai.base import AIResult, Anomaly, AlertSeverity
 from app.ai.anomaly.detector import AnomalyDetector, anomaly_detector
 
@@ -98,7 +99,7 @@ class AnomalyService:
             "details": anomaly.details,
             "recommended_action": anomaly.recommended_action,
             "status": "pending",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
             "acknowledged_at": None,
             "resolved_at": None,
             "acknowledged_by": None,
@@ -179,7 +180,7 @@ class AnomalyService:
             for alert in customer_alerts:
                 if alert["id"] == alert_id:
                     alert["status"] = "acknowledged"
-                    alert["acknowledged_at"] = datetime.utcnow().isoformat()
+                    alert["acknowledged_at"] = utc_now().isoformat()
                     alert["acknowledged_by"] = user_id
                     return alert
         return None
@@ -190,7 +191,7 @@ class AnomalyService:
             for alert in customer_alerts:
                 if alert["id"] == alert_id:
                     alert["status"] = "resolved"
-                    alert["resolved_at"] = datetime.utcnow().isoformat()
+                    alert["resolved_at"] = utc_now().isoformat()
                     alert["resolved_by"] = user_id
                     if notes:
                         alert["notes"] = notes
@@ -203,7 +204,7 @@ class AnomalyService:
             for alert in customer_alerts:
                 if alert["id"] == alert_id:
                     alert["status"] = "dismissed"
-                    alert["resolved_at"] = datetime.utcnow().isoformat()
+                    alert["resolved_at"] = utc_now().isoformat()
                     alert["resolved_by"] = user_id
                     if reason:
                         alert["notes"] = f"Dismissed: {reason}"

@@ -5,6 +5,7 @@ import logging
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
 
+from app.utils.datetime_utils import utc_now
 from app.performance.database.connection_pool import db_manager, DatabaseRole
 
 logger = logging.getLogger(__name__)
@@ -206,7 +207,7 @@ class MaterializedViewManager:
             view_name: Name of the view to refresh
             concurrently: Use CONCURRENTLY (non-blocking)
         """
-        start_time = datetime.utcnow()
+        start_time = utc_now()
 
         if not db_manager.is_available:
             return {"status": "error", "error": "Database not available"}
@@ -224,7 +225,7 @@ class MaterializedViewManager:
                 )
                 await session.commit()
 
-            duration = (datetime.utcnow() - start_time).total_seconds()
+            duration = (utc_now() - start_time).total_seconds()
             logger.info(f"Refreshed {view_name} in {duration:.2f}s")
 
             return {

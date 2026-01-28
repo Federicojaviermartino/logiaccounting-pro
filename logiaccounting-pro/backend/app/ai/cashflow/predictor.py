@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.ai.base import AIResult, Prediction, PredictionConfidence, BasePredictor
 
 logger = logging.getLogger(__name__)
@@ -95,7 +96,7 @@ class CashFlowPredictor(BasePredictor):
             }
 
             self._trained[customer_id] = True
-            self._last_training[customer_id] = datetime.utcnow()
+            self._last_training[customer_id] = utc_now()
 
             return AIResult.ok({
                 "status": "trained",
@@ -167,7 +168,7 @@ class CashFlowPredictor(BasePredictor):
             # Generate predictions
             forecasts = []
             running_balance = current_balance
-            start_date = datetime.utcnow().date()
+            start_date = utc_now().date()
 
             # Scenario adjustments
             scenario_factors = {

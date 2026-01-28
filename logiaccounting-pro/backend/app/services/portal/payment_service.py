@@ -8,6 +8,7 @@ from uuid import uuid4
 import logging
 
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -67,16 +68,16 @@ class PortalPaymentService:
             "amount": pay_amount,
             "payment_method": payment_method,
             "status": "completed",
-            "paid_at": datetime.utcnow().isoformat(),
+            "paid_at": utc_now().isoformat(),
             "transaction_id": f"txn_{uuid4().hex[:12]}",
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
         db.payments.create(payment)
 
         current_paid = invoice.get("amount_paid", 0) + pay_amount
         if current_paid >= invoice.get("total", 0):
             invoice["status"] = "paid"
-            invoice["paid_at"] = datetime.utcnow().isoformat()
+            invoice["paid_at"] = utc_now().isoformat()
         invoice["amount_paid"] = current_paid
         db.invoices.update(invoice_id, invoice)
 
@@ -110,7 +111,7 @@ class PortalPaymentService:
             "brand": details.get("brand"),
             "expiry": details.get("expiry"),
             "is_default": len(self._saved_methods.get(customer_id, [])) == 0,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
         if customer_id not in self._saved_methods:
             self._saved_methods[customer_id] = []
@@ -125,7 +126,7 @@ class PortalPaymentService:
         return self._auto_pay.get(customer_id)
 
     def setup_auto_pay(self, customer_id: str, payment_method_id: str, enabled: bool = True) -> Dict:
-        self._auto_pay[customer_id] = {"enabled": enabled, "payment_method_id": payment_method_id, "created_at": datetime.utcnow().isoformat()}
+        self._auto_pay[customer_id] = {"enabled": enabled, "payment_method_id": payment_method_id, "created_at": utc_now().isoformat()}
         return self._auto_pay[customer_id]
 
     def disable_auto_pay(self, customer_id: str):

@@ -4,10 +4,10 @@ Allows workflows to call other workflows as reusable components
 """
 
 from typing import Dict, Any, Optional, Set
-from datetime import datetime
 import asyncio
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.workflows.actions.base import ActionExecutor, ActionResult
 from app.workflows.models.store import workflow_store
 from app.workflows.config import WorkflowStatus, ExecutionStatus
@@ -102,13 +102,13 @@ class SubWorkflowAction(ActionExecutor):
             _active_call_stacks[exec_id].discard(wf_id)
 
     async def _wait_completion(self, exec_id: str, timeout: int) -> Dict:
-        start = datetime.utcnow()
+        start = utc_now()
         while True:
             execution = workflow_store.get_execution(exec_id)
             if not execution:
                 return {"status": ExecutionStatus.FAILED, "error": "Not found"}
             if execution.status in [ExecutionStatus.COMPLETED, ExecutionStatus.FAILED, ExecutionStatus.CANCELLED]:
                 return {"status": execution.status, "output": execution.output, "error": execution.error}
-            if (datetime.utcnow() - start).total_seconds() >= timeout:
+            if (utc_now() - start).total_seconds() >= timeout:
                 raise asyncio.TimeoutError()
             await asyncio.sleep(0.5)

@@ -4,10 +4,10 @@ CRUD operations and data manipulation actions
 """
 
 from typing import Dict, Any, List
-from datetime import datetime
 from uuid import uuid4
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.workflows.actions.base import (
     BaseAction, ActionCategory, ActionInput, ActionOutput, register_action
 )
@@ -108,7 +108,7 @@ class CreateRecordAction(BaseAction):
 
         return {
             "record_id": record_id,
-            "record": {**data, "id": record_id, "created_at": datetime.utcnow().isoformat()},
+            "record": {**data, "id": record_id, "created_at": utc_now().isoformat()},
         }
 
 
@@ -152,7 +152,7 @@ class UpdateRecordAction(BaseAction):
 
         return {
             "success": True,
-            "record": {**data, "id": record_id, "updated_at": datetime.utcnow().isoformat()},
+            "record": {**data, "id": record_id, "updated_at": utc_now().isoformat()},
         }
 
 
@@ -191,7 +191,7 @@ class DeleteRecordAction(BaseAction):
 
         return {
             "success": True,
-            "deleted_at": datetime.utcnow().isoformat(),
+            "deleted_at": utc_now().isoformat(),
         }
 
 

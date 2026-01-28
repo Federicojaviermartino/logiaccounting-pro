@@ -6,6 +6,7 @@ Handles PayPal payment processing
 from datetime import datetime
 from typing import Dict, Optional
 import secrets
+from app.utils.datetime_utils import utc_now
 
 
 class PayPalService:
@@ -43,7 +44,7 @@ class PayPalService:
                     "value": f"{amount:.2f}"
                 }
             }],
-            "create_time": datetime.utcnow().isoformat() + "Z",
+            "create_time": utc_now().isoformat() + "Z",
             "links": [
                 {
                     "href": f"https://api.sandbox.paypal.com/v2/checkout/orders/{order_id}",
@@ -110,7 +111,7 @@ class PayPalService:
                 "status": "COMPLETED",
                 "amount": order["purchase_units"][0]["amount"],
                 "final_capture": True,
-                "create_time": datetime.utcnow().isoformat() + "Z"
+                "create_time": utc_now().isoformat() + "Z"
             }]
         }
 
@@ -155,7 +156,7 @@ class PayPalService:
                 "value": f"{refund_amount:.2f}"
             },
             "note_to_payer": note,
-            "create_time": datetime.utcnow().isoformat() + "Z"
+            "create_time": utc_now().isoformat() + "Z"
         }
 
         # Update capture status

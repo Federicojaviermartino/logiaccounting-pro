@@ -4,10 +4,10 @@ External API calls and third-party integrations
 """
 
 from typing import Dict, Any, List
-from datetime import datetime
 import logging
 import aiohttp
 
+from app.utils.datetime_utils import utc_now
 from app.workflows.actions.base import (
     BaseAction, ActionCategory, ActionInput, ActionOutput, register_action
 )
@@ -130,7 +130,7 @@ class SyncToQuickBooksAction(BaseAction):
         return {
             "qb_id": f"qb_{record_id}",
             "sync_status": "synced",
-            "synced_at": datetime.utcnow().isoformat(),
+            "synced_at": utc_now().isoformat(),
         }
 
 
@@ -169,9 +169,9 @@ class ChargeStripeAction(BaseAction):
         logger.info(f"[ChargeStripe] Charging {amount} {currency} to {customer_id}")
 
         return {
-            "payment_intent_id": f"pi_{datetime.utcnow().timestamp()}",
+            "payment_intent_id": f"pi_{utc_now().timestamp()}",
             "status": "requires_confirmation",
-            "client_secret": f"pi_secret_{datetime.utcnow().timestamp()}",
+            "client_secret": f"pi_secret_{utc_now().timestamp()}",
         }
 
 
@@ -256,7 +256,7 @@ class GeneratePDFAction(BaseAction):
 
         logger.info(f"[GeneratePDF] Generating {template} for {record_id}")
 
-        file_id = f"pdf_{datetime.utcnow().timestamp()}"
+        file_id = f"pdf_{utc_now().timestamp()}"
 
         return {
             "file_id": file_id,

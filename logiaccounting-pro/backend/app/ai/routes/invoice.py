@@ -6,6 +6,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, status, Depends, UploadFile, File, Form
 from pydantic import BaseModel
 
+from app.utils.datetime_utils import utc_now
 from app.utils.auth import get_current_user, require_roles
 from ..services.invoice import InvoiceOCR, InvoiceExtractor, InvoiceCategorizer
 from ..models.scanned_invoice import ScannedInvoice
@@ -136,10 +137,9 @@ async def correct_scan(
             detail="Scan not found"
         )
 
-    from datetime import datetime
     scan.corrected_data = request.corrected_data
     scan.validation_status = 'corrected'
-    scan.validated_at = datetime.utcnow()
+    scan.validated_at = utc_now()
     scan.validated_by = current_user.get("id")
     scan.save()
 
@@ -161,9 +161,8 @@ async def approve_scan(
             detail="Scan not found"
         )
 
-    from datetime import datetime
     scan.validation_status = 'approved'
-    scan.validated_at = datetime.utcnow()
+    scan.validated_at = utc_now()
     scan.validated_by = current_user.get("id")
     scan.save()
 

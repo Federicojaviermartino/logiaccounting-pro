@@ -9,6 +9,7 @@ from datetime import datetime
 from uuid import uuid4
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.ai.client import ai_client
 from app.ai.config import get_model_config
 from app.ai.assistant.prompts import SYSTEM_PROMPT, get_context_prompt
@@ -21,7 +22,7 @@ class Message:
     """Chat message."""
     role: str  # "user" or "assistant"
     content: str
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=utc_now)
     data: Optional[Dict] = None
     suggested_actions: List[Dict] = field(default_factory=list)
 
@@ -42,14 +43,14 @@ class Conversation:
     customer_id: str = ""
     messages: List[Message] = field(default_factory=list)
     context: Dict = field(default_factory=dict)
-    created_at: datetime = field(default_factory=datetime.utcnow)
-    updated_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
+    updated_at: datetime = field(default_factory=utc_now)
 
     def add_message(self, role: str, content: str, **kwargs) -> Message:
         """Add a message to the conversation."""
         msg = Message(role=role, content=content, **kwargs)
         self.messages.append(msg)
-        self.updated_at = datetime.utcnow()
+        self.updated_at = utc_now()
         return msg
 
     def to_dict(self) -> Dict:

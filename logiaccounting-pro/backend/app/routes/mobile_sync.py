@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 
 from app.utils.auth import get_current_user
+from app.utils.datetime_utils import utc_now
 from app.models.store import db
 
 router = APIRouter(prefix="/sync", tags=["Mobile Sync"])
@@ -97,7 +98,7 @@ async def get_changes(
 
     return SyncResponse(
         changes=changes,
-        server_time=datetime.utcnow().isoformat(),
+        server_time=utc_now().isoformat(),
         has_more=has_more
     )
 
@@ -167,7 +168,7 @@ async def push_changes(
         synced=synced,
         failed=failed,
         conflicts=conflicts,
-        server_time=datetime.utcnow().isoformat()
+        server_time=utc_now().isoformat()
     )
 
 
@@ -204,7 +205,7 @@ async def get_sync_status(
     Get sync status and statistics.
     """
     return {
-        "server_time": datetime.utcnow().isoformat(),
+        "server_time": utc_now().isoformat(),
         "counts": {
             "invoices": len(db.payments.find_all()),
             "inventory": len(db.materials.find_all()),

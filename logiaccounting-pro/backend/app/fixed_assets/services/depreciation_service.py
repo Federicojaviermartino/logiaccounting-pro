@@ -2,6 +2,8 @@
 Depreciation processing service.
 """
 from datetime import datetime, date
+
+from app.utils.datetime_utils import utc_now
 from decimal import Decimal
 from typing import Optional, List, Tuple
 from uuid import UUID
@@ -209,14 +211,14 @@ class DepreciationService:
 
         # Update run
         run.status = DepreciationRunStatus.POSTED
-        run.posted_at = datetime.utcnow()
+        run.posted_at = utc_now()
         run.posted_by = user_id
 
         # Update entries and assets
         for entry in run.entries:
             if entry.status == DepreciationEntryStatus.CALCULATED:
                 entry.status = DepreciationEntryStatus.POSTED
-                entry.posted_at = datetime.utcnow()
+                entry.posted_at = utc_now()
                 entry.posted_by = user_id
 
                 # Update asset

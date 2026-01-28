@@ -10,6 +10,8 @@ from uuid import UUID
 import uuid
 
 from sqlalchemy import select, func, and_, or_
+
+from app.utils.datetime_utils import utc_now
 from sqlalchemy.orm import Session, selectinload
 from fastapi import Depends, HTTPException, status
 
@@ -152,7 +154,7 @@ class InvoiceService:
         for field, value in update_data.items():
             setattr(invoice, field, value)
 
-        invoice.updated_at = datetime.utcnow()
+        invoice.updated_at = utc_now()
         invoice.recalculate_totals()
 
         self.db.commit()
@@ -390,7 +392,7 @@ class InvoiceService:
             )
 
         invoice.status = InvoiceStatusEnum.PENDING.value
-        invoice.updated_at = datetime.utcnow()
+        invoice.updated_at = utc_now()
 
         self._update_order_invoiced(invoice)
 
@@ -442,7 +444,7 @@ class InvoiceService:
             )
 
         invoice.status = InvoiceStatusEnum.SENT.value
-        invoice.sent_at = datetime.utcnow()
+        invoice.sent_at = utc_now()
         invoice.sent_to = request.email_to
 
         self.db.commit()
@@ -875,7 +877,7 @@ class PaymentService:
 
         payment.is_void = True
         payment.void_reason = request.reason
-        payment.void_at = datetime.utcnow()
+        payment.void_at = utc_now()
         payment.void_by = void_by
         payment.applied_amount = Decimal("0")
         payment.unapplied_amount = payment.amount

@@ -4,6 +4,7 @@ Refund Management Service
 
 from datetime import datetime
 from typing import Dict, List, Optional
+from app.utils.datetime_utils import utc_now
 from app.services.stripe_service import stripe_service
 from app.services.paypal_service import paypal_service
 from app.services.mercadopago_service import mercadopago_service
@@ -88,8 +89,8 @@ class RefundService:
             "gateway_refund_id": result.get("refund", {}).get("id"),
             "status": "completed",
             "requested_by": requested_by,
-            "processed_at": datetime.utcnow().isoformat(),
-            "created_at": datetime.utcnow().isoformat()
+            "processed_at": utc_now().isoformat(),
+            "created_at": utc_now().isoformat()
         }
 
         self._refunds[refund_id] = refund

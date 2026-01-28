@@ -6,6 +6,7 @@ Core synchronization engine for bidirectional data sync
 from typing import Dict, Any, List, Optional, Tuple
 from datetime import datetime
 from enum import Enum
+from app.utils.datetime_utils import utc_now
 import logging
 import hashlib
 import json
@@ -102,7 +103,7 @@ class SyncEngine:
 
             # Update sync config timestamp
             sync_configs_store.update(sync_config_id, {
-                "last_sync_at": datetime.utcnow().isoformat()
+                "last_sync_at": utc_now().isoformat()
             })
 
         except Exception as e:
@@ -216,8 +217,8 @@ class SyncEngine:
                 # Update existing record
                 sync_records_store.update(existing["id"], {
                     "remote_hash": remote_hash,
-                    "remote_updated_at": datetime.utcnow().isoformat(),
-                    "last_synced_at": datetime.utcnow().isoformat(),
+                    "remote_updated_at": utc_now().isoformat(),
+                    "last_synced_at": utc_now().isoformat(),
                     "sync_status": SyncStatus.SYNCED,
                 })
 
@@ -282,7 +283,7 @@ class SyncEngine:
             logger.info(f"Would sync outbound record: {sync_record['local_id']}")
 
             sync_records_store.update(sync_record["id"], {
-                "last_synced_at": datetime.utcnow().isoformat(),
+                "last_synced_at": utc_now().isoformat(),
                 "sync_status": SyncStatus.SYNCED,
             })
 

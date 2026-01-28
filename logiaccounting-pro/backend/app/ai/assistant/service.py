@@ -7,6 +7,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.ai.base import AIResult
 from app.ai.assistant.chatbot import AIAssistant, ai_assistant, AssistantResponse
 from app.ai.assistant.prompts import get_suggestions
@@ -69,7 +70,7 @@ Keep each insight to 1-2 sentences."""
 
             return AIResult.ok({
                 "insights": response.response,
-                "generated_at": datetime.utcnow().isoformat(),
+                "generated_at": utc_now().isoformat(),
             })
 
         except Exception as e:

@@ -7,6 +7,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, status, Depends
 from app.models.store import db
 from app.utils.auth import get_current_user, require_roles
+from app.utils.datetime_utils import utc_now
 from app.schemas.schemas import PaymentCreate, PaymentUpdate, PaymentMarkPaid
 
 router = APIRouter()
@@ -32,7 +33,7 @@ async def get_payments(
         filters["client_id"] = current_user["id"]
     
     payments = db.payments.find_all(filters if filters else None)
-    now = datetime.utcnow()
+    now = utc_now()
     
     for p in payments:
         supplier = db.users.find_by_id(p.get("supplier_id"))

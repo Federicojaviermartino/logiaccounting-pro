@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 import base64
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -72,7 +74,7 @@ class QuickBooksOAuth:
                     "refresh_token": result["refresh_token"],
                     "expires_in": result["expires_in"],
                     "token_type": result["token_type"],
-                    "obtained_at": datetime.utcnow().isoformat(),
+                    "obtained_at": utc_now().isoformat(),
                 }
 
     async def refresh_token(self, refresh_token: str) -> Dict:
@@ -107,7 +109,7 @@ class QuickBooksOAuth:
                     "refresh_token": result.get("refresh_token", refresh_token),
                     "expires_in": result["expires_in"],
                     "token_type": result["token_type"],
-                    "refreshed_at": datetime.utcnow().isoformat(),
+                    "refreshed_at": utc_now().isoformat(),
                 }
 
     async def revoke_token(self, token: str) -> bool:
@@ -136,4 +138,4 @@ class QuickBooksOAuth:
         expires_at = obtained + timedelta(seconds=expires_in)
         buffer = timedelta(minutes=buffer_minutes)
 
-        return datetime.utcnow() >= (expires_at - buffer)
+        return utc_now() >= (expires_at - buffer)

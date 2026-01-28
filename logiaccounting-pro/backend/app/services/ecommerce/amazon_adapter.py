@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import random
 from app.services.ecommerce.base_adapter import BaseEcommerceAdapter
+from app.utils.datetime_utils import utc_now
 
 
 class AmazonAdapter(BaseEcommerceAdapter):
@@ -217,7 +218,7 @@ class AmazonAdapter(BaseEcommerceAdapter):
 
             order = {
                 "amazon_order_id": f"111-{random.randint(1000000, 9999999)}-{random.randint(1000000, 9999999)}",
-                "purchase_date": (datetime.utcnow() - timedelta(days=i)).isoformat() + "Z",
+                "purchase_date": (utc_now() - timedelta(days=i)).isoformat() + "Z",
                 "order_status": random.choice(statuses),
                 "fulfillment_channel": product["fulfillment_channel"],
                 "order_total": {"amount": subtotal + 5.99, "currency": "USD"},

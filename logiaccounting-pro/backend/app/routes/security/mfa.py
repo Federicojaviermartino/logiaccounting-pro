@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException, Depends, Request, status
 from pydantic import BaseModel, Field
 
 from app.utils.auth import get_current_user, require_roles
+from app.utils.datetime_utils import utc_now
 
 
 router = APIRouter()
@@ -104,7 +105,7 @@ class MFAStore:
         self._pending_setup[user_id] = {
             "secret": secret,
             "backup_codes": backup_codes,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
         }
         return self._pending_setup[user_id]
 
@@ -119,8 +120,8 @@ class MFAStore:
                 "enabled": True,
                 "method": "totp",
                 "secret": pending["secret"],
-                "verified_at": datetime.utcnow().isoformat(),
-                "last_verified": datetime.utcnow().isoformat(),
+                "verified_at": utc_now().isoformat(),
+                "last_verified": utc_now().isoformat(),
             }
             self._backup_codes[user_id] = pending["backup_codes"]
             del self._pending_setup[user_id]
@@ -135,7 +136,7 @@ class MFAStore:
             return False
 
         if self._verify_totp(data.get("secret", ""), code):
-            self._data[user_id]["last_verified"] = datetime.utcnow().isoformat()
+            self._data[user_id]["last_verified"] = utc_now().isoformat()
             return True
 
         return self._use_backup_code(user_id, code)
@@ -178,7 +179,7 @@ class MFAStore:
         if code in codes:
             codes.remove(code)
             self._backup_codes[user_id] = codes
-            self._data[user_id]["last_verified"] = datetime.utcnow().isoformat()
+            self._data[user_id]["last_verified"] = utc_now().isoformat()
             return True
         return False
 

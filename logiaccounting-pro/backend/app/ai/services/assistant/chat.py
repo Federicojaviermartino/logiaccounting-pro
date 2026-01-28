@@ -8,6 +8,7 @@ import json
 from typing import Optional, Dict, Any, List
 from datetime import datetime
 
+from app.utils.datetime_utils import utc_now
 from ...config import get_ai_config
 from ...models.conversation import AIConversation, AIMessage
 from ..llm_client import get_llm_client, ModelTier
@@ -172,7 +173,7 @@ class ChatAssistant:
         # Update conversation
         conversation.total_input_tokens += response.input_tokens
         conversation.total_output_tokens += response.output_tokens
-        conversation.updated_at = datetime.utcnow()
+        conversation.updated_at = utc_now()
 
         # Auto-generate title from first message
         if not conversation.title or conversation.title == 'New Conversation':

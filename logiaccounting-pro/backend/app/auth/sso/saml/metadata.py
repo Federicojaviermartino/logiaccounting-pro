@@ -3,8 +3,10 @@ SAML Service Provider Metadata Generator
 """
 
 from typing import Optional
-from datetime import datetime, timedelta
+from datetime import timedelta
 import os
+
+from app.utils.datetime_utils import utc_now
 
 
 class SAMLMetadataGenerator:
@@ -103,5 +105,5 @@ class SAMLMetadataGenerator:
 
     def _get_valid_until(self) -> str:
         """Get validity timestamp"""
-        valid_until = datetime.utcnow() + timedelta(days=self.valid_days)
+        valid_until = utc_now() + timedelta(days=self.valid_days)
         return valid_until.strftime('%Y-%m-%dT%H:%M:%SZ')

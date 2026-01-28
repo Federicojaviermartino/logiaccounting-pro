@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -67,7 +69,7 @@ class PaymentOptimizer:
         )
 
         running_balance = current_balance
-        today = datetime.utcnow().date()
+        today = utc_now().date()
 
         for payment in sorted_payments:
             due_date = payment.due_date.date() if isinstance(payment.due_date, datetime) else payment.due_date

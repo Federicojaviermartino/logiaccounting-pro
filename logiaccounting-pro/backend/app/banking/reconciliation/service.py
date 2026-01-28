@@ -10,6 +10,8 @@ from uuid import UUID, uuid4
 from sqlalchemy import select, func, and_, or_
 from sqlalchemy.orm import Session
 
+from app.utils.datetime_utils import utc_now
+
 from app.banking.reconciliation.models import (
     BankReconciliation, BankReconciliationLine, BankMatchingRule,
     ReconciliationStatus, MatchType, LineStatus
@@ -227,7 +229,7 @@ class BankReconciliationService:
 
                         # Update rule stats
                         rule.times_matched += 1
-                        rule.last_matched_at = datetime.utcnow()
+                        rule.last_matched_at = utc_now()
                         break
 
         # Amount-based matching for remaining transactions
@@ -266,7 +268,7 @@ class BankReconciliationService:
 
         reconciliation.status = ReconciliationStatus.COMPLETED.value
         reconciliation.completed_by = completed_by
-        reconciliation.completed_at = datetime.utcnow()
+        reconciliation.completed_at = utc_now()
 
         # Update account reconciliation date
         from app.banking.accounts.models import BankAccount
@@ -354,7 +356,7 @@ class BankReconciliationService:
             transaction.reconciliation_id = reconciliation_id
             if status == MatchStatus.RECONCILED:
                 transaction.is_reconciled = True
-                transaction.reconciled_at = datetime.utcnow()
+                transaction.reconciled_at = utc_now()
 
     def _get_active_rules(self) -> List[BankMatchingRule]:
         """Get active matching rules ordered by priority"""

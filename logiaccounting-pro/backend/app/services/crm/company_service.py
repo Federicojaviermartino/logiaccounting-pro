@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import List, Optional, Dict, Any
 
 from app.models.crm_store import crm_store
+from app.utils.datetime_utils import utc_now
 
 
 class CompanyService:
@@ -154,7 +155,7 @@ class CompanyService:
         # Recent activity
         recent_activities = [
             a for a in activities
-            if a.get("created_at", "") > (datetime.utcnow().replace(day=1)).isoformat()
+            if a.get("created_at", "") > (utc_now().replace(day=1)).isoformat()
         ]
         if recent_activities:
             score += min(len(recent_activities) * 2, 15)  # Up to +15 for recent activity

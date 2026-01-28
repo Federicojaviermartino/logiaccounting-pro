@@ -6,6 +6,7 @@ Manages gateway configurations and connections
 from datetime import datetime
 from typing import Dict, List, Optional
 import hashlib
+from app.utils.datetime_utils import utc_now
 import base64
 
 
@@ -77,7 +78,7 @@ class GatewayService:
                 "webhook_url": f"/api/v1/webhooks/{provider}",
                 "last_tested": None,
                 "test_status": None,
-                "created_at": datetime.utcnow().isoformat()
+                "created_at": utc_now().isoformat()
             }
 
     def get_gateway(self, provider: str) -> Optional[dict]:
@@ -156,7 +157,7 @@ class GatewayService:
             message = "Connection successful" if success else "Invalid credentials"
 
         # Update test status
-        gateway["last_tested"] = datetime.utcnow().isoformat()
+        gateway["last_tested"] = utc_now().isoformat()
         gateway["test_status"] = "success" if success else "failed"
 
         return {

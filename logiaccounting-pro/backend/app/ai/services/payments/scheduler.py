@@ -7,6 +7,7 @@ import logging
 from datetime import datetime, date, timedelta
 from typing import Optional, Dict, Any, List
 
+from app.utils.datetime_utils import utc_now
 from ...models.payment_recommendation import PaymentRecommendation
 
 logger = logging.getLogger(__name__)
@@ -66,9 +67,9 @@ class PaymentScheduler:
             return None
 
         rec.status = 'accepted'
-        rec.actioned_at = datetime.utcnow()
+        rec.actioned_at = utc_now()
         rec.actioned_by = user_id
-        rec.action_result = {'action': 'accepted', 'timestamp': datetime.utcnow().isoformat()}
+        rec.action_result = {'action': 'accepted', 'timestamp': utc_now().isoformat()}
         rec.save()
 
         return rec.to_dict()
@@ -97,12 +98,12 @@ class PaymentScheduler:
             return None
 
         rec.status = 'rejected'
-        rec.actioned_at = datetime.utcnow()
+        rec.actioned_at = utc_now()
         rec.actioned_by = user_id
         rec.action_result = {
             'action': 'rejected',
             'reason': reason,
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': utc_now().isoformat(),
         }
         rec.save()
 

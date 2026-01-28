@@ -2,6 +2,8 @@
 Asset disposal processing service.
 """
 from datetime import datetime, date
+
+from app.utils.datetime_utils import utc_now
 from decimal import Decimal
 from typing import Optional, List, Tuple
 from uuid import UUID
@@ -101,7 +103,7 @@ class DisposalService:
 
         transaction.status = TransactionStatus.APPROVED
         transaction.approved_by = user_id
-        transaction.approved_at = datetime.utcnow()
+        transaction.approved_at = utc_now()
 
         self.db.commit()
         self.db.refresh(transaction)

@@ -6,6 +6,7 @@ Natural language processing for queries and commands
 import re
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
+from app.utils.datetime_utils import utc_now
 from app.models.store import db
 
 
@@ -80,7 +81,7 @@ class AIAssistantService:
     def extract_time_period(self, message: str) -> Tuple[datetime, datetime]:
         """Extract time period from message"""
         message_lower = message.lower()
-        now = datetime.utcnow()
+        now = utc_now()
 
         if any(w in message_lower for w in ["today", "hoy"]):
             start = now.replace(hour=0, minute=0, second=0)
@@ -118,7 +119,7 @@ class AIAssistantService:
         self._conversations[user_id].append({
             "role": "user",
             "content": message,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": utc_now().isoformat()
         })
 
         response = self._generate_response(intent, start_date, end_date, language, message)
@@ -126,7 +127,7 @@ class AIAssistantService:
         self._conversations[user_id].append({
             "role": "assistant",
             "content": response["message"],
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": utc_now().isoformat()
         })
 
         return {
@@ -242,7 +243,7 @@ class AIAssistantService:
     def _query_payments(self, spanish: bool) -> dict:
         """Query overdue and pending payments"""
         payments = db.payments.find_all()
-        today = datetime.utcnow().date().isoformat()
+        today = utc_now().date().isoformat()
 
         overdue = [p for p in payments if p.get("status") == "pending" and p.get("due_date", "") < today]
         pending = [p for p in payments if p.get("status") == "pending"]

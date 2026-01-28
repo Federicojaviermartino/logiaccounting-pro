@@ -3,10 +3,10 @@ Workflow Version Control Service
 """
 
 from typing import Dict, Any, Optional, List
-from datetime import datetime
 from uuid import uuid4
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.workflows.models.workflow import Workflow
 from app.workflows.models.store import workflow_store
 
@@ -32,7 +32,7 @@ class WorkflowVersionService:
             "workflow_id": wf_id,
             "version": version_number,
             "snapshot": self._create_snapshot(workflow),
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
             "created_by": user_id,
             "comment": comment,
             "node_count": len(workflow.nodes),

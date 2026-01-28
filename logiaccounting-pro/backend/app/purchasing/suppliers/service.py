@@ -3,11 +3,13 @@ Supplier Service
 Business logic for supplier management
 """
 
-from datetime import datetime, date
+from datetime import date
 from decimal import Decimal
 from typing import List, Optional, Tuple
 from uuid import UUID
 import logging
+
+from app.utils.datetime_utils import utc_now
 
 from sqlalchemy import func, or_, and_
 from sqlalchemy.orm import Session, joinedload
@@ -245,7 +247,7 @@ class SupplierService:
 
         supplier.is_approved = approve
         supplier.approved_by = approved_by if approve else None
-        supplier.approved_at = datetime.utcnow() if approve else None
+        supplier.approved_at = utc_now() if approve else None
 
         self.db.commit()
         self.db.refresh(supplier)

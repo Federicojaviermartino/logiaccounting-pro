@@ -8,6 +8,7 @@ from typing import List, Optional, Dict, Any
 from uuid import uuid4
 
 from app.models.crm_store import crm_store
+from app.utils.datetime_utils import utc_now
 
 
 class OpportunityService:
@@ -140,7 +141,7 @@ class OpportunityService:
 
         updates = {
             "status": "won",
-            "actual_close_date": datetime.utcnow().isoformat(),
+            "actual_close_date": utc_now().isoformat(),
             "win_notes": notes,
         }
 
@@ -175,7 +176,7 @@ class OpportunityService:
 
         updates = {
             "status": "lost",
-            "actual_close_date": datetime.utcnow().isoformat(),
+            "actual_close_date": utc_now().isoformat(),
             "lost_reason": lost_reason,
             "competitor": competitor,
             "loss_notes": notes,
@@ -293,7 +294,7 @@ class OpportunityService:
             limit=1000,
         )
 
-        today = datetime.utcnow().date()
+        today = utc_now().date()
         end_date = today + timedelta(days=days)
 
         # Filter by expected close date
@@ -338,7 +339,7 @@ class OpportunityService:
         """Analyze win/loss rates"""
         opps, _ = crm_store.list_opportunities(tenant_id=tenant_id, limit=1000)
 
-        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        cutoff = (utc_now() - timedelta(days=days)).isoformat()
         recent_opps = [
             o for o in opps
             if o.get("actual_close_date") and o["actual_close_date"] >= cutoff

@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any, List, Tuple, Generator, AsyncGenerator
 from datetime import datetime
 from dataclasses import dataclass, field
+from app.utils.datetime_utils import utc_now
 from enum import Enum
 import logging
 import hashlib
@@ -45,7 +46,7 @@ class SyncResult:
             'record_id': record_id,
             'error': error,
             'details': details,
-            'timestamp': datetime.utcnow().isoformat()
+            'timestamp': utc_now().isoformat()
         })
         self.records_failed += 1
 

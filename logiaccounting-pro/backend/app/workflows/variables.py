@@ -9,6 +9,8 @@ import json
 from datetime import datetime
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -20,9 +22,9 @@ class VariableResolver:
 
     # Built-in functions
     FUNCTIONS = {
-        "now": lambda: datetime.utcnow().isoformat(),
-        "today": lambda: datetime.utcnow().strftime("%Y-%m-%d"),
-        "timestamp": lambda: int(datetime.utcnow().timestamp()),
+        "now": lambda: utc_now().isoformat(),
+        "today": lambda: utc_now().strftime("%Y-%m-%d"),
+        "timestamp": lambda: int(utc_now().timestamp()),
         "uuid": lambda: __import__('uuid').uuid4().hex,
     }
 

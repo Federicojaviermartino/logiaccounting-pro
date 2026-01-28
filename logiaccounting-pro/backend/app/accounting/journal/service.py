@@ -12,6 +12,8 @@ import logging
 from sqlalchemy import select, and_, or_, func
 from sqlalchemy.orm import Session, joinedload
 
+from app.utils.datetime_utils import utc_now
+
 from app.accounting.journal.models import (
     JournalEntry, JournalLine, EntryTypeEnum, EntryStatusEnum
 )
@@ -296,7 +298,7 @@ class JournalEntryService:
         if not self.validator.validate(entry):
             raise ValueError(self.validator.get_errors())
 
-        entry.updated_at = datetime.utcnow()
+        entry.updated_at = utc_now()
         self.db.commit()
         self.db.refresh(entry)
 
@@ -340,7 +342,7 @@ class JournalEntryService:
 
         entry.status = EntryStatusEnum.PENDING
         entry.submitted_by = submitted_by
-        entry.submitted_at = datetime.utcnow()
+        entry.submitted_at = utc_now()
 
         self.db.commit()
         logger.info(f"Submitted entry for approval: {entry.entry_number}")
@@ -362,7 +364,7 @@ class JournalEntryService:
 
         entry.status = EntryStatusEnum.APPROVED
         entry.approved_by = approved_by
-        entry.approved_at = datetime.utcnow()
+        entry.approved_at = utc_now()
         entry.approval_notes = notes
 
         self.db.commit()
@@ -414,7 +416,7 @@ class JournalEntryService:
 
         entry.status = EntryStatusEnum.POSTED
         entry.posted_by = posted_by
-        entry.posted_at = datetime.utcnow()
+        entry.posted_at = utc_now()
 
         self.db.commit()
         logger.info(f"Posted entry: {entry.entry_number}")
@@ -461,7 +463,7 @@ class JournalEntryService:
             reversed_entry_id=original.id,
             created_by=reversed_by,
             approved_by=reversed_by,
-            approved_at=datetime.utcnow(),
+            approved_at=utc_now(),
         )
 
         # Create reversed lines (swap debit/credit)
@@ -513,7 +515,7 @@ class JournalEntryService:
 
         entry.status = EntryStatusEnum.VOIDED
         entry.voided_by = voided_by
-        entry.voided_at = datetime.utcnow()
+        entry.voided_at = utc_now()
         entry.void_reason = reason
 
         self.db.commit()

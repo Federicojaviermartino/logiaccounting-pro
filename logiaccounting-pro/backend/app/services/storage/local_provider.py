@@ -6,6 +6,7 @@ For development and testing
 from typing import Optional, Dict, Any, BinaryIO
 from datetime import datetime
 import os
+from app.utils.datetime_utils import utc_now
 import shutil
 import hashlib
 import json
@@ -68,7 +69,7 @@ class LocalStorageProvider(StorageProvider):
                 'metadata': metadata or {},
                 'size': len(content),
                 'etag': file_hash,
-                'created_at': datetime.utcnow().isoformat(),
+                'created_at': utc_now().isoformat(),
             }, f)
 
         return StorageObject(
@@ -77,7 +78,7 @@ class LocalStorageProvider(StorageProvider):
             size=len(content),
             content_type=content_type or self._guess_content_type(key),
             etag=file_hash,
-            last_modified=datetime.utcnow(),
+            last_modified=utc_now(),
             metadata=metadata,
             url=f"{self.base_url}/{bucket}/{key}",
         )
@@ -106,7 +107,7 @@ class LocalStorageProvider(StorageProvider):
                 'metadata': metadata or {},
                 'size': len(content),
                 'etag': file_hash,
-                'created_at': datetime.utcnow().isoformat(),
+                'created_at': utc_now().isoformat(),
             }, f)
 
         return StorageObject(
@@ -115,7 +116,7 @@ class LocalStorageProvider(StorageProvider):
             size=len(content),
             content_type=content_type or self._guess_content_type(key),
             etag=file_hash,
-            last_modified=datetime.utcnow(),
+            last_modified=utc_now(),
             metadata=metadata,
             url=f"{self.base_url}/{bucket}/{key}",
         )

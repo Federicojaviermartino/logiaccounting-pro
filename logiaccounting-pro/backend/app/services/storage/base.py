@@ -8,6 +8,7 @@ from typing import Optional, Dict, Any, BinaryIO, List
 from dataclasses import dataclass
 from datetime import datetime
 import mimetypes
+from app.utils.datetime_utils import utc_now
 import os
 
 
@@ -157,7 +158,7 @@ class StorageProvider(ABC):
     ) -> str:
         """Generate storage key with organization namespace"""
         safe_filename = self._safe_filename(filename)
-        date_path = datetime.utcnow().strftime('%Y/%m')
+        date_path = utc_now().strftime('%Y/%m')
 
         if version:
             return f"{organization_id}/documents/{date_path}/{document_id}/v{version}/{safe_filename}"

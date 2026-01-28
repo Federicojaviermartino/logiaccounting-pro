@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, Set
 from datetime import datetime
 from enum import Enum
 
+from app.utils.datetime_utils import utc_now
 from app.performance.caching.redis_client import redis_manager
 from app.performance.caching.cache_manager import cache_manager
 from app.performance.caching.cache_keys import CacheTags, cache_keys
@@ -209,7 +210,7 @@ class CacheInvalidationService:
             message = json.dumps({
                 "event": event.value,
                 "context": context,
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": utc_now().isoformat()
             })
             await redis_client.publish(
                 self.PUBSUB_CHANNEL,

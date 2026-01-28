@@ -6,6 +6,7 @@ Integration with HubSpot CRM
 from typing import Optional, Dict, Any, List, Tuple
 from datetime import datetime
 import httpx
+from app.utils.datetime_utils import utc_now
 import logging
 
 from ..base_connector import (
@@ -387,7 +388,7 @@ class HubSpotConnector(BaseConnector):
         data = {
             'engagement': {
                 'type': engagement_type.upper(),
-                'timestamp': int(datetime.utcnow().timestamp() * 1000),
+                'timestamp': int(utc_now().timestamp() * 1000),
             },
             'associations': {
                 'contactIds': contact_ids or [],

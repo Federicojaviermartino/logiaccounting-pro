@@ -6,6 +6,7 @@ Business logic for workflow management
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 from uuid import uuid4
+from app.utils.datetime_utils import utc_now
 import logging
 
 from app.workflows.models import (
@@ -196,7 +197,7 @@ class WorkflowService:
                 for e in data["edges"]
             ]
 
-        workflow.updated_at = datetime.utcnow()
+        workflow.updated_at = utc_now()
         workflow.version += 1
 
         # Re-register triggers if active
@@ -234,7 +235,7 @@ class WorkflowService:
             raise ValidationError("Cannot activate invalid workflow", errors)
 
         workflow.status = WorkflowStatus.ACTIVE
-        workflow.updated_at = datetime.utcnow()
+        workflow.updated_at = utc_now()
 
         # Register triggers
         self._register_workflow_triggers(workflow)
@@ -249,7 +250,7 @@ class WorkflowService:
             return None
 
         workflow.status = WorkflowStatus.PAUSED
-        workflow.updated_at = datetime.utcnow()
+        workflow.updated_at = utc_now()
 
         # Unregister triggers
         self._unregister_workflow_triggers(workflow)

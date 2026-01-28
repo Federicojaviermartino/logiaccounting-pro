@@ -8,6 +8,7 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime, timedelta
 import uuid
 
+from app.utils.datetime_utils import utc_now
 from app.realtime.server import get_socketio
 from app.realtime.managers.connection_manager import get_connection_manager
 from app.realtime.utils.message_types import MessageType
@@ -69,8 +70,8 @@ class NotificationService:
             'priority': priority,
             'is_read': False,
             'read_at': None,
-            'created_at': datetime.utcnow().isoformat(),
-            'expires_at': (datetime.utcnow() + timedelta(days=expires_in_days)).isoformat(),
+            'created_at': utc_now().isoformat(),
+            'expires_at': (utc_now() + timedelta(days=expires_in_days)).isoformat(),
         }
 
         if user_id not in notifications_db:
@@ -126,7 +127,7 @@ class NotificationService:
 
         notifs = list(user_notifications.values())
 
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         notifs = [n for n in notifs if n.get('expires_at', now) >= now]
 
         if unread_only:
@@ -153,7 +154,7 @@ class NotificationService:
         notification = notifications_db[user_id][notification_id]
         if not notification.get('is_read'):
             notification['is_read'] = True
-            notification['read_at'] = datetime.utcnow().isoformat()
+            notification['read_at'] = utc_now().isoformat()
 
             if user_id in unread_counts:
                 unread_counts[user_id] = max(0, unread_counts[user_id] - 1)
@@ -177,7 +178,7 @@ class NotificationService:
             return 0
 
         count = 0
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
 
         for notif in notifications_db[user_id].values():
             if not notif.get('is_read'):

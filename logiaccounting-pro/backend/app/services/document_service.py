@@ -7,6 +7,7 @@ import base64
 import hashlib
 from datetime import datetime
 from typing import Dict, List, Optional
+from app.utils.datetime_utils import utc_now
 
 
 class DocumentService:
@@ -79,7 +80,7 @@ class DocumentService:
             "description": description,
             "content": content_base64,
             "uploaded_by": uploaded_by,
-            "uploaded_at": datetime.utcnow().isoformat(),
+            "uploaded_at": utc_now().isoformat(),
             "version": 1
         }
 

@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from app.models.store import db
 from app.utils.auth import require_roles
 from app.utils.activity_logger import activity_logger
+from app.utils.datetime_utils import utc_now
 import csv
 import io
 import json
@@ -113,7 +114,7 @@ async def generate_report(
         "columns": config.columns,
         "data": data,
         "total_rows": len(data),
-        "generated_at": datetime.utcnow().isoformat()
+        "generated_at": utc_now().isoformat()
     }
 
 
@@ -142,7 +143,7 @@ async def save_template(
         "name": template.name,
         "config": template.config.model_dump(),
         "user_id": current_user["id"],
-        "created_at": datetime.utcnow().isoformat()
+        "created_at": utc_now().isoformat()
     }
 
     return {"id": template_id, "message": "Template saved"}

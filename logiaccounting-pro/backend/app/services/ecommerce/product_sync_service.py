@@ -6,6 +6,7 @@ Handles bidirectional product synchronization
 from datetime import datetime
 from typing import Dict, List, Optional
 import uuid
+from app.utils.datetime_utils import utc_now
 
 
 class ProductSyncService:
@@ -50,7 +51,7 @@ class ProductSyncService:
                     if options.get("update_existing", True):
                         stats["updated"] += 1
                         self._product_mappings[mapping_key]["last_synced"] = (
-                            datetime.utcnow().isoformat() + "Z"
+                            utc_now().isoformat() + "Z"
                         )
                     else:
                         stats["skipped"] += 1
@@ -66,8 +67,8 @@ class ProductSyncService:
                             "name": product["name"],
                             "sku": product["sku"],
                             "sync_direction": "import",
-                            "last_synced": datetime.utcnow().isoformat() + "Z",
-                            "created_at": datetime.utcnow().isoformat() + "Z"
+                            "last_synced": utc_now().isoformat() + "Z",
+                            "created_at": utc_now().isoformat() + "Z"
                         }
                         stats["created"] += 1
                     else:
@@ -83,7 +84,7 @@ class ProductSyncService:
             "direction": "import",
             "status": "completed",
             "stats": stats,
-            "completed_at": datetime.utcnow().isoformat() + "Z"
+            "completed_at": utc_now().isoformat() + "Z"
         }
         self._sync_history.append(sync_record)
 
@@ -117,7 +118,7 @@ class ProductSyncService:
         for mapping in mappings:
             try:
                 # In real implementation, would push to platform
-                mapping["last_synced"] = datetime.utcnow().isoformat() + "Z"
+                mapping["last_synced"] = utc_now().isoformat() + "Z"
                 stats["updated"] += 1
             except Exception:
                 stats["errors"] += 1
@@ -129,7 +130,7 @@ class ProductSyncService:
             "direction": "export",
             "status": "completed",
             "stats": stats,
-            "completed_at": datetime.utcnow().isoformat() + "Z"
+            "completed_at": utc_now().isoformat() + "Z"
         }
         self._sync_history.append(sync_record)
 

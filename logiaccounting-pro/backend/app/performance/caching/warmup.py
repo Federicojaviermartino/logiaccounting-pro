@@ -6,6 +6,7 @@ import logging
 from typing import Any, Callable, Dict, List, Optional
 from datetime import datetime, timedelta
 
+from app.utils.datetime_utils import utc_now
 from app.performance.caching.cache_manager import cache_manager
 from app.performance.caching.cache_keys import CacheNamespace, CacheTTL, cache_keys
 
@@ -73,7 +74,7 @@ class CacheWarmupService:
             return {"status": "already_running"}
 
         self._is_warming = True
-        start_time = datetime.utcnow()
+        start_time = utc_now()
         results = {
             "status": "completed",
             "started_at": start_time.isoformat(),
@@ -107,9 +108,9 @@ class CacheWarmupService:
                     results["tasks"][task.name] = result
                     results["total_keys"] += result.get("keys_cached", 0)
 
-            results["completed_at"] = datetime.utcnow().isoformat()
+            results["completed_at"] = utc_now().isoformat()
             results["duration_seconds"] = (
-                datetime.utcnow() - start_time
+                utc_now() - start_time
             ).total_seconds()
 
         except Exception as e:
@@ -133,7 +134,7 @@ class CacheWarmupService:
         tenant_ids: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         """Execute a single warmup task."""
-        start_time = datetime.utcnow()
+        start_time = utc_now()
         keys_cached = 0
         errors = []
 
@@ -162,7 +163,7 @@ class CacheWarmupService:
             return {
                 "status": "success",
                 "keys_cached": keys_cached,
-                "duration_seconds": (datetime.utcnow() - start_time).total_seconds(),
+                "duration_seconds": (utc_now() - start_time).total_seconds(),
                 "errors": errors if errors else None
             }
 

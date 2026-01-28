@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from datetime import datetime
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -167,7 +169,7 @@ class GracefulShutdown:
             return
 
         self._state.is_shutting_down = True
-        self._state.started_at = datetime.utcnow()
+        self._state.started_at = utc_now()
 
         logger.info("Starting graceful shutdown")
 

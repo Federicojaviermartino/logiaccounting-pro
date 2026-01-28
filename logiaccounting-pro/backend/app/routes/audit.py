@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query, Response
 from fastapi.responses import StreamingResponse
 
 from app.utils.auth import require_roles
+from app.utils.datetime_utils import utc_now
 from app.services.audit import (
     AuditService, audit_service, log_audit,
     AlertService, ReportService,
@@ -143,7 +144,7 @@ async def get_user_audit_trail(
 ):
     """Get audit trail for a specific user"""
     org_id = current_user.get("organization_id", "default")
-    from_date = (datetime.utcnow() - timedelta(days=days)).isoformat()
+    from_date = (utc_now() - timedelta(days=days)).isoformat()
 
     filters = {
         "organization_id": org_id,
@@ -412,7 +413,7 @@ async def update_alert_rule(
         raise HTTPException(status_code=404, detail="Rule not found")
 
     updates = {k: v for k, v in rule.model_dump().items() if v is not None}
-    updates["updated_at"] = datetime.utcnow().isoformat()
+    updates["updated_at"] = utc_now().isoformat()
 
     updated = audit_db.alert_rules.update(rule_id, updates)
 
@@ -532,12 +533,12 @@ async def generate_report(
         framework = params.get("framework", "sox")
         report = report_service.generate_compliance_report(framework)
     elif request.report_type == "activity_summary":
-        start = datetime.fromisoformat(params.get("start_date", (datetime.utcnow() - timedelta(days=30)).isoformat()))
-        end = datetime.fromisoformat(params.get("end_date", datetime.utcnow().isoformat()))
+        start = datetime.fromisoformat(params.get("start_date", (utc_now() - timedelta(days=30)).isoformat()))
+        end = datetime.fromisoformat(params.get("end_date", utc_now().isoformat()))
         report = report_service.generate_activity_report(start, end)
     elif request.report_type == "access_review":
-        start = datetime.fromisoformat(params.get("start_date", (datetime.utcnow() - timedelta(days=30)).isoformat()))
-        end = datetime.fromisoformat(params.get("end_date", datetime.utcnow().isoformat()))
+        start = datetime.fromisoformat(params.get("start_date", (utc_now() - timedelta(days=30)).isoformat()))
+        end = datetime.fromisoformat(params.get("end_date", utc_now().isoformat()))
         report = report_service.generate_access_report(start, end)
     elif request.report_type == "change_report":
         entity_type = params.get("entity_type", "transaction")
@@ -587,7 +588,7 @@ async def create_retention_policy(
     """Create a data retention policy"""
     org_id = current_user.get("organization_id", "default")
 
-    now = datetime.utcnow().isoformat()
+    now = utc_now().isoformat()
     policy_data = policy.model_dump()
     policy_data["organization_id"] = org_id
     policy_data["created_at"] = now
@@ -619,7 +620,7 @@ async def update_retention_policy(
         raise HTTPException(status_code=404, detail="Policy not found")
 
     updates = {k: v for k, v in policy.model_dump().items() if v is not None}
-    updates["updated_at"] = datetime.utcnow().isoformat()
+    updates["updated_at"] = utc_now().isoformat()
 
     updated = audit_db.retention_policies.update(policy_id, updates)
 

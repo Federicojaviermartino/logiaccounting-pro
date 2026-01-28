@@ -4,8 +4,9 @@ Handles /invoice, /customer, /project commands
 """
 
 from typing import Dict, Any, Optional
-from datetime import datetime
 import logging
+
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ class SlackCommandHandler:
 
         # Check timestamp is recent (within 5 minutes)
         request_time = int(timestamp)
-        current_time = int(datetime.utcnow().timestamp())
+        current_time = int(utc_now().timestamp())
         if abs(current_time - request_time) > 300:
             return False
 

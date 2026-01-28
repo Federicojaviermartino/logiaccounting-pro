@@ -8,6 +8,8 @@ from typing import Dict, List, Any
 from collections import defaultdict
 import math
 
+from app.utils.datetime_utils import utc_now
+
 
 class TrendAnalyzer:
     """
@@ -28,7 +30,7 @@ class TrendAnalyzer:
         transactions = self.db.transactions.find_all()
 
         return {
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'revenue_trend': self._analyze_trend(transactions, 'income'),
             'expense_trend': self._analyze_trend(transactions, 'expense'),
             'profit_trend': self._analyze_profit_trend(transactions),
@@ -84,7 +86,7 @@ class TrendAnalyzer:
         transactions = self.db.transactions.find_all()
 
         return {
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'monthly_patterns': self._monthly_seasonality(transactions),
             'weekly_patterns': self._weekly_seasonality(transactions),
             'quarterly_patterns': self._quarterly_seasonality(transactions)
@@ -181,7 +183,7 @@ class TrendAnalyzer:
 
     def _yoy_comparison(self, transactions: List[Dict]) -> Dict[str, Any]:
         """Year-over-year comparison"""
-        today = datetime.utcnow()
+        today = utc_now()
         current_year = today.year
         previous_year = current_year - 1
 
@@ -234,7 +236,7 @@ class TrendAnalyzer:
 
     def _mom_comparison(self, transactions: List[Dict]) -> Dict[str, Any]:
         """Month-over-month comparison"""
-        today = datetime.utcnow()
+        today = utc_now()
         current_month_start = today.replace(day=1)
         previous_month_end = current_month_start - timedelta(days=1)
         previous_month_start = previous_month_end.replace(day=1)

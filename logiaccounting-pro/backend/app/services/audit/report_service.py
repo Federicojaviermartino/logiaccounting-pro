@@ -10,6 +10,7 @@ import json
 import logging
 
 from app.models.audit_store import audit_db
+from app.utils.datetime_utils import utc_now
 from .compliance_service import ComplianceService
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ class ReportService:
             'report_type': 'compliance_summary',
             'framework': framework,
             'organization_id': self.organization_id,
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'summary': result['summary'],
             'controls': result['controls'],
         }
@@ -114,7 +115,7 @@ class ReportService:
                 'user_id': user_id,
                 'entity_type': entity_type,
             },
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'statistics': stats,
             'events': logs[:1000],  # Limit events
         }
@@ -168,7 +169,7 @@ class ReportService:
                 'start': start_date.isoformat(),
                 'end': end_date.isoformat(),
             },
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'statistics': stats,
             'events': logs[:500],
         }
@@ -223,7 +224,7 @@ class ReportService:
                 'start': start_date.isoformat() if start_date else None,
                 'end': end_date.isoformat() if end_date else None,
             },
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'total_changes': len(changes),
             'changes': changes,
         }

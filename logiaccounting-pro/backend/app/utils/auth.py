@@ -2,7 +2,7 @@
 Authentication utilities for LogiAccounting Pro
 """
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -11,6 +11,7 @@ from passlib.context import CryptContext
 from pydantic_settings import BaseSettings
 
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 
 
 class Settings(BaseSettings):
@@ -42,11 +43,11 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None, e
     """Create a JWT access token"""
     to_encode = data.copy()
     if expires_minutes:
-        expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
+        expire = utc_now() + timedelta(minutes=expires_minutes)
     elif expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = utc_now() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(hours=settings.access_token_expire_hours)
+        expire = utc_now() + timedelta(hours=settings.access_token_expire_hours)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
 
@@ -54,7 +55,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None, e
 def create_refresh_token(data: dict, expires_days: int = 7) -> str:
     """Create a JWT refresh token with longer expiration"""
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(days=expires_days)
+    expire = utc_now() + timedelta(days=expires_days)
     to_encode.update({"exp": expire, "token_type": "refresh"})
     return jwt.encode(to_encode, settings.secret_key, algorithm=settings.algorithm)
 

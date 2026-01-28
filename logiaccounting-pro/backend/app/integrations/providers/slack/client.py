@@ -4,8 +4,9 @@ Handles Slack API communication
 """
 
 from typing import Dict, Any, List, Optional
-from datetime import datetime
 import logging
+
+from app.utils.datetime_utils import utc_now
 
 from app.integrations.base import (
     BaseIntegration,
@@ -74,7 +75,7 @@ class SlackIntegration(BaseIntegration):
         """Handle OAuth callback."""
         # Demo response
         return {
-            "access_token": f"xoxb-slack-token-{datetime.utcnow().timestamp()}",
+            "access_token": f"xoxb-slack-token-{utc_now().timestamp()}",
             "team": {"id": "T12345", "name": "Demo Workspace"},
             "incoming_webhook": {"url": "https://hooks.slack.com/services/..."},
         }
@@ -138,7 +139,7 @@ class SlackIntegration(BaseIntegration):
         return {
             "ok": True,
             "channel": channel,
-            "ts": str(datetime.utcnow().timestamp()),
+            "ts": str(utc_now().timestamp()),
             "message": {"text": text},
         }
 

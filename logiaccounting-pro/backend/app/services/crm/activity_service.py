@@ -8,6 +8,7 @@ from typing import List, Optional, Dict, Any
 from uuid import uuid4
 
 from app.models.crm_store import crm_store
+from app.utils.datetime_utils import utc_now
 
 
 class ActivityService:
@@ -141,7 +142,7 @@ class ActivityService:
         """Mark activity as completed"""
         updates = {
             "status": "completed",
-            "completed_at": datetime.utcnow().isoformat(),
+            "completed_at": utc_now().isoformat(),
             "completed_by": user_id,
         }
 
@@ -156,7 +157,7 @@ class ActivityService:
         """Cancel activity"""
         return crm_store.update_activity(activity_id, {
             "status": "cancelled",
-            "cancelled_at": datetime.utcnow().isoformat(),
+            "cancelled_at": utc_now().isoformat(),
             "cancelled_by": user_id,
             "cancel_reason": reason,
         })
@@ -177,7 +178,7 @@ class ActivityService:
         reschedule_history.append({
             "from_date": activity.get("due_date"),
             "to_date": new_date,
-            "rescheduled_at": datetime.utcnow().isoformat(),
+            "rescheduled_at": utc_now().isoformat(),
             "rescheduled_by": user_id,
         })
 
@@ -276,8 +277,8 @@ class ActivityService:
         }
 
         if open_count == 1:
-            updates["first_opened_at"] = datetime.utcnow().isoformat()
-        updates["last_opened_at"] = datetime.utcnow().isoformat()
+            updates["first_opened_at"] = utc_now().isoformat()
+        updates["last_opened_at"] = utc_now().isoformat()
 
         return crm_store.update_activity(activity_id, updates)
 
@@ -292,7 +293,7 @@ class ActivityService:
         return crm_store.update_activity(activity_id, {
             "email_status": "clicked",
             "email_click_count": click_count,
-            "last_clicked_at": datetime.utcnow().isoformat(),
+            "last_clicked_at": utc_now().isoformat(),
             "last_clicked_url": url,
         })
 
@@ -383,7 +384,7 @@ class ActivityService:
             limit=1000,
         )
 
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         return [a for a in activities if a.get("due_date") and a["due_date"] < now]
 
     def get_upcoming_activities(
@@ -400,7 +401,7 @@ class ActivityService:
             limit=1000,
         )
 
-        now = datetime.utcnow()
+        now = utc_now()
         end_date = (now + timedelta(days=days)).isoformat()
 
         upcoming = [
@@ -427,7 +428,7 @@ class ActivityService:
             limit=10000,
         )
 
-        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        cutoff = (utc_now() - timedelta(days=days)).isoformat()
         recent = [a for a in activities if a.get("created_at", "") >= cutoff]
 
         # Count by type

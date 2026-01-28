@@ -7,6 +7,7 @@ Handles SSO connections, authentication flows, and user provisioning.
 from typing import Optional, Dict, Any, List, Tuple
 from datetime import datetime, timedelta
 from uuid import uuid4
+from app.utils.datetime_utils import utc_now
 import os
 import secrets
 
@@ -139,7 +140,7 @@ class SSOService:
             "state": request_id,
             "relay_state": relay_state,
             "status": "pending",
-            "expires_at": (datetime.utcnow() + timedelta(minutes=10)).isoformat(),
+            "expires_at": (utc_now() + timedelta(minutes=10)).isoformat(),
         })
 
         return redirect_url, request_id
@@ -228,7 +229,7 @@ class SSOService:
             "state": state,
             "nonce": nonce,
             "status": "pending",
-            "expires_at": (datetime.utcnow() + timedelta(minutes=10)).isoformat(),
+            "expires_at": (utc_now() + timedelta(minutes=10)).isoformat(),
         })
 
         return auth_url, state
@@ -292,7 +293,7 @@ class SSOService:
             "status": "completed",
             "access_token_encrypted": encrypt_value(tokens.access_token) if tokens.access_token else None,
             "refresh_token_encrypted": encrypt_value(tokens.refresh_token) if tokens.refresh_token else None,
-            "token_expires_at": (datetime.utcnow() + timedelta(seconds=tokens.expires_in)).isoformat() if tokens.expires_in else None,
+            "token_expires_at": (utc_now() + timedelta(seconds=tokens.expires_in)).isoformat() if tokens.expires_in else None,
         })
 
         return self._complete_sso_authentication(
@@ -381,7 +382,7 @@ class SSOService:
             db.external_identities.update(external_identity["id"], {
                 "external_email": email,
                 "attributes": attributes,
-                "last_login_at": datetime.utcnow().isoformat(),
+                "last_login_at": utc_now().isoformat(),
             })
 
         mapped_role = self._map_role(attributes.get("groups", []), connection)

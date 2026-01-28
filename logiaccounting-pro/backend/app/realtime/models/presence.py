@@ -8,6 +8,8 @@ from datetime import datetime
 from typing import Optional, Dict, Any
 from enum import Enum
 
+from app.utils.datetime_utils import utc_now
+
 
 class PresenceStatus(str, Enum):
     """User presence status"""
@@ -45,7 +47,7 @@ class PresenceData:
 
     def update_activity(self, current_page: str = None, entity_type: str = None, entity_id: str = None):
         """Update last activity and location"""
-        self.last_active_at = datetime.utcnow()
+        self.last_active_at = utc_now()
         if self.status == PresenceStatus.AWAY:
             self.status = PresenceStatus.ONLINE
         if current_page:
@@ -67,7 +69,7 @@ class PresenceData:
     def set_online(self):
         """Set user as online"""
         self.status = PresenceStatus.ONLINE
-        self.last_active_at = datetime.utcnow()
+        self.last_active_at = utc_now()
 
     def set_offline(self):
         """Set user as offline"""

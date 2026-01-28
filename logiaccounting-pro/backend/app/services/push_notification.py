@@ -6,6 +6,7 @@ import asyncio
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
+from app.utils.datetime_utils import utc_now
 from pydantic import BaseModel
 
 
@@ -63,7 +64,7 @@ class PushNotificationService:
             device_id=device_id,
             platform=platform,
             user_id=user_id,
-            created_at=datetime.utcnow(),
+            created_at=utc_now(),
         )
 
         if user_id not in self._tokens:
@@ -155,7 +156,7 @@ class PushNotificationService:
             message["channelId"] = notification.channel_id
 
         self._notification_queue.append(message)
-        return {"success": True, "ticket_id": f"ticket-{datetime.utcnow().timestamp()}"}
+        return {"success": True, "ticket_id": f"ticket-{utc_now().timestamp()}"}
 
     async def send_invoice_notification(
         self,

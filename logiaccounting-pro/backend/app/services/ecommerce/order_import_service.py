@@ -6,6 +6,7 @@ Handles importing orders from e-commerce platforms
 from datetime import datetime
 from typing import Dict, List, Optional
 import uuid
+from app.utils.datetime_utils import utc_now
 
 
 class OrderImportService:
@@ -64,7 +65,7 @@ class OrderImportService:
             "platform": adapter.platform_name,
             "status": "completed",
             "stats": stats,
-            "completed_at": datetime.utcnow().isoformat() + "Z"
+            "completed_at": utc_now().isoformat() + "Z"
         }
         self._import_history.append(import_record)
 
@@ -95,7 +96,7 @@ class OrderImportService:
             "source_id": order["external_id"],
             "source_order_number": order.get("order_number", ""),
             "store_id": store_id,
-            "date": order.get("created_at", datetime.utcnow().isoformat() + "Z"),
+            "date": order.get("created_at", utc_now().isoformat() + "Z"),
             "status": status_map.get(order.get("status", ""), "pending"),
             "client_name": order.get("customer_name", ""),
             "client_email": order.get("customer_email", ""),
@@ -106,7 +107,7 @@ class OrderImportService:
             "currency": order.get("currency", "USD"),
             "shipping_address": order.get("shipping_address", {}),
             "payment_method": order.get("payment_method", ""),
-            "imported_at": datetime.utcnow().isoformat() + "Z"
+            "imported_at": utc_now().isoformat() + "Z"
         }
 
     def get_imported_orders(

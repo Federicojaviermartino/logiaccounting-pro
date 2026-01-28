@@ -11,6 +11,7 @@ import logging
 
 from app.models.crm_store import crm_store
 from app.utils.auth import create_access_token, create_refresh_token, verify_password, get_password_hash
+from app.utils.datetime_utils import utc_now
 
 
 logger = logging.getLogger(__name__)
@@ -25,8 +26,8 @@ class PortalSession:
         self.contact_id = contact_id
         self.tenant_id = tenant_id
         self.device_info = device_info or {}
-        self.created_at = datetime.utcnow()
-        self.last_active = datetime.utcnow()
+        self.created_at = utc_now()
+        self.last_active = utc_now()
         self.ip_address = None
         self.user_agent = None
 
@@ -74,7 +75,7 @@ class PortalAuthService:
                 "email_notifications": True,
                 "push_notifications": False,
             },
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
             "last_login": None,
         }
 
@@ -114,7 +115,7 @@ class PortalAuthService:
             self._magic_links[temp_token] = {
                 "type": "2fa_pending",
                 "email": email,
-                "expires_at": datetime.utcnow() + timedelta(minutes=5),
+                "expires_at": utc_now() + timedelta(minutes=5),
             }
             return {
                 "requires_2fa": True,
@@ -136,7 +137,7 @@ class PortalAuthService:
         if not link_data or link_data["type"] != "2fa_pending":
             raise ValueError("Invalid or expired token")
 
-        if datetime.utcnow() > link_data["expires_at"]:
+        if utc_now() > link_data["expires_at"]:
             del self._magic_links[temp_token]
             raise ValueError("Token expired")
 
@@ -173,7 +174,7 @@ class PortalAuthService:
 
         self._sessions[session_id] = session
 
-        portal_user["last_login"] = datetime.utcnow().isoformat()
+        portal_user["last_login"] = utc_now().isoformat()
 
         token_data = {
             "sub": portal_user["id"],
@@ -225,7 +226,7 @@ class PortalAuthService:
         if not portal_user:
             raise ValueError("User not found")
 
-        session.last_active = datetime.utcnow()
+        session.last_active = utc_now()
 
         token_data = {
             "sub": portal_user["id"],
@@ -286,7 +287,7 @@ class PortalAuthService:
         self._magic_links[token] = {
             "type": "magic_link",
             "email": email,
-            "expires_at": datetime.utcnow() + timedelta(minutes=15),
+            "expires_at": utc_now() + timedelta(minutes=15),
         }
 
         return token
@@ -303,7 +304,7 @@ class PortalAuthService:
         if not link_data or link_data["type"] != "magic_link":
             raise ValueError("Invalid or expired link")
 
-        if datetime.utcnow() > link_data["expires_at"]:
+        if utc_now() > link_data["expires_at"]:
             del self._magic_links[token]
             raise ValueError("Link expired")
 

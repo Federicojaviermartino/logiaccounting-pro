@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Dict, List, Optional
 from decimal import Decimal, ROUND_HALF_UP
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 
 
 class TaxService:
@@ -45,7 +46,7 @@ class TaxService:
                 "regions": [],
                 "is_compound": False,
                 "active": True,
-                "created_at": datetime.utcnow().isoformat()
+                "created_at": utc_now().isoformat()
             }
         cls._counter = len(cls.DEFAULT_TAXES)
 
@@ -83,7 +84,7 @@ class TaxService:
             "is_compound": is_compound,
             "is_default": is_default,
             "active": True,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
 
         self._taxes[tax_id] = tax

@@ -3,10 +3,10 @@ Error Handling Actions - Try-Catch, Retry, Fallback, Circuit Breaker
 """
 
 from typing import Dict, Any, List
-from datetime import datetime
 import asyncio
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.workflows.actions.base import ActionExecutor, ActionResult
 
 
@@ -172,7 +172,7 @@ class CircuitBreakerAction(ActionExecutor):
             })
 
             if circuit["state"] == "open":
-                if datetime.utcnow().timestamp() - circuit["last_failure"] > reset_timeout:
+                if utc_now().timestamp() - circuit["last_failure"] > reset_timeout:
                     circuit["state"] = "half_open"
                 else:
                     return ActionResult(success=False, error="Circuit breaker open", data={"circuit_state": "open"})
@@ -187,7 +187,7 @@ class CircuitBreakerAction(ActionExecutor):
                 return ActionResult(success=True, data={**result.data, "circuit_state": circuit["state"]})
 
             circuit["failures"] += 1
-            circuit["last_failure"] = datetime.utcnow().timestamp()
+            circuit["last_failure"] = utc_now().timestamp()
             if circuit["failures"] >= failure_threshold:
                 circuit["state"] = "open"
 

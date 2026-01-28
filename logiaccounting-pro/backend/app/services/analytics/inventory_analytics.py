@@ -8,6 +8,8 @@ from typing import Dict, List, Any, Optional
 from collections import defaultdict
 import math
 
+from app.utils.datetime_utils import utc_now
+
 
 class InventoryAnalytics:
     """
@@ -42,7 +44,7 @@ class InventoryAnalytics:
         ])
 
         return {
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'total_items': total_items,
             'total_value': round(total_value, 2),
             'low_stock_items': low_stock_count,
@@ -138,7 +140,7 @@ class InventoryAnalytics:
         recommendations.sort(key=lambda x: (urgency_order.get(x['urgency'], 3), x['days_until_stockout']))
 
         return {
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'total_recommendations': len(recommendations),
             'critical_count': len([r for r in recommendations if r['urgency'] == 'critical']),
             'total_estimated_cost': round(sum(r['estimated_cost'] for r in recommendations), 2),
@@ -199,7 +201,7 @@ class InventoryAnalytics:
             ) if total_value > 0 else 0
 
         return {
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'total_items': len(item_values),
             'total_annual_value': round(total_value, 2),
             'class_summary': class_summary,
@@ -383,7 +385,7 @@ class InventoryAnalytics:
             for m in materials
         )
 
-        year_ago = datetime.utcnow() - timedelta(days=365)
+        year_ago = utc_now() - timedelta(days=365)
         annual_cogs = 0
 
         for mov in movements:
@@ -451,7 +453,7 @@ class InventoryAnalytics:
         """Get top moving items"""
         movement_counts = defaultdict(int)
 
-        cutoff = datetime.utcnow() - timedelta(days=30)
+        cutoff = utc_now() - timedelta(days=30)
 
         for mov in movements:
             if mov.get('type') != 'exit':
@@ -482,7 +484,7 @@ class InventoryAnalytics:
 
     def _get_annual_consumption(self, movements: List[Dict], sku: str) -> int:
         """Get annual consumption for SKU"""
-        year_ago = datetime.utcnow() - timedelta(days=365)
+        year_ago = utc_now() - timedelta(days=365)
         total = 0
 
         for mov in movements:

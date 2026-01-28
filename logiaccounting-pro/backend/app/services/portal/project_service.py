@@ -9,6 +9,7 @@ from uuid import uuid4
 import logging
 
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +100,7 @@ class PortalProjectService:
             "customer_id": customer_id,
             "content": content,
             "rating": rating,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
         }
 
         if project_id not in self._feedbacks:
@@ -121,7 +122,7 @@ class PortalProjectService:
             "customer_id": customer_id,
             "approved": approved,
             "comment": comment,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
         }
 
         self._approvals[deliverable_id] = approval

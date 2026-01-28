@@ -6,6 +6,7 @@ CSV/Excel import with validation
 from datetime import datetime
 from typing import Dict, List, Optional, Any, Tuple
 import csv
+from app.utils.datetime_utils import utc_now
 import io
 from app.models.store import db
 
@@ -261,7 +262,7 @@ class ImportService:
             "preview": valid_rows[:10],
             "status": "pending",
             "created_by": created_by,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
 
         # Store validated data for execution
@@ -305,7 +306,7 @@ class ImportService:
                 pass  # Continue on individual failures
 
         import_job["status"] = "completed"
-        import_job["completed_at"] = datetime.utcnow().isoformat()
+        import_job["completed_at"] = utc_now().isoformat()
         import_job["created_count"] = created
         import_job["created_ids"] = created_ids
 
@@ -343,7 +344,7 @@ class ImportService:
                 pass
 
         import_job["status"] = "rolled_back"
-        import_job["rolled_back_at"] = datetime.utcnow().isoformat()
+        import_job["rolled_back_at"] = utc_now().isoformat()
         import_job["deleted_count"] = deleted
 
         return {

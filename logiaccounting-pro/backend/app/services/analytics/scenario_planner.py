@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any
 from dataclasses import dataclass, asdict
 
+from app.utils.datetime_utils import utc_now
+
 
 @dataclass
 class ScenarioResult:
@@ -50,7 +52,7 @@ class ScenarioPlanner:
             return {'error': f'Unknown scenario type: {scenario_type}'}
 
         return {
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'scenario_type': scenario_type,
             'baseline': baseline,
             'result': asdict(result) if hasattr(result, '__dataclass_fields__') else result
@@ -74,7 +76,7 @@ class ScenarioPlanner:
         })
 
         return {
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'baseline': baseline,
             'best_case': asdict(best_case),
             'worst_case': asdict(worst_case),
@@ -115,14 +117,14 @@ class ScenarioPlanner:
             })
 
         return {
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'baseline': baseline,
             'scenarios': results
         }
 
     def _calculate_baseline(self, transactions: List[Dict]) -> Dict[str, float]:
         """Calculate baseline metrics from last 12 months"""
-        year_ago = datetime.utcnow() - timedelta(days=365)
+        year_ago = utc_now() - timedelta(days=365)
 
         total_income = total_expense = 0
 

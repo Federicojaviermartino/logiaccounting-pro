@@ -6,6 +6,7 @@ Helper functions for data processing, feature engineering, and model operations
 from typing import Dict, Any, List, Optional, Tuple, Union
 from datetime import datetime, timedelta
 import numpy as np
+from app.utils.datetime_utils import utc_now
 import pandas as pd
 from collections import defaultdict
 import json
@@ -250,7 +251,7 @@ class AICache:
         value, timestamp = self._cache[hash_key]
 
         # Check TTL
-        if (datetime.utcnow() - timestamp).total_seconds() > self.ttl_seconds:
+        if (utc_now() - timestamp).total_seconds() > self.ttl_seconds:
             del self._cache[hash_key]
             return None
 
@@ -263,7 +264,7 @@ class AICache:
             self._evict_oldest()
 
         hash_key = self._hash_key(key)
-        self._cache[hash_key] = (value, datetime.utcnow())
+        self._cache[hash_key] = (value, utc_now())
 
     def _evict_oldest(self):
         """Evict oldest entries."""

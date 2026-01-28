@@ -7,6 +7,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Dict, List, Any
 
+from app.utils.datetime_utils import utc_now
+
 
 @dataclass
 class Room:
@@ -15,7 +17,7 @@ class Room:
     entity_type: str
     entity_id: str
     tenant_id: str
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
     users: Dict[str, Dict[str, Any]] = field(default_factory=dict)
 
     def add_user(self, user_id: str, user_name: str, sid: str):
@@ -24,7 +26,7 @@ class Room:
             'user_id': user_id,
             'user_name': user_name,
             'sid': sid,
-            'joined_at': datetime.utcnow().isoformat(),
+            'joined_at': utc_now().isoformat(),
         }
 
     def remove_user(self, user_id: str):

@@ -3,9 +3,9 @@ In-memory workflow storage.
 For production, replace with PostgreSQL/Redis.
 """
 from typing import Dict, List, Optional
-from datetime import datetime
 from copy import deepcopy
 
+from app.utils.datetime_utils import utc_now
 from app.workflows.models.workflow import Workflow, WorkflowVersion
 from app.workflows.models.execution import WorkflowExecution, ExecutionLog
 from app.workflows.models.rule import BusinessRule
@@ -159,7 +159,7 @@ class WorkflowStore:
 
     def get_waiting_executions(self) -> List[WorkflowExecution]:
         """Get executions waiting for resume."""
-        now = datetime.utcnow()
+        now = utc_now()
         return [
             e for e in self.executions.values()
             if e.status == ExecutionStatus.WAITING

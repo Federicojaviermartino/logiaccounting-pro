@@ -6,6 +6,7 @@ Feature flag management for tenants
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 from app.models.tenant_store import tenant_db, TenantTier, TIER_FEATURES
+from app.utils.datetime_utils import utc_now
 
 
 class FeatureService:
@@ -270,7 +271,7 @@ class FeatureService:
         if feature_name not in self.ALL_FEATURES:
             raise ValueError(f"Unknown feature: {feature_name}")
 
-        expires_at = (datetime.utcnow() + timedelta(days=days)).isoformat()
+        expires_at = (utc_now() + timedelta(days=days)).isoformat()
 
         return self.enable_feature(
             feature_name,

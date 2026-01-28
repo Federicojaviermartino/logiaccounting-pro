@@ -10,6 +10,8 @@ from uuid import UUID
 from sqlalchemy import select, func, and_
 from sqlalchemy.orm import Session
 
+from app.utils.datetime_utils import utc_now
+
 from app.banking.cashflow.models import (
     CashFlowForecast, CashFlowForecastLine, PlannedCashTransaction, CashPosition,
     ForecastStatus, Granularity, TransactionType, RecurrencePattern
@@ -174,7 +176,7 @@ class CashFlowService:
             opening_balance = closing_balance
 
         forecast.status = ForecastStatus.ACTIVE.value
-        forecast.last_generated_at = datetime.utcnow()
+        forecast.last_generated_at = utc_now()
         forecast.generated_by = generated_by
 
         self.db.commit()

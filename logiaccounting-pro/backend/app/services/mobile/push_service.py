@@ -9,6 +9,8 @@ from uuid import uuid4
 import json
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -31,8 +33,8 @@ class PushSubscription:
             "payments": True,
             "marketing": False,
         }
-        self.created_at = datetime.utcnow()
-        self.last_used_at = datetime.utcnow()
+        self.created_at = utc_now()
+        self.last_used_at = utc_now()
 
 
 class PushNotification:
@@ -51,7 +53,7 @@ class PushNotification:
         self.require_interaction = False
         self.actions = []
         self.status = "pending"
-        self.created_at = datetime.utcnow()
+        self.created_at = utc_now()
         self.sent_at = None
         self.error = None
 
@@ -141,13 +143,13 @@ class PushNotificationService:
             try:
                 self._send_to_subscription(notification, subscription)
                 sent_ids.append(subscription.id)
-                subscription.last_used_at = datetime.utcnow()
+                subscription.last_used_at = utc_now()
             except Exception as e:
                 logger.error(f"Failed to send notification to {subscription.id}: {e}")
                 notification.error = str(e)
 
         notification.status = "sent" if sent_ids else "failed"
-        notification.sent_at = datetime.utcnow()
+        notification.sent_at = utc_now()
         self._notifications.append(notification)
 
         return sent_ids

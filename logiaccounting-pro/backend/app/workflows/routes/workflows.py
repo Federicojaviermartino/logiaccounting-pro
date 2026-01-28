@@ -2,9 +2,9 @@
 Workflow API routes.
 """
 from typing import List, Optional
-from datetime import datetime
 from fastapi import APIRouter, HTTPException, Depends, Query
 
+from app.utils.datetime_utils import utc_now
 from app.routes.auth import get_current_user
 from app.workflows.models.workflow import (
     Workflow, WorkflowCreate, WorkflowUpdate, WorkflowVersion,
@@ -28,7 +28,7 @@ async def create_workflow(
 ):
     """Create a new workflow."""
     metadata = WorkflowMetadata(
-        created_at=datetime.utcnow(),
+        created_at=utc_now(),
         created_by=current_user["id"],
         tags=workflow_data.tags,
         category=workflow_data.category
@@ -138,7 +138,7 @@ async def update_workflow(
         workflow.metadata.category = updates.category
 
     workflow.version += 1
-    workflow.metadata.updated_at = datetime.utcnow()
+    workflow.metadata.updated_at = utc_now()
     workflow.metadata.updated_by = current_user["id"]
 
     workflow_store.save_workflow(workflow)
@@ -324,7 +324,7 @@ async def rollback_to_version(
     workflow.description = snapshot.get("description")
 
     workflow.version += 1
-    workflow.metadata.updated_at = datetime.utcnow()
+    workflow.metadata.updated_at = utc_now()
     workflow.metadata.updated_by = current_user["id"]
 
     workflow_store.save_workflow(workflow)

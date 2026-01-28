@@ -9,6 +9,7 @@ from uuid import uuid4
 import re
 
 from app.models.crm_store import crm_store
+from app.utils.datetime_utils import utc_now
 
 
 class EmailTemplateService:
@@ -71,8 +72,8 @@ class EmailTemplateService:
             "category": category,
             "created_by": created_by,
             "is_shared": is_shared,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat(),
             "use_count": 0,
             **kwargs,
         }
@@ -86,7 +87,7 @@ class EmailTemplateService:
         if not template:
             raise ValueError(f"Template not found: {template_id}")
 
-        updates["updated_at"] = datetime.utcnow().isoformat()
+        updates["updated_at"] = utc_now().isoformat()
         template.update(updates)
         return template
 
@@ -194,7 +195,7 @@ class EmailTemplateService:
             flat_context["sender.phone"] = s.get("phone", "")
 
         # Date fields
-        now = datetime.utcnow()
+        now = utc_now()
         flat_context["today"] = now.strftime("%B %d, %Y")
         flat_context["current_month"] = now.strftime("%B")
         flat_context["current_year"] = str(now.year)

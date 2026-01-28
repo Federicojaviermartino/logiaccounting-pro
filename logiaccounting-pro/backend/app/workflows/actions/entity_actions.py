@@ -3,11 +3,11 @@ Entity CRUD action executors.
 Create, update, and delete entities in the system.
 """
 from typing import Dict, Any
-from datetime import datetime
 import logging
 import re
 import uuid
 
+from app.utils.datetime_utils import utc_now
 from app.workflows.actions import ActionExecutor
 
 
@@ -48,7 +48,7 @@ class UpdateEntityExecutor(ActionExecutor):
         for key, value in updates.items():
             entity[key] = value
 
-        entity["updated_at"] = datetime.utcnow().isoformat()
+        entity["updated_at"] = utc_now().isoformat()
 
         if hasattr(store, 'save'):
             store.save(entity)
@@ -144,7 +144,7 @@ class CreateEntityExecutor(ActionExecutor):
         if "id" not in data:
             data["id"] = str(uuid.uuid4())
 
-        data["created_at"] = datetime.utcnow().isoformat()
+        data["created_at"] = utc_now().isoformat()
 
         store = self._get_store(entity_type)
         if not store:
@@ -244,7 +244,7 @@ class DeleteEntityExecutor(ActionExecutor):
             entity = store.get(entity_id) if hasattr(store, 'get') else None
             if entity:
                 entity["deleted"] = True
-                entity["deleted_at"] = datetime.utcnow().isoformat()
+                entity["deleted_at"] = utc_now().isoformat()
                 if hasattr(store, 'save'):
                     store.save(entity)
         else:

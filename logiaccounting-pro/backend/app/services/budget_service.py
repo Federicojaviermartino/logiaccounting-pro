@@ -6,6 +6,7 @@ Track and manage budgets by category, project, or department
 from datetime import datetime
 from typing import Dict, List, Optional
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 
 
 class BudgetService:
@@ -53,7 +54,7 @@ class BudgetService:
             ],
             "active": True,
             "created_by": created_by,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
 
         budget["spent"] = self._calculate_spent(budget)
@@ -87,7 +88,7 @@ class BudgetService:
         try:
             start = datetime.fromisoformat(start_date)
         except:
-            start = datetime.utcnow()
+            start = utc_now()
 
         if period == "monthly":
             month = start.month + 1

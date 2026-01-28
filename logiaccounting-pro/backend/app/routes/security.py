@@ -10,6 +10,7 @@ from fastapi import APIRouter, HTTPException, Depends, Request, Query, status
 from pydantic import BaseModel, Field, EmailStr
 
 from app.utils.auth import get_current_user, require_roles
+from app.utils.datetime_utils import utc_now
 from app.routes.security import router as security_sub_router
 
 
@@ -227,7 +228,7 @@ class SecurityStore:
             },
         }
 
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         cls._roles = {
             "admin": {
                 "id": "admin",
@@ -322,7 +323,7 @@ class SecurityStore:
         connection = {
             "provider": provider,
             "email": email,
-            "connected_at": datetime.utcnow().isoformat(),
+            "connected_at": utc_now().isoformat(),
             "access_token": access_token,
         }
         self._oauth_connections[user_id][provider] = connection
@@ -349,7 +350,7 @@ class SecurityStore:
         """Create a new role."""
         self._counter += 1
         role_id = f"role_{self._counter}"
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
 
         role = {
             "id": role_id,
@@ -377,7 +378,7 @@ class SecurityStore:
             if value is not None:
                 role[key] = value
 
-        role["updated_at"] = datetime.utcnow().isoformat()
+        role["updated_at"] = utc_now().isoformat()
         return role
 
     def delete_role(self, role_id: str) -> bool:
@@ -424,7 +425,7 @@ class SecurityStore:
             "ip_range": rule_data.get("ip_range"),
             "description": rule_data.get("description"),
             "enabled": True,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
         }
 
         self._ip_rules.append(rule)

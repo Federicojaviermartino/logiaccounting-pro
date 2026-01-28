@@ -10,6 +10,8 @@ from uuid import UUID, uuid4
 from sqlalchemy import select, func, and_, or_
 from sqlalchemy.orm import Session
 
+from app.utils.datetime_utils import utc_now
+
 from app.banking.payments.models import (
     PaymentBatch, PaymentInstruction, PaymentHistory,
     BatchStatus, PaymentMethod, BatchType, InstructionStatus
@@ -243,7 +245,7 @@ class PaymentService:
         if approved:
             batch.status = BatchStatus.APPROVED.value
             batch.approved_by = approved_by
-            batch.approved_at = datetime.utcnow()
+            batch.approved_at = utc_now()
         else:
             batch.status = BatchStatus.DRAFT.value
 
@@ -296,7 +298,7 @@ class PaymentService:
             raise ValueError(f"Unsupported file format: {file_format}")
 
         batch.file_format = file_format
-        batch.file_generated_at = datetime.utcnow()
+        batch.file_generated_at = utc_now()
         batch.file_reference = f"PAY-{batch.batch_number}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
         self.db.commit()
@@ -311,7 +313,7 @@ class PaymentService:
             raise ValueError("Batch must be in processing status")
 
         batch.status = BatchStatus.SENT.value
-        batch.sent_at = datetime.utcnow()
+        batch.sent_at = utc_now()
 
         # Update all instructions
         result = self.db.execute(
@@ -337,7 +339,7 @@ class PaymentService:
             raise ValueError("Batch must be in sent status")
 
         batch.status = BatchStatus.COMPLETED.value
-        batch.completed_at = datetime.utcnow()
+        batch.completed_at = utc_now()
 
         # Update instructions with confirmation numbers
         if completed_instructions:
@@ -350,7 +352,7 @@ class PaymentService:
                 instruction = result.scalar_one_or_none()
                 if instruction:
                     instruction.status = InstructionStatus.COMPLETED.value
-                    instruction.processed_at = datetime.utcnow()
+                    instruction.processed_at = utc_now()
                     instruction.confirmation_number = item.get("confirmation_number")
         else:
             # Mark all as completed
@@ -359,7 +361,7 @@ class PaymentService:
             )
             for instruction in result.scalars().all():
                 instruction.status = InstructionStatus.COMPLETED.value
-                instruction.processed_at = datetime.utcnow()
+                instruction.processed_at = utc_now()
 
         self.db.commit()
         self.db.refresh(batch)

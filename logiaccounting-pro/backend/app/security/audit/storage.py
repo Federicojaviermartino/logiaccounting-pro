@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 from dataclasses import dataclass, field
 from uuid import uuid4
 
+from app.utils.datetime_utils import utc_now
+
 from .events import (
     AuditEvent,
     AuditEventType,
@@ -50,7 +52,7 @@ class AuditLogModel:
     previous_hash: Optional[str] = None
     data_hash: Optional[str] = None
     is_archived: bool = False
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
 
     @classmethod
     def from_event(cls, event: AuditEvent, organization_id: Optional[str] = None) -> "AuditLogModel":
@@ -408,7 +410,7 @@ class AuditStorageService:
         older_than_days: int = 90,
     ) -> int:
         """Mark old logs as archived."""
-        cutoff = datetime.utcnow() - timedelta(days=older_than_days)
+        cutoff = utc_now() - timedelta(days=older_than_days)
         count = 0
 
         for log in self._logs:

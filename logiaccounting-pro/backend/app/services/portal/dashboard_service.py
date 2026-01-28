@@ -10,6 +10,7 @@ import logging
 
 from app.models.store import db
 from app.models.crm_store import crm_store
+from app.utils.datetime_utils import utc_now
 
 
 logger = logging.getLogger(__name__)
@@ -65,7 +66,7 @@ class PortalDashboardService:
         active_projects = len([p for p in projects if p.get("status") == "active"])
 
         payments = [p for p in db.payments.find_all() if p.get("client_id") == customer_id]
-        this_month = datetime.utcnow().replace(day=1)
+        this_month = utc_now().replace(day=1)
         payments_this_month = sum(
             p.get("amount", 0) for p in payments
             if p.get("status") == "completed" and
@@ -217,7 +218,7 @@ class PortalDashboardService:
             return False
         try:
             date = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
-            return date <= datetime.utcnow() + timedelta(days=days)
+            return date <= utc_now() + timedelta(days=days)
         except:
             return False
 

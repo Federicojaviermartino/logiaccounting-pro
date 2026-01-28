@@ -8,6 +8,8 @@ from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 import math
 
+from app.utils.datetime_utils import utc_now
+
 
 @dataclass
 class ForecastPoint:
@@ -100,7 +102,7 @@ class CashFlowForecaster:
         summary = self._calculate_summary(predictions, current_balance)
 
         return CashFlowForecast(
-            generated_at=datetime.utcnow().isoformat(),
+            generated_at=utc_now().isoformat(),
             current_balance=current_balance,
             forecast_days=days,
             model_type=self.model_type,
@@ -360,7 +362,7 @@ class CashFlowForecaster:
     def _empty_forecast(self, days: int) -> CashFlowForecast:
         """Return empty forecast when no data available"""
         return CashFlowForecast(
-            generated_at=datetime.utcnow().isoformat(),
+            generated_at=utc_now().isoformat(),
             current_balance=0,
             forecast_days=days,
             model_type='none',

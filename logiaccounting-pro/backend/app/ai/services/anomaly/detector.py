@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
 
+from app.utils.datetime_utils import utc_now
 from ...config import get_ai_config
 from ...models.anomaly import Anomaly
 
@@ -77,7 +78,7 @@ class AnomalyDetector:
 
         return Transaction(
             id=data.get('id', ''),
-            date=txn_date or datetime.utcnow(),
+            date=txn_date or utc_now(),
             amount=float(data.get('amount', 0)),
             type=data.get('type', 'unknown'),
             category=data.get('category'),
@@ -335,7 +336,7 @@ class AnomalyDetector:
             return None
 
         anomaly.status = 'resolved'
-        anomaly.resolved_at = datetime.utcnow()
+        anomaly.resolved_at = utc_now()
         anomaly.resolved_by = user_id
         anomaly.resolution_notes = resolution_notes
         anomaly.save()
@@ -355,7 +356,7 @@ class AnomalyDetector:
             return None
 
         anomaly.status = 'dismissed'
-        anomaly.resolved_at = datetime.utcnow()
+        anomaly.resolved_at = utc_now()
         anomaly.resolved_by = user_id
         anomaly.resolution_notes = f'Dismissed: {reason}' if reason else 'Dismissed as false positive'
         anomaly.save()

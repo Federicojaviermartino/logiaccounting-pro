@@ -10,6 +10,7 @@ import hashlib
 import logging
 from datetime import datetime
 
+from app.utils.datetime_utils import utc_now
 from app.ai.client import ai_client
 from app.ai.config import get_model_config
 
@@ -207,7 +208,7 @@ class DuplicateDetector:
             "vendor_name": vendor_name,
             "total": total,
             "date": date,
-            "registered_at": datetime.utcnow().isoformat(),
+            "registered_at": utc_now().isoformat(),
         })
 
 

@@ -13,6 +13,8 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.backends import default_backend
 
+from app.utils.datetime_utils import utc_now
+
 
 NONCE_SIZE = 12
 TAG_SIZE = 16
@@ -174,7 +176,7 @@ class AESCipher:
             version=CURRENT_VERSION,
             key_id=self._key_id,
             algorithm="AES-256-GCM",
-            encrypted_at=datetime.utcnow(),
+            encrypted_at=utc_now(),
             nonce=nonce,
             associated_data=associated_data,
         )
@@ -202,7 +204,7 @@ class AESCipher:
         """Create a new cipher with a rotated key."""
         return AESCipher(
             key=new_key,
-            key_id=f"{self._key_id}_rotated_{datetime.utcnow().strftime('%Y%m%d')}",
+            key_id=f"{self._key_id}_rotated_{utc_now().strftime('%Y%m%d')}",
         )
 
 

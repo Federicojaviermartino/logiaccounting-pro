@@ -9,6 +9,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from datetime import datetime, timedelta
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -26,7 +28,7 @@ class ComponentHealth:
     status: HealthStatus
     message: str = ""
     latency_ms: float = 0
-    last_check: datetime = field(default_factory=datetime.utcnow)
+    last_check: datetime = field(default_factory=utc_now)
     details: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -53,7 +55,7 @@ class HealthChecker:
 
     def __init__(self):
         self._checks: Dict[str, Callable] = {}
-        self._start_time = datetime.utcnow()
+        self._start_time = utc_now()
         self._is_ready = False
         self._is_shutting_down = False
         self._last_results: Dict[str, ComponentHealth] = {}
@@ -184,12 +186,12 @@ class HealthChecker:
 
         self._last_results = components
 
-        uptime = (datetime.utcnow() - self._start_time).total_seconds()
+        uptime = (utc_now() - self._start_time).total_seconds()
 
         return HealthCheckResult(
             status=overall_status,
             components=components,
-            timestamp=datetime.utcnow(),
+            timestamp=utc_now(),
             uptime_seconds=uptime
         )
 
@@ -199,7 +201,7 @@ class HealthChecker:
             "is_ready": self._is_ready,
             "is_shutting_down": self._is_shutting_down,
             "registered_checks": list(self._checks.keys()),
-            "uptime_seconds": (datetime.utcnow() - self._start_time).total_seconds()
+            "uptime_seconds": (utc_now() - self._start_time).total_seconds()
         }
 
 

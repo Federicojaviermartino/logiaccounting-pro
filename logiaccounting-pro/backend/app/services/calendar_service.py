@@ -6,6 +6,7 @@ Events and scheduling
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 
 
 class CalendarService:
@@ -71,7 +72,7 @@ class CalendarService:
             "reminder": reminder,
             "recurrence": recurrence,
             "created_by": created_by,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
 
         self._events[event_id] = event
@@ -166,8 +167,8 @@ class CalendarService:
 
     def get_upcoming(self, days: int = 7) -> List[dict]:
         """Get upcoming events"""
-        today = datetime.utcnow().date().isoformat()
-        end_date = (datetime.utcnow() + timedelta(days=days)).date().isoformat()
+        today = utc_now().date().isoformat()
+        end_date = (utc_now() + timedelta(days=days)).date().isoformat()
         return self.get_events(today, end_date)
 
 

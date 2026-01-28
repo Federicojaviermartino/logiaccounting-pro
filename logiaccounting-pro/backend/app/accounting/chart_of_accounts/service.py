@@ -13,6 +13,8 @@ from sqlalchemy import select, and_, or_, func
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError
 
+from app.utils.datetime_utils import utc_now
+
 from app.accounting.chart_of_accounts.models import (
     Account, AccountType, AccountTypeEnum, DEFAULT_ACCOUNT_TYPES
 )
@@ -240,7 +242,7 @@ class ChartOfAccountsService:
         for field, value in update_data.items():
             setattr(account, field, value)
 
-        account.updated_at = datetime.utcnow()
+        account.updated_at = utc_now()
         self.db.commit()
         self.db.refresh(account)
 
@@ -265,7 +267,7 @@ class ChartOfAccountsService:
             raise ValueError("Cannot deactivate account with non-zero balance")
 
         account.is_active = False
-        account.updated_at = datetime.utcnow()
+        account.updated_at = utc_now()
         self.db.commit()
 
         logger.info(f"Deactivated account: {account.code}")

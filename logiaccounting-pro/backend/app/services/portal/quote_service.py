@@ -9,6 +9,7 @@ from uuid import uuid4
 import logging
 
 from app.models.crm_store import crm_store
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -53,12 +54,12 @@ class PortalQuoteService:
         valid_until = quote.get("valid_until")
         if valid_until:
             expiry = datetime.fromisoformat(valid_until.replace("Z", "+00:00"))
-            if expiry < datetime.utcnow():
+            if expiry < utc_now():
                 raise ValueError("Quote has expired")
 
         crm_store.update_quote(quote_id, {
             "status": "accepted",
-            "accepted_at": datetime.utcnow().isoformat(),
+            "accepted_at": utc_now().isoformat(),
             "acceptance_notes": acceptance_notes,
         })
 
@@ -67,7 +68,7 @@ class PortalQuoteService:
                 "quote_id": quote_id,
                 "customer_id": customer_id,
                 "signature_data": signature_data,
-                "signed_at": datetime.utcnow().isoformat(),
+                "signed_at": utc_now().isoformat(),
                 "ip_address": None,
             }
 
@@ -86,7 +87,7 @@ class PortalQuoteService:
 
         crm_store.update_quote(quote_id, {
             "status": "declined",
-            "declined_at": datetime.utcnow().isoformat(),
+            "declined_at": utc_now().isoformat(),
             "decline_reason": reason,
         })
 
@@ -103,7 +104,7 @@ class PortalQuoteService:
         crm_store.update_quote(quote_id, {
             "status": "revision_requested",
             "revision_notes": revision_notes,
-            "revision_requested_at": datetime.utcnow().isoformat(),
+            "revision_requested_at": utc_now().isoformat(),
         })
 
         return {"success": True, "status": "revision_requested", "quote_id": quote_id}
@@ -148,7 +149,7 @@ class PortalQuoteService:
             return False
         try:
             expiry = datetime.fromisoformat(valid_until.replace("Z", "+00:00"))
-            return expiry < datetime.utcnow()
+            return expiry < utc_now()
         except:
             return False
 
@@ -157,7 +158,7 @@ class PortalQuoteService:
             return False
         try:
             expiry = datetime.fromisoformat(valid_until.replace("Z", "+00:00"))
-            return datetime.utcnow() < expiry <= datetime.utcnow() + timedelta(days=days)
+            return utc_now() < expiry <= utc_now() + timedelta(days=days)
         except:
             return False
 

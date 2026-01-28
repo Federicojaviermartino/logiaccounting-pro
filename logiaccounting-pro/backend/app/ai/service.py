@@ -7,6 +7,7 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.ai.cashflow.service import cashflow_service
 from app.ai.ocr.service import ocr_service
 from app.ai.assistant.service import assistant_service
@@ -31,7 +32,7 @@ class AIServiceAggregator:
             "cashflow": None,
             "anomalies": None,
             "recommendations": [],
-            "generated_at": datetime.utcnow().isoformat(),
+            "generated_at": utc_now().isoformat(),
         }
 
         try:

@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from typing import Dict, Optional
 import httpx
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,12 +19,12 @@ class ExchangeRate:
     from_currency: str
     to_currency: str
     rate: float
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=utc_now)
     provider: str = "unknown"
 
     def is_stale(self, max_age_hours: int = 24) -> bool:
         """Check if rate is stale."""
-        age = datetime.utcnow() - self.timestamp
+        age = utc_now() - self.timestamp
         return age > timedelta(hours=max_age_hours)
 
     def convert(self, amount: float) -> float:

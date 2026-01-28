@@ -5,9 +5,10 @@ Foundation for workflow actions
 
 from typing import Dict, Any, List, Optional, Callable, Type
 from abc import ABC, abstractmethod
-from datetime import datetime
 from enum import Enum
 import logging
+
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -112,7 +113,7 @@ class BaseAction(ABC):
     def _log_execution(self, config: Dict, result: Dict, error: str = None):
         """Log action execution."""
         self._execution_count += 1
-        self._last_execution = datetime.utcnow()
+        self._last_execution = utc_now()
 
         if error:
             logger.error(f"[{self.ACTION_ID}] Execution failed: {error}")

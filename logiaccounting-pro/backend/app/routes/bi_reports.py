@@ -7,6 +7,7 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 from app.utils.auth import get_current_user
+from app.utils.datetime_utils import utc_now
 from app.services.bi.scheduler_service import SchedulerService
 from app.services.bi.metrics_service import MetricsService
 from app.models.bi_store import bi_store
@@ -104,7 +105,6 @@ async def create_report(
     current_user: dict = Depends(get_current_user)
 ):
     """Create a new report"""
-    from datetime import datetime
     from uuid import uuid4
 
     report = {
@@ -116,8 +116,8 @@ async def create_report(
         "query": data.query,
         "layout": data.layout,
         "created_by": current_user["id"],
-        "created_at": datetime.utcnow().isoformat(),
-        "updated_at": datetime.utcnow().isoformat(),
+        "created_at": utc_now().isoformat(),
+        "updated_at": utc_now().isoformat(),
         "is_public": False,
         "shared_with": [],
     }
@@ -148,14 +148,12 @@ async def update_report(
     current_user: dict = Depends(get_current_user)
 ):
     """Update report definition"""
-    from datetime import datetime
-
     report = bi_store.get_report(report_id)
     if not report:
         raise HTTPException(status_code=404, detail="Report not found")
 
     updates = data.dict(exclude_none=True)
-    updates["updated_at"] = datetime.utcnow().isoformat()
+    updates["updated_at"] = utc_now().isoformat()
 
     return bi_store.update_report(report_id, updates)
 
@@ -185,8 +183,6 @@ async def execute_report(
     current_user: dict = Depends(get_current_user)
 ):
     """Execute report and return data"""
-    from datetime import datetime
-
     report = bi_store.get_report(report_id)
     if not report:
         raise HTTPException(status_code=404, detail="Report not found")
@@ -195,7 +191,7 @@ async def execute_report(
     return {
         "report_id": report_id,
         "report_name": report["name"],
-        "executed_at": datetime.utcnow().isoformat(),
+        "executed_at": utc_now().isoformat(),
         "parameters": data.parameters,
         "data": {
             "components": []

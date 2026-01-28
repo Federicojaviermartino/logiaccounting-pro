@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from uuid import uuid4
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.ai.base import Recommendation
 
 logger = logging.getLogger(__name__)
@@ -212,7 +213,7 @@ class RecommendationEngine:
     def get_customer_recommendations(self, customer_id: str) -> List[Recommendation]:
         """Get stored recommendations for customer."""
         recommendations = self._generated.get(customer_id, [])
-        return [r for r in recommendations if r.expires_at is None or r.expires_at > datetime.utcnow()]
+        return [r for r in recommendations if r.expires_at is None or r.expires_at > utc_now()]
 
 
 # Global engine instance

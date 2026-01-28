@@ -6,6 +6,7 @@ High-level service for managing integrations
 from typing import Optional, Dict, Any, List, Tuple
 from datetime import datetime, timedelta
 import logging
+from app.utils.datetime_utils import utc_now
 import asyncio
 
 from app.models.integrations_store import (
@@ -265,7 +266,7 @@ class IntegrationService:
             if success:
                 integrations_store.update(integration_id, {
                     'status': IntegrationStatus.ACTIVE.value,
-                    'last_sync_at': datetime.utcnow().isoformat(),
+                    'last_sync_at': utc_now().isoformat(),
                 })
             else:
                 integrations_store.mark_error(integration_id, message)
@@ -397,7 +398,7 @@ class IntegrationService:
             'entity_type': entity_type,
             'direction': sync_config.get('direction', 'bidirectional'),
             'status': SyncStatus.IN_PROGRESS.value,
-            'started_at': datetime.utcnow().isoformat(),
+            'started_at': utc_now().isoformat(),
         })
 
         try:
@@ -443,12 +444,12 @@ class IntegrationService:
 
             # Update sync config
             sync_configs_store.update(sync_config['id'], {
-                'last_sync_at': datetime.utcnow().isoformat(),
+                'last_sync_at': utc_now().isoformat(),
             })
 
             # Update integration
             integrations_store.update(integration_id, {
-                'last_sync_at': datetime.utcnow().isoformat(),
+                'last_sync_at': utc_now().isoformat(),
             })
 
             logger.info(
@@ -679,7 +680,7 @@ class IntegrationScheduler:
                     last_sync_time = datetime.fromisoformat(last_sync)
                     next_sync = last_sync_time + timedelta(seconds=sync_interval)
 
-                    if datetime.utcnow() < next_sync:
+                    if utc_now() < next_sync:
                         continue
 
                 # Run sync

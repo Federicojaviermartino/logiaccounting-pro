@@ -16,6 +16,7 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB
 import uuid
 
 from app.database import Base
+from app.utils.datetime_utils import utc_now
 
 
 class AccountType(str, Enum):
@@ -110,9 +111,9 @@ class BankAccount(Base):
 
     # Metadata
     created_by: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True))
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+        DateTime, default=utc_now, onupdate=utc_now
     )
 
     # Relationships
@@ -147,7 +148,7 @@ class BankAccount(Base):
         self.current_balance = new_balance
         self.available_balance = new_balance + self.overdraft_limit
         self.last_balance_date = balance_date or date.today()
-        self.updated_at = datetime.utcnow()
+        self.updated_at = utc_now()
 
 
 class BankAccountBalance(Base):
@@ -178,7 +179,7 @@ class BankAccountBalance(Base):
     is_reconciled: Mapped[bool] = mapped_column(Boolean, default=False)
     reconciliation_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True))
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
 
     # Relationships
     account: Mapped["BankAccount"] = relationship(

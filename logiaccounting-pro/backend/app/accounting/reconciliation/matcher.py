@@ -12,6 +12,8 @@ import logging
 from sqlalchemy import and_, or_, func
 from sqlalchemy.orm import Session
 
+from app.utils.datetime_utils import utc_now
+
 from app.accounting.reconciliation.models import BankTransaction, BankAccount
 from app.accounting.journal.models import JournalEntry, JournalLine, EntryStatusEnum
 
@@ -155,7 +157,7 @@ class TransactionMatcher:
         transaction.is_matched = True
         transaction.matched_entry_id = line.entry_id
         transaction.matched_line_id = line.id
-        transaction.matched_at = datetime.utcnow()
+        transaction.matched_at = utc_now()
         transaction.match_confidence = Decimal(str(confidence))
         transaction.match_method = "auto"
 

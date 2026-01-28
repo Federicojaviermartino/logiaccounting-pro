@@ -5,6 +5,8 @@ import logging
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 
+from app.utils.datetime_utils import utc_now
+
 try:
     from dateutil.relativedelta import relativedelta
     DATEUTIL_AVAILABLE = True
@@ -206,7 +208,7 @@ class PartitionManager:
             return []
 
         dropped_partitions = []
-        cutoff_date = datetime.utcnow() - relativedelta(months=retention_months)
+        cutoff_date = utc_now() - relativedelta(months=retention_months)
 
         async with db_manager.write_session() as session:
             result = await session.execute(text(f"""

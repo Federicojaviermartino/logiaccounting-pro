@@ -7,6 +7,7 @@ from datetime import datetime
 import asyncio
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.workflows.models.workflow import Workflow
 from app.workflows.models.execution import ExecutionContext
 from app.workflows.models.store import workflow_store
@@ -62,7 +63,7 @@ class ScheduleTrigger:
 
     async def _check_schedules(self):
         """Check and trigger scheduled workflows."""
-        now = datetime.utcnow()
+        now = utc_now()
 
         workflows = workflow_store.get_active_workflows_by_trigger(
             trigger_type=TriggerType.SCHEDULE.value
@@ -102,7 +103,7 @@ class ScheduleTrigger:
         context = ExecutionContext(
             trigger_type=TriggerType.SCHEDULE.value,
             trigger_data={
-                "scheduled_time": datetime.utcnow().isoformat(),
+                "scheduled_time": utc_now().isoformat(),
                 "cron": workflow.trigger.cron
             },
             tenant_id=workflow.tenant_id

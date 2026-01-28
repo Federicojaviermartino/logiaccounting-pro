@@ -11,6 +11,7 @@ import secrets
 import hashlib
 from typing import Optional, List, Dict
 from datetime import datetime
+from app.utils.datetime_utils import utc_now
 
 
 class TwoFactorService:
@@ -83,7 +84,7 @@ class TwoFactorService:
             "backup_codes_plain": backup_codes,
             "enabled": False,
             "verified": False,
-            "setup_at": datetime.utcnow().isoformat()
+            "setup_at": utc_now().isoformat()
         }
 
         qr_code = self.generate_qr_code(secret, email)
@@ -104,7 +105,7 @@ class TwoFactorService:
         if self.verify_code(user_2fa["secret"], code):
             user_2fa["verified"] = True
             user_2fa["enabled"] = True
-            user_2fa["enabled_at"] = datetime.utcnow().isoformat()
+            user_2fa["enabled_at"] = utc_now().isoformat()
             user_2fa.pop("backup_codes_plain", None)
             return True
 

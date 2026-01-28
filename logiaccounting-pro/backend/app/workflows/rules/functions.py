@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 import re
 import math
 
+from app.utils.datetime_utils import utc_now
+
 
 def fn_upper(text: Any) -> str:
     """Convert to uppercase."""
@@ -34,12 +36,12 @@ def fn_trim(text: Any) -> str:
 
 def fn_now() -> str:
     """Get current timestamp."""
-    return datetime.utcnow().isoformat()
+    return utc_now().isoformat()
 
 
 def fn_today() -> str:
     """Get current date."""
-    return datetime.utcnow().strftime('%Y-%m-%d')
+    return utc_now().strftime('%Y-%m-%d')
 
 
 def fn_date_add(date_str: str, amount: int, unit: str = 'days') -> str:

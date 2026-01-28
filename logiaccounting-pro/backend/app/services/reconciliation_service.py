@@ -6,6 +6,7 @@ Match bank statements with system transactions
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Tuple
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 
 
 class ReconciliationService:
@@ -64,7 +65,7 @@ class ReconciliationService:
             "unmatched_count": len(processed_entries),
             "reconciled": False,
             "imported_by": imported_by,
-            "imported_at": datetime.utcnow().isoformat()
+            "imported_at": utc_now().isoformat()
         }
 
         self._statements[statement_id] = statement
@@ -236,7 +237,7 @@ class ReconciliationService:
             return {"error": f"{statement['unmatched_count']} entries still unmatched"}
 
         statement["reconciled"] = True
-        statement["reconciled_at"] = datetime.utcnow().isoformat()
+        statement["reconciled_at"] = utc_now().isoformat()
 
         # Mark transactions as reconciled
         for entry in statement["entries"]:

@@ -12,6 +12,8 @@ import logging
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
+from app.utils.datetime_utils import utc_now
+
 from app.accounting.periods.models import FiscalYear, FiscalPeriod
 
 logger = logging.getLogger(__name__)
@@ -166,7 +168,7 @@ class PeriodService:
             raise ValueError("Previous periods must be closed first")
 
         period.is_closed = True
-        period.closed_at = datetime.utcnow()
+        period.closed_at = utc_now()
         period.closed_by = closed_by
         period.close_notes = notes
 

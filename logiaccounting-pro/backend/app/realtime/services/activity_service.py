@@ -8,6 +8,7 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime
 import uuid
 
+from app.utils.datetime_utils import utc_now
 from app.realtime.server import get_socketio
 from app.realtime.utils.message_types import MessageType
 
@@ -61,7 +62,7 @@ class ActivityService:
             'details': details,
             'visibility': visibility,
             'visible_to': visible_to,
-            'created_at': datetime.utcnow().isoformat(),
+            'created_at': utc_now().isoformat(),
         }
 
         if tenant_id not in activities_db:

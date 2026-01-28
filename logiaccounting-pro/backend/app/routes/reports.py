@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, Query
 from app.models.store import db
 from app.utils.auth import get_current_user, require_roles
+from app.utils.datetime_utils import utc_now
 
 router = APIRouter()
 
@@ -14,7 +15,7 @@ router = APIRouter()
 @router.get("/dashboard")
 async def get_dashboard(current_user: dict = Depends(get_current_user)):
     """Get dashboard statistics"""
-    now = datetime.utcnow()
+    now = utc_now()
     month_start = datetime(now.year, now.month, 1)
     
     projects = db.projects._data
@@ -67,7 +68,7 @@ async def get_cash_flow(
     current_user: dict = Depends(require_roles("admin"))
 ):
     """Get cash flow data for charts"""
-    now = datetime.utcnow()
+    now = utc_now()
     result = []
     
     for i in range(months - 1, -1, -1):
@@ -168,7 +169,7 @@ async def get_inventory_summary(current_user: dict = Depends(get_current_user)):
 async def get_payment_summary(current_user: dict = Depends(get_current_user)):
     """Get payment summary"""
     payments = db.payments._data
-    now = datetime.utcnow()
+    now = utc_now()
     
     pending = [p for p in payments if p.get("status") == "pending"]
     paid = [p for p in payments if p.get("status") == "paid"]

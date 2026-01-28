@@ -7,6 +7,8 @@ from datetime import datetime
 from typing import List, Optional, Dict, Any
 from uuid import uuid4
 
+from app.utils.datetime_utils import utc_now
+
 from app.models.bi_store import bi_store
 
 
@@ -232,8 +234,8 @@ class MetricsService:
             "filters": kwargs.get("filters", []),
             "depends_on": kwargs.get("depends_on", []),
             "created_by": user_id,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat(),
             "is_system": False,
             "certified": False,
             "certified_by": None,
@@ -251,7 +253,7 @@ class MetricsService:
         if metric.get("is_system"):
             raise ValueError("Cannot modify system metrics")
 
-        updates["updated_at"] = datetime.utcnow().isoformat()
+        updates["updated_at"] = utc_now().isoformat()
 
         return bi_store.update_metric(metric_id, updates)
 
@@ -275,7 +277,7 @@ class MetricsService:
         return bi_store.update_metric(metric_id, {
             "certified": True,
             "certified_by": user_id,
-            "certified_at": datetime.utcnow().isoformat(),
+            "certified_at": utc_now().isoformat(),
         })
 
     def list_metrics(

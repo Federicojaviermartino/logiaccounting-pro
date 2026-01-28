@@ -6,6 +6,7 @@ Phase 17 - API Gateway with scopes, rate limits, IP restrictions
 import hashlib
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
+from app.utils.datetime_utils import utc_now
 
 from app.models.gateway_store import gateway_db
 from app.middleware.tenant_context import TenantContext
@@ -84,7 +85,7 @@ class APIKeyService:
         # Calculate expiration
         expires_at = None
         if expires_days:
-            expires_at = (datetime.utcnow() + timedelta(days=expires_days)).isoformat()
+            expires_at = (utc_now() + timedelta(days=expires_days)).isoformat()
 
         # Create key
         result = gateway_db.api_keys.create({
@@ -122,7 +123,7 @@ class APIKeyService:
 
         # Check expiration
         if key.get("expires_at"):
-            if datetime.fromisoformat(key["expires_at"]) < datetime.utcnow():
+            if datetime.fromisoformat(key["expires_at"]) < utc_now():
                 return None
 
         return key
@@ -368,7 +369,7 @@ class APIKeyService:
         expires_at = key.get("expires_at")
         if not expires_at:
             return False
-        return datetime.fromisoformat(expires_at) < datetime.utcnow()
+        return datetime.fromisoformat(expires_at) < utc_now()
 
 
 # Global service instance

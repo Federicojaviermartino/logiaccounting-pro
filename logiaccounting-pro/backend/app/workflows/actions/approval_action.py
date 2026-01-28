@@ -8,6 +8,7 @@ import logging
 import re
 import uuid
 
+from app.utils.datetime_utils import utc_now
 from app.workflows.actions import ActionExecutor
 
 
@@ -58,12 +59,12 @@ class ApprovalActionExecutor(ActionExecutor):
             "require_all": config.get("require_all", False),
             "responses": {},
             "timeout_hours": timeout_hours,
-            "expires_at": (datetime.utcnow() + timedelta(hours=timeout_hours)).isoformat(),
+            "expires_at": (utc_now() + timedelta(hours=timeout_hours)).isoformat(),
             "escalation_email": config.get("escalation_email"),
             "workflow_execution_id": variables.get("execution_id"),
             "entity_type": variables.get("entity"),
             "entity_id": variables.get("entity_id"),
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
 
         await self._save_approval(approval)

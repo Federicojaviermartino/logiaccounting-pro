@@ -12,6 +12,7 @@ import json
 import io
 
 from app.utils.auth import get_current_user, require_roles
+from app.utils.datetime_utils import utc_now
 
 
 router = APIRouter()
@@ -141,7 +142,7 @@ class SecurityAuditStore:
 
         entry = {
             "id": f"SEC-{self._counter:08d}",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": utc_now().isoformat(),
             "event_type": event_type,
             "action": action,
             "entity_type": entity_type,
@@ -229,7 +230,7 @@ class SecurityAuditStore:
         limit: int = 200,
     ) -> List[Dict[str, Any]]:
         """Get audit trail for a specific user."""
-        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        cutoff = (utc_now() - timedelta(days=days)).isoformat()
         return sorted(
             [l for l in self._logs if l["user_id"] == user_id and l["timestamp"] >= cutoff],
             key=lambda x: x["timestamp"],
@@ -251,7 +252,7 @@ class SecurityAuditStore:
 
     def get_statistics(self, days: int = 30) -> Dict[str, Any]:
         """Get audit statistics."""
-        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        cutoff = (utc_now() - timedelta(days=days)).isoformat()
         recent = [l for l in self._logs if l["timestamp"] >= cutoff]
 
         by_event_type = {}

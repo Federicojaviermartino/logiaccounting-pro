@@ -4,6 +4,7 @@ Payment Analytics Service
 
 from datetime import datetime, timedelta
 from typing import Dict, List
+from app.utils.datetime_utils import utc_now
 from app.services.payment_link_service import payment_link_service
 from app.services.refund_service import refund_service
 
@@ -52,7 +53,7 @@ class PaymentAnalyticsService:
         """Get collection trend over time"""
         # Simulated trend data
         trend = []
-        today = datetime.utcnow().date()
+        today = utc_now().date()
 
         for i in range(days, -1, -1):
             date = today - timedelta(days=i)

@@ -16,6 +16,8 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 
+from app.utils.datetime_utils import utc_now
+
 
 KEY_SIZE = 32
 NONCE_SIZE = 12
@@ -52,7 +54,7 @@ class EncryptionKey:
     key_material: bytes
     status: KeyStatus = KeyStatus.ACTIVE
     version: int = 1
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
     expires_at: Optional[datetime] = None
     rotated_at: Optional[datetime] = None
     rotated_from: Optional[str] = None
@@ -65,7 +67,7 @@ class EncryptionKey:
         """Check if key is currently active."""
         if self.status != KeyStatus.ACTIVE:
             return False
-        if self.expires_at and datetime.utcnow() > self.expires_at:
+        if self.expires_at and utc_now() > self.expires_at:
             return False
         return True
 
@@ -146,7 +148,7 @@ class KeyManager:
         key_material = os.urandom(KEY_SIZE)
         expires_at = None
         if expires_in_days:
-            expires_at = datetime.utcnow() + timedelta(days=expires_in_days)
+            expires_at = utc_now() + timedelta(days=expires_in_days)
 
         version = 1
         if key_id in self._key_versions:
@@ -234,7 +236,7 @@ class KeyManager:
 
         old_versioned_id = f"{key_id}_v{old_key.version}"
         old_key.status = KeyStatus.ROTATED
-        old_key.rotated_at = datetime.utcnow()
+        old_key.rotated_at = utc_now()
         old_key.rotated_to = f"{key_id}_v{new_key.version}"
 
         new_key.rotated_from = old_versioned_id
@@ -329,7 +331,7 @@ class KeyManager:
         Path(storage_path).write_text(json.dumps({
             "version": 1,
             "keys": keys_data,
-            "saved_at": datetime.utcnow().isoformat(),
+            "saved_at": utc_now().isoformat(),
         }))
 
     def load_keys(self, path: Optional[str] = None) -> int:

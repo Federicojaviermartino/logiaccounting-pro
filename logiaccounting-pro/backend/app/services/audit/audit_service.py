@@ -11,6 +11,7 @@ import csv
 import logging
 
 from app.models.audit_store import audit_db
+from app.utils.datetime_utils import utc_now
 from .event_types import (
     EventType, EventCategory, Severity, Action,
     get_event_type,
@@ -293,7 +294,7 @@ class AuditService:
     def get_statistics(self, since: datetime = None) -> Dict:
         """Get audit log statistics"""
         if not since:
-            since = datetime.utcnow() - timedelta(days=30)
+            since = utc_now() - timedelta(days=30)
 
         logs = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
@@ -390,7 +391,7 @@ class AuditService:
 
         output = BytesIO()
         output.write(json.dumps({
-            "exported_at": datetime.utcnow().isoformat(),
+            "exported_at": utc_now().isoformat(),
             "organization_id": self.organization_id,
             "total_logs": len(logs),
             "logs": logs

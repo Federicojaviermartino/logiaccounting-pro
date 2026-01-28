@@ -8,6 +8,8 @@ from typing import Dict, List, Any, Optional, Tuple
 from collections import defaultdict
 import json
 
+from app.utils.datetime_utils import utc_now
+
 
 class DataPipeline:
     """
@@ -43,7 +45,7 @@ class DataPipeline:
             List of time series data points
         """
         if end_date is None:
-            end_date = datetime.utcnow()
+            end_date = utc_now()
         if start_date is None:
             start_date = end_date - timedelta(days=365)
 
@@ -80,7 +82,7 @@ class DataPipeline:
         Returns:
             Dictionary with income, expenses, net cash flow, and pending items
         """
-        end_date = datetime.utcnow()
+        end_date = utc_now()
         start_date = end_date - timedelta(days=months * 30)
 
         transactions = self.db.transactions.find_all()
@@ -167,7 +169,7 @@ class DataPipeline:
         """
         Get revenue data for prediction models
         """
-        end_date = datetime.utcnow()
+        end_date = utc_now()
         start_date = end_date - timedelta(days=months * 30)
 
         transactions = self.db.transactions.find_all()
@@ -232,7 +234,7 @@ class DataPipeline:
         """
         Get inventory movement data for demand forecasting
         """
-        end_date = datetime.utcnow()
+        end_date = utc_now()
         start_date = end_date - timedelta(days=months * 30)
 
         movements = self.db.movements.find_all()

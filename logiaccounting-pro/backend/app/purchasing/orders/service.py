@@ -2,11 +2,13 @@
 Purchase Order Service
 """
 
-from datetime import datetime, date
+from datetime import date
 from decimal import Decimal
 from typing import List, Optional, Tuple
 from uuid import UUID
 import logging
+
+from app.utils.datetime_utils import utc_now
 
 from sqlalchemy import func, or_, and_, extract
 from sqlalchemy.orm import Session, joinedload
@@ -33,7 +35,7 @@ class PurchaseOrderService:
 
     def _generate_order_number(self, customer_id: UUID) -> str:
         """Generate unique PO number."""
-        year = datetime.utcnow().strftime("%y")
+        year = utc_now().strftime("%y")
 
         last = self.db.query(PurchaseOrder).filter(
             PurchaseOrder.customer_id == customer_id,
@@ -346,7 +348,7 @@ class PurchaseOrderService:
             order.status = POStatusEnum.APPROVED.value
             order.approval_status = "approved"
             order.approved_by = approver_id
-            order.approved_at = datetime.utcnow()
+            order.approved_at = utc_now()
         elif action == "reject":
             order.status = POStatusEnum.CANCELLED.value
             order.approval_status = "rejected"

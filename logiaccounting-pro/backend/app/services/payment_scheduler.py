@@ -6,6 +6,7 @@ Optimizes payment dates to maximize discounts and minimize penalties
 import os
 from datetime import datetime, timedelta
 from typing import Optional, Dict, List, Any, Tuple
+from app.utils.datetime_utils import utc_now
 from dataclasses import dataclass, asdict
 from collections import defaultdict
 
@@ -101,7 +102,7 @@ class PaymentScheduler:
 
         if not pending:
             return PaymentSchedule(
-                generated_at=datetime.utcnow().isoformat(),
+                generated_at=utc_now().isoformat(),
                 total_pending=0,
                 total_potential_savings=0,
                 total_penalty_risk=0,
@@ -138,7 +139,7 @@ class PaymentScheduler:
         total_risk = sum(r.penalty_risk for r in recommendations)
 
         # Cash requirements
-        today = datetime.utcnow().date()
+        today = utc_now().date()
         week_end = today + timedelta(days=7)
         month_end = today + timedelta(days=30)
 
@@ -155,7 +156,7 @@ class PaymentScheduler:
         notes = self._generate_notes(recommendations, optimize_for, available_cash)
 
         return PaymentSchedule(
-            generated_at=datetime.utcnow().isoformat(),
+            generated_at=utc_now().isoformat(),
             total_pending=round(total_pending, 2),
             total_potential_savings=round(total_savings, 2),
             total_penalty_risk=round(total_risk, 2),
@@ -170,7 +171,7 @@ class PaymentScheduler:
         """
         Analyze a single payment and generate recommendation
         """
-        today = datetime.utcnow().date()
+        today = utc_now().date()
         amount = payment.get("amount", 0)
         due_date_str = payment.get("due_date", "")[:10]
 

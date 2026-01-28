@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.responses import StreamingResponse
 
 from app.utils.auth import require_roles
+from app.utils.datetime_utils import utc_now
 from app.services.audit import ComplianceService, ReportService, log_audit
 from app.models.audit_store import audit_db
 from app.schemas.audit_schemas import (
@@ -95,7 +96,7 @@ async def run_compliance_check(
     check_data = {
         "organization_id": org_id,
         "framework_id": framework_id,
-        "checked_at": datetime.utcnow().isoformat(),
+        "checked_at": utc_now().isoformat(),
         "summary": result["summary"],
         "controls": result["controls"],
         "initiated_by": current_user.get("id")
@@ -515,7 +516,7 @@ async def complete_data_subject_request(
         organization_id=org_id,
         metadata={
             "status": "completed",
-            "completed_at": datetime.utcnow().isoformat(),
+            "completed_at": utc_now().isoformat(),
             "completed_by": current_user.get("id"),
             "notes": notes
         }

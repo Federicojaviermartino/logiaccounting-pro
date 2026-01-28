@@ -8,6 +8,7 @@ import base64
 from datetime import datetime
 from typing import List, Dict, Optional
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 from app.utils.activity_logger import activity_logger
 
 
@@ -42,7 +43,7 @@ class BackupService:
 
         backup_data = {
             "version": "1.0",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
             "created_by": user_email,
             "entities": {}
         }

@@ -8,6 +8,7 @@ import os
 import json
 from datetime import datetime, timedelta
 from typing import Optional, Dict, List, Any, Tuple
+from app.utils.datetime_utils import utc_now
 from dataclasses import dataclass, asdict
 
 # Optional Anthropic import
@@ -461,7 +462,7 @@ Respond in JSON format with this structure:
             if end_date:
                 try:
                     end = datetime.fromisoformat(end_date)
-                    days_left = (end - datetime.utcnow()).days
+                    days_left = (end - utc_now()).days
                     if days_left < 0:
                         risks.append(f"Overdue by {abs(days_left)} days")
                     elif days_left < 14:
@@ -534,7 +535,7 @@ Respond in JSON format with this structure:
         Show upcoming payment obligations
         """
         payments = self.db.payments.find_all()
-        today = datetime.utcnow().date()
+        today = utc_now().date()
         week_end = today + timedelta(days=7)
 
         upcoming = []

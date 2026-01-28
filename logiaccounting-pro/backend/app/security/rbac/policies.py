@@ -9,6 +9,8 @@ from datetime import datetime, time
 from ipaddress import ip_address, ip_network
 import re
 
+from app.utils.datetime_utils import utc_now
+
 
 class PolicyEffect(str, Enum):
     """Policy evaluation result."""
@@ -146,7 +148,7 @@ class TimeBasedCondition:
 
     def evaluate(self, context: Dict[str, Any]) -> bool:
         """Check if current time is within allowed window."""
-        now = context.get("current_time", datetime.utcnow())
+        now = context.get("current_time", utc_now())
         if isinstance(now, str):
             now = datetime.fromisoformat(now)
 
@@ -248,8 +250,8 @@ class Policy:
     ownership_condition: Optional[ResourceOwnershipCondition] = None
     is_active: bool = True
     metadata: Dict[str, Any] = field(default_factory=dict)
-    created_at: datetime = field(default_factory=datetime.utcnow)
-    updated_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
+    updated_at: datetime = field(default_factory=utc_now)
 
     def matches_request(
         self,

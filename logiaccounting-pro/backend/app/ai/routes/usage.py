@@ -6,6 +6,7 @@ from typing import Optional
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, Query
 
+from app.utils.datetime_utils import utc_now
 from app.utils.auth import get_current_user, require_roles
 from ..models.ai_usage import AIUsage
 from ..config import get_ai_config
@@ -20,7 +21,7 @@ async def get_usage(
 ):
     """Get AI usage statistics"""
     tenant_id = current_user.get("tenant_id", "default")
-    start_date = datetime.utcnow() - timedelta(days=days)
+    start_date = utc_now() - timedelta(days=days)
 
     return AIUsage.get_usage_summary(
         tenant_id=tenant_id,
@@ -35,7 +36,7 @@ async def get_usage_by_feature(
 ):
     """Get AI usage broken down by feature"""
     tenant_id = current_user.get("tenant_id", "default")
-    start_date = datetime.utcnow() - timedelta(days=days)
+    start_date = utc_now() - timedelta(days=days)
 
     summary = AIUsage.get_usage_summary(tenant_id, start_date)
 
@@ -53,7 +54,7 @@ async def get_usage_costs(
 ):
     """Get AI usage costs"""
     tenant_id = current_user.get("tenant_id", "default")
-    start_date = datetime.utcnow() - timedelta(days=days)
+    start_date = utc_now() - timedelta(days=days)
 
     summary = AIUsage.get_usage_summary(tenant_id, start_date)
 

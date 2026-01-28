@@ -6,6 +6,7 @@ Handles Stripe payment processing
 from datetime import datetime
 from typing import Dict, Optional
 import secrets
+from app.utils.datetime_utils import utc_now
 
 
 class StripeService:
@@ -52,7 +53,7 @@ class StripeService:
             "metadata": metadata or {},
             "status": "requires_payment_method",
             "client_secret": client_secret,
-            "created": int(datetime.utcnow().timestamp()),
+            "created": int(utc_now().timestamp()),
             "livemode": False
         }
 
@@ -135,7 +136,7 @@ class StripeService:
             return {"error": f"Cannot cancel payment in {payment['status']} status"}
 
         payment["status"] = "canceled"
-        payment["canceled_at"] = int(datetime.utcnow().timestamp())
+        payment["canceled_at"] = int(utc_now().timestamp())
 
         return {"success": True, "payment_intent": payment}
 
@@ -165,7 +166,7 @@ class StripeService:
             "payment_intent": payment_intent_id,
             "reason": reason,
             "status": "succeeded",
-            "created": int(datetime.utcnow().timestamp())
+            "created": int(utc_now().timestamp())
         }
 
         # Update payment
@@ -194,7 +195,7 @@ class StripeService:
             "data": {
                 "object": payload
             },
-            "created": int(datetime.utcnow().timestamp()),
+            "created": int(utc_now().timestamp()),
             "livemode": False
         }
 

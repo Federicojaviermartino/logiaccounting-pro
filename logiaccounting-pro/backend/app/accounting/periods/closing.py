@@ -12,6 +12,8 @@ import logging
 from sqlalchemy import func, and_
 from sqlalchemy.orm import Session
 
+from app.utils.datetime_utils import utc_now
+
 from app.accounting.periods.models import FiscalYear, FiscalPeriod
 from app.accounting.chart_of_accounts.models import Account, AccountType
 from app.accounting.journal.models import JournalEntry, JournalLine, EntryTypeEnum, EntryStatusEnum
@@ -63,7 +65,7 @@ class YearEndClosingService:
 
         # Close the fiscal year
         fiscal_year.is_closed = True
-        fiscal_year.closed_at = datetime.utcnow()
+        fiscal_year.closed_at = utc_now()
         fiscal_year.closed_by = closed_by
 
         self.db.commit()

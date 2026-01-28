@@ -8,6 +8,7 @@ from typing import List, Optional, Dict, Any
 from uuid import uuid4
 
 from app.models.crm_store import crm_store
+from app.utils.datetime_utils import utc_now
 
 
 class LeadService:
@@ -249,7 +250,7 @@ class LeadService:
         """Assign lead to a user"""
         return crm_store.update_lead(lead_id, {
             "owner_id": owner_id,
-            "assigned_at": datetime.utcnow().isoformat(),
+            "assigned_at": utc_now().isoformat(),
             "assigned_by": assigned_by,
         })
 
@@ -259,7 +260,7 @@ class LeadService:
         for lead_id in lead_ids:
             if crm_store.update_lead(lead_id, {
                 "owner_id": owner_id,
-                "assigned_at": datetime.utcnow().isoformat(),
+                "assigned_at": utc_now().isoformat(),
                 "assigned_by": assigned_by,
             }):
                 count += 1

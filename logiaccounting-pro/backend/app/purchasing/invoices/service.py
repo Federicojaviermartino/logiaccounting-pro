@@ -3,11 +3,13 @@ Supplier Invoice Service
 3-way matching and invoice processing
 """
 
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 from typing import List, Optional, Tuple
 from uuid import UUID
 import logging
+
+from app.utils.datetime_utils import utc_now
 
 from sqlalchemy import func, or_
 from sqlalchemy.orm import Session, joinedload
@@ -29,7 +31,7 @@ class SupplierInvoiceService:
         self.db = db
 
     def _generate_invoice_number(self, customer_id: UUID) -> str:
-        year = datetime.utcnow().strftime("%y")
+        year = utc_now().strftime("%y")
 
         last = self.db.query(SupplierInvoice).filter(
             SupplierInvoice.customer_id == customer_id,
@@ -243,7 +245,7 @@ class SupplierInvoiceService:
 
         invoice.status = InvoiceStatusEnum.APPROVED.value
         invoice.approved_by = approved_by
-        invoice.approved_at = datetime.utcnow()
+        invoice.approved_at = utc_now()
 
         self.db.commit()
         self.db.refresh(invoice)

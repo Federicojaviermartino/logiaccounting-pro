@@ -8,6 +8,8 @@ from datetime import datetime
 from uuid import uuid4
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -18,13 +20,13 @@ class Conversation:
         self.customer_id = customer_id
         self.subject = subject
         self.status = "active"
-        self.last_message_at = datetime.utcnow()
+        self.last_message_at = utc_now()
         self.last_message_preview = None
         self.unread_customer = 0
         self.unread_agent = 0
         self.messages = []
-        self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.created_at = utc_now()
+        self.updated_at = utc_now()
 
 
 class Message:
@@ -37,7 +39,7 @@ class Message:
         self.content = content
         self.attachments = attachments or []
         self.read_at = None
-        self.created_at = datetime.utcnow()
+        self.created_at = utc_now()
 
 
 class MessageService:
@@ -101,10 +103,10 @@ class MessageService:
         msg = Message(conversation_id=conversation_id, sender_type="customer", sender_id=contact_id, sender_name=sender_name, content=content, attachments=attachments)
 
         conv.messages.append(msg)
-        conv.last_message_at = datetime.utcnow()
+        conv.last_message_at = utc_now()
         conv.last_message_preview = content[:100]
         conv.unread_agent += 1
-        conv.updated_at = datetime.utcnow()
+        conv.updated_at = utc_now()
 
         return msg
 
@@ -116,7 +118,7 @@ class MessageService:
 
         for msg in conv.messages:
             if msg.sender_type != "customer" and not msg.read_at:
-                msg.read_at = datetime.utcnow()
+                msg.read_at = utc_now()
 
         conv.unread_customer = 0
 
@@ -127,7 +129,7 @@ class MessageService:
             raise ValueError("Conversation not found")
 
         conv.status = "archived"
-        conv.updated_at = datetime.utcnow()
+        conv.updated_at = utc_now()
 
     def get_unread_count(self, customer_id: str) -> int:
         """Get total unread message count."""

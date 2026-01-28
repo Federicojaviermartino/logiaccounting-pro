@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import random
 from app.services.ecommerce.base_adapter import BaseEcommerceAdapter
+from app.utils.datetime_utils import utc_now
 
 
 class ShopifyAdapter(BaseEcommerceAdapter):
@@ -147,8 +148,8 @@ class ShopifyAdapter(BaseEcommerceAdapter):
             "body_html": f"<p>{product_data.get('description', '')}</p>",
             "vendor": product_data.get("vendor", ""),
             "product_type": product_data.get("category", ""),
-            "created_at": datetime.utcnow().isoformat() + "Z",
-            "updated_at": datetime.utcnow().isoformat() + "Z",
+            "created_at": utc_now().isoformat() + "Z",
+            "updated_at": utc_now().isoformat() + "Z",
             "status": "active",
             "variants": [{
                 "id": str(random.randint(10000000000000, 99999999999999)),
@@ -174,7 +175,7 @@ class ShopifyAdapter(BaseEcommerceAdapter):
                     product["variants"][0]["price"] = str(product_data["price"])
                 if "stock" in product_data:
                     product["variants"][0]["inventory_quantity"] = product_data["stock"]
-                product["updated_at"] = datetime.utcnow().isoformat() + "Z"
+                product["updated_at"] = utc_now().isoformat() + "Z"
                 return self.normalize_product(product)
         return {"error": "Product not found"}
 
@@ -267,8 +268,8 @@ class ShopifyAdapter(BaseEcommerceAdapter):
             order = {
                 "id": str(5000000000000 + i),
                 "order_number": 1001 + i,
-                "created_at": (datetime.utcnow() - timedelta(days=i)).isoformat() + "Z",
-                "updated_at": (datetime.utcnow() - timedelta(days=i)).isoformat() + "Z",
+                "created_at": (utc_now() - timedelta(days=i)).isoformat() + "Z",
+                "updated_at": (utc_now() - timedelta(days=i)).isoformat() + "Z",
                 "financial_status": random.choice(statuses),
                 "fulfillment_status": "fulfilled" if i < 7 else None,
                 "currency": "USD",

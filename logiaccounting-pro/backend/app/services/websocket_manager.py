@@ -7,6 +7,7 @@ from typing import Dict, List, Set
 from fastapi import WebSocket
 import json
 from datetime import datetime
+from app.utils.datetime_utils import utc_now
 
 
 class WebSocketManager:
@@ -63,7 +64,7 @@ class WebSocketManager:
             "type": "notification",
             "event": event_type,
             "data": data,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": utc_now().isoformat()
         }
 
         if target_users:

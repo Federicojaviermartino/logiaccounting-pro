@@ -9,6 +9,8 @@ from enum import Enum
 import logging
 import asyncio
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -32,7 +34,7 @@ class WorkflowError(Exception):
         self.details = details or {}
         self.node_id = node_id
         self.recoverable = recoverable
-        self.timestamp = datetime.utcnow()
+        self.timestamp = utc_now()
         super().__init__(self.message)
 
     def to_dict(self) -> Dict:

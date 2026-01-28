@@ -6,6 +6,7 @@ In production, integrate with SendGrid, AWS SES, or SMTP
 from datetime import datetime
 from typing import Optional, Dict, List
 from dataclasses import dataclass, asdict
+from app.utils.datetime_utils import utc_now
 
 
 @dataclass
@@ -138,7 +139,7 @@ LogiAccounting Pro Team
                 template=template,
                 data=data,
                 status="sent",
-                sent_at=datetime.utcnow().isoformat()
+                sent_at=utc_now().isoformat()
             )
 
             # In production: Actually send email here
@@ -153,7 +154,7 @@ LogiAccounting Pro Team
                 template=template,
                 data=data,
                 status="failed",
-                sent_at=datetime.utcnow().isoformat(),
+                sent_at=utc_now().isoformat(),
                 error=str(e)
             )
 

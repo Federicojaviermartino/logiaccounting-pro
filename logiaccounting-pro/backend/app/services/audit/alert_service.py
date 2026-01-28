@@ -8,6 +8,7 @@ from typing import List, Dict, Any, Optional
 import logging
 
 from app.models.audit_store import audit_db
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +72,7 @@ class AlertService:
             timeframe = conditions.get('timeframe_minutes', 60)
 
             # Count recent matching events
-            since = (datetime.utcnow() - timedelta(minutes=timeframe)).isoformat()
+            since = (utc_now() - timedelta(minutes=timeframe)).isoformat()
             recent_logs = audit_db.audit_logs.find_all({
                 "organization_id": self.organization_id,
                 "from_date": since

@@ -8,6 +8,7 @@ from typing import Optional, Dict, Any
 from dataclasses import dataclass, field
 import uuid
 
+from app.utils.datetime_utils import utc_now
 
 # In-memory storage
 ai_usage_db: Dict[str, 'AIUsage'] = {}
@@ -26,8 +27,8 @@ class AIUsage:
     token_output: int = 0
     processing_time_ms: int = 0
     estimated_cost: float = 0.0
-    created_at: datetime = field(default_factory=datetime.utcnow)
-    updated_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
+    updated_at: datetime = field(default_factory=utc_now)
 
     COSTS = {
         'anthropic': {
@@ -70,7 +71,7 @@ class AIUsage:
         usage.token_input += input_tokens
         usage.token_output += output_tokens
         usage.processing_time_ms += processing_time_ms
-        usage.updated_at = datetime.utcnow()
+        usage.updated_at = utc_now()
 
         if model and provider in cls.COSTS and model in cls.COSTS[provider]:
             costs = cls.COSTS[provider][model]
