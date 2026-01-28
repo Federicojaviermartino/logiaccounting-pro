@@ -23,6 +23,7 @@ import NodePalette from '../components/NodePalette';
 import NodeConfigPanel from '../components/NodeConfigPanel';
 import TriggerConfig from '../components/TriggerConfig';
 import { workflowAPI } from '../services/workflowAPI';
+import toast from '../../../utils/toast';
 
 const WorkflowBuilder = () => {
   const { id } = useParams();
@@ -105,7 +106,7 @@ const WorkflowBuilder = () => {
       setHasChanges(false);
     } catch (error) {
       console.error('Failed to save workflow:', error);
-      alert('Failed to save workflow');
+      toast.error('Failed to save workflow');
     } finally {
       setSaving(false);
     }
@@ -113,16 +114,16 @@ const WorkflowBuilder = () => {
 
   const handleTest = async () => {
     if (isNew) {
-      alert('Please save the workflow first');
+      toast.info('Please save the workflow first');
       return;
     }
 
     try {
       const result = await workflowAPI.executeWorkflow(id);
-      alert(`Test started! Execution ID: ${result.execution_id}`);
+      toast.info(`Test started! Execution ID: ${result.execution_id}`);
     } catch (error) {
       console.error('Failed to test workflow:', error);
-      alert('Failed to test workflow');
+      toast.error('Failed to test workflow');
     }
   };
 

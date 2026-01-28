@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { ocrAPI, transactionsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import toast from '../utils/toast';
 
 export default function InvoiceOCR() {
   const { user } = useAuth();
@@ -77,7 +78,7 @@ export default function InvoiceOCR() {
       const res = await ocrAPI.processInvoice(file, autoCreate);
       setResult(res.data);
       if (autoCreate && res.data.auto_created) {
-        alert('Transaction created successfully!');
+        toast.success('Transaction created successfully!');
       }
     } catch (err) {
       setError(err.response?.data?.detail || 'Processing failed');
@@ -105,9 +106,9 @@ export default function InvoiceOCR() {
         description: `Invoice from ${data.vendor_name || 'Unknown'}`,
         create_payment: !!data.due_date
       });
-      alert('Transaction created successfully!');
+      toast.success('Transaction created successfully!');
     } catch (err) {
-      alert('Failed to create transaction: ' + (err.response?.data?.detail || err.message));
+      toast.error('Failed to create transaction: ' + (err.response?.data?.detail || err.message));
     }
   };
 

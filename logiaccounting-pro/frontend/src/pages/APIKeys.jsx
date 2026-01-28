@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiKeysAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function APIKeys() {
   const [loading, setLoading] = useState(true);
@@ -87,7 +88,7 @@ export default function APIKeys() {
       resetForm();
       loadData();
     } catch (error) {
-      alert('Failed to create key: ' + (error.response?.data?.detail || error.message));
+      toast.error('Failed to create key: ' + (error.response?.data?.detail || error.message));
     }
   };
 
@@ -98,7 +99,7 @@ export default function APIKeys() {
       setNewKeyResult(response.data);
       loadData();
     } catch (error) {
-      alert('Failed to regenerate key: ' + (error.response?.data?.detail || error.message));
+      toast.error('Failed to regenerate key: ' + (error.response?.data?.detail || error.message));
     }
   };
 
@@ -108,7 +109,7 @@ export default function APIKeys() {
       await apiKeysAPI.revoke(keyId);
       loadData();
     } catch (error) {
-      alert('Failed to revoke key');
+      toast.error('Failed to revoke key');
     }
   };
 
@@ -118,7 +119,7 @@ export default function APIKeys() {
       await apiKeysAPI.delete(keyId);
       loadData();
     } catch (error) {
-      alert('Failed to delete key');
+      toast.error('Failed to delete key');
     }
   };
 
@@ -128,7 +129,7 @@ export default function APIKeys() {
       setUsageStats(response.data.usage);
       setShowUsageModal(true);
     } catch (error) {
-      alert('Failed to load usage stats');
+      toast.error('Failed to load usage stats');
     }
   };
 
@@ -163,7 +164,7 @@ export default function APIKeys() {
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    alert('Copied to clipboard!');
+    toast.success('Copied to clipboard!');
   };
 
   const scopeCategories = scopes.reduce((acc, s) => {

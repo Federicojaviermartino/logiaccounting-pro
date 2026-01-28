@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { tasksAPI, commentsAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function TeamTasks() {
   const [tasks, setTasks] = useState([]);
@@ -69,7 +70,7 @@ export default function TeamTasks() {
       loadTasks();
       loadInitialData();
     } catch (err) {
-      alert('Failed to save task');
+      toast.error('Failed to save task');
     }
   };
 
@@ -79,7 +80,7 @@ export default function TeamTasks() {
       loadTasks();
       loadInitialData();
     } catch (err) {
-      alert('Failed to update status');
+      toast.error('Failed to update status');
     }
   };
 
@@ -89,7 +90,7 @@ export default function TeamTasks() {
       await tasksAPI.delete(taskId);
       loadTasks();
     } catch (err) {
-      alert('Failed to delete');
+      toast.error('Failed to delete');
     }
   };
 

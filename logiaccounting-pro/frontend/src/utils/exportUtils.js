@@ -2,13 +2,14 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { saveAs } from 'file-saver';
+import toast from './toast';
 
 /**
  * Export data to CSV file
  */
 export const exportToCSV = (data, filename, headers = null) => {
   if (!data || data.length === 0) {
-    alert('No data to export');
+    toast.info('No data to export');
     return;
   }
 
@@ -36,7 +37,7 @@ export const exportToCSV = (data, filename, headers = null) => {
  */
 export const exportToExcel = (data, filename, sheetName = 'Sheet1') => {
   if (!data || data.length === 0) {
-    alert('No data to export');
+    toast.info('No data to export');
     return;
   }
 
@@ -59,7 +60,7 @@ export const exportToExcel = (data, filename, sheetName = 'Sheet1') => {
  */
 export const exportToPDF = (data, filename, title, columns = null) => {
   if (!data || data.length === 0) {
-    alert('No data to export');
+    toast.info('No data to export');
     return;
   }
 

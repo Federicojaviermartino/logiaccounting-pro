@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { paymentsAPI, projectsAPI, authAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import toast from '../utils/toast';
 
 export default function Payments() {
   const { user } = useAuth();
@@ -60,7 +61,7 @@ export default function Payments() {
       setModalOpen(false);
       loadData();
     } catch (error) {
-      alert(error.response?.data?.detail || 'Failed to save payment');
+      toast.error(error.response?.data?.detail || 'Failed to save payment');
     }
   };
 
@@ -68,10 +69,10 @@ export default function Payments() {
     if (!window.confirm('Confirm payment? All parties will be notified.')) return;
     try {
       await paymentsAPI.markAsPaid(id, new Date().toISOString());
-      alert('Payment confirmed! Notifications sent to all parties.');
+      toast.success('Payment confirmed! Notifications sent to all parties.');
       loadData();
     } catch (error) {
-      alert(error.response?.data?.detail || 'Failed to mark as paid');
+      toast.error(error.response?.data?.detail || 'Failed to mark as paid');
     }
   };
 
@@ -81,7 +82,7 @@ export default function Payments() {
       await paymentsAPI.deletePayment(id);
       loadData();
     } catch (error) {
-      alert('Failed to delete');
+      toast.error('Failed to delete');
     }
   };
 

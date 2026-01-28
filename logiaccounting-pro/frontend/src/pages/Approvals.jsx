@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { approvalsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import toast from '../utils/toast';
 
 export default function Approvals() {
   const { user } = useAuth();
@@ -48,13 +49,13 @@ export default function Approvals() {
       setSelectedItem(null);
       loadData();
     } catch (error) {
-      alert('Failed to approve: ' + (error.response?.data?.detail || error.message));
+      toast.error('Failed to approve: ' + (error.response?.data?.detail || error.message));
     }
   };
 
   const handleReject = async (approvalId) => {
     if (!comments.trim()) {
-      alert('Please provide a reason for rejection');
+      toast.warning('Please provide a reason for rejection');
       return;
     }
     try {
@@ -63,7 +64,7 @@ export default function Approvals() {
       setSelectedItem(null);
       loadData();
     } catch (error) {
-      alert('Failed to reject: ' + (error.response?.data?.detail || error.message));
+      toast.error('Failed to reject: ' + (error.response?.data?.detail || error.message));
     }
   };
 
@@ -79,7 +80,7 @@ export default function Approvals() {
       });
       loadData();
     } catch (error) {
-      alert('Failed to create rule: ' + (error.response?.data?.detail || error.message));
+      toast.error('Failed to create rule: ' + (error.response?.data?.detail || error.message));
     }
   };
 
@@ -89,7 +90,7 @@ export default function Approvals() {
       await approvalsAPI.deleteRule(ruleId);
       loadData();
     } catch (error) {
-      alert('Failed to delete rule');
+      toast.error('Failed to delete rule');
     }
   };
 

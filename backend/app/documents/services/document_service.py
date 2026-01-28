@@ -1,9 +1,12 @@
 """Document management service."""
 import os
 import hashlib
+import logging
 from datetime import datetime
 from typing import Optional, List, BinaryIO
 from uuid import UUID, uuid4
+
+logger = logging.getLogger(__name__)
 
 from sqlalchemy import select, func, and_, or_, desc
 from sqlalchemy.orm import Session
@@ -61,10 +64,14 @@ class DocumentService:
         relative_path = f"{customer_id}/{year_month}/{uuid4()}{ext}"
         full_path = os.path.join(self.UPLOAD_DIR, relative_path)
         
-        os.makedirs(os.path.dirname(full_path), exist_ok=True)
-        with open(full_path, 'wb') as f:
-            f.write(file_content)
-        
+        try:
+            os.makedirs(os.path.dirname(full_path), exist_ok=True)
+            with open(full_path, 'wb') as f:
+                f.write(file_content)
+        except OSError as exc:
+            logger.error("Failed to write document file %s: %s", full_path, exc)
+            raise ValueError(f"Failed to store file: {exc}") from exc
+
         document = Document(
             id=uuid4(),
             customer_id=customer_id,
@@ -125,7 +132,14 @@ class DocumentService:
         if 'document_type' in update_data:
             update_data['document_type'] = DocumentType(update_data['document_type'])
         
+        _UPDATABLE_FIELDS = frozenset({
+            'title', 'description', 'document_type', 'category_id',
+            'tags', 'document_date', 'is_confidential', 'metadata',
+            'related_entity_type', 'related_entity_id', 'status',
+        })
         for field, value in update_data.items():
+            if field not in _UPDATABLE_FIELDS:
+                continue
             setattr(document, field, value)
         
         document.updated_by = user_id
@@ -173,10 +187,14 @@ class DocumentService:
         relative_path = f"{customer_id}/{year_month}/{uuid4()}{ext}"
         full_path = os.path.join(self.UPLOAD_DIR, relative_path)
         
-        os.makedirs(os.path.dirname(full_path), exist_ok=True)
-        with open(full_path, 'wb') as f:
-            f.write(file_content)
-        
+        try:
+            os.makedirs(os.path.dirname(full_path), exist_ok=True)
+            with open(full_path, 'wb') as f:
+                f.write(file_content)
+        except OSError as exc:
+            logger.error("Failed to write version file %s: %s", full_path, exc)
+            raise ValueError(f"Failed to store file version: {exc}") from exc
+
         document.file_name = file_name
         document.file_path = relative_path
         document.file_size = file_size
@@ -216,7 +234,7 @@ class DocumentService:
         query = select(Document).where(
             Document.customer_id == customer_id,
             Document.status != DocumentStatus.DELETED,
-            Document.is_latest == True
+            Document.is_latest.is_(True)
         )
         
         if filters.search:
@@ -283,8 +301,11 @@ class DocumentService:
         
         if permanent:
             full_path = os.path.join(self.UPLOAD_DIR, document.file_path)
-            if os.path.exists(full_path):
-                os.remove(full_path)
+            try:
+                if os.path.exists(full_path):
+                    os.remove(full_path)
+            except OSError as exc:
+                logger.warning("Failed to delete file %s: %s", full_path, exc)
             self.db.delete(document)
         else:
             document.status = DocumentStatus.DELETED
@@ -368,7 +389,7 @@ class DocumentService:
             DocumentCategory.customer_id == customer_id
         )
         if not include_inactive:
-            query = query.where(DocumentCategory.is_active == True)
+            query = query.where(DocumentCategory.is_active.is_(True))
         
         query = query.order_by(DocumentCategory.path)
         result = self.db.execute(query)

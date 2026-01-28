@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { commentsAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function CommentSection({ entityType, entityId }) {
   const [comments, setComments] = useState([]);
@@ -48,7 +49,7 @@ export default function CommentSection({ entityType, entityId }) {
       setReplyTo(null);
       loadComments();
     } catch (err) {
-      alert('Failed to post comment');
+      toast.error('Failed to post comment');
     }
   };
 
@@ -67,7 +68,7 @@ export default function CommentSection({ entityType, entityId }) {
       await commentsAPI.delete(commentId);
       loadComments();
     } catch (err) {
-      alert('Failed to delete');
+      toast.error('Failed to delete');
     }
   };
 

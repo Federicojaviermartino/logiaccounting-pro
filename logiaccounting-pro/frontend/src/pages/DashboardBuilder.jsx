@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { dashboardAPI } from '../services/api';
+import toast from '../utils/toast';
 
 // Widget Components
 import KPIWidget from '../components/dashboard/widgets/KPIWidget';
@@ -71,7 +72,7 @@ export default function DashboardBuilder() {
       setNewDashboardName('');
       setSelectedTemplate('');
     } catch (err) {
-      alert('Failed to create dashboard');
+      toast.error('Failed to create dashboard');
     }
   };
 
@@ -107,7 +108,7 @@ export default function DashboardBuilder() {
       setCurrentDashboard(res.data);
       setShowAddWidget(false);
     } catch (err) {
-      alert('Failed to add widget');
+      toast.error('Failed to add widget');
     }
   };
 
@@ -117,7 +118,7 @@ export default function DashboardBuilder() {
       const res = await dashboardAPI.removeWidget(currentDashboard.id, widgetId);
       setCurrentDashboard(res.data);
     } catch (err) {
-      alert('Failed to remove widget');
+      toast.error('Failed to remove widget');
     }
   };
 
@@ -126,9 +127,9 @@ export default function DashboardBuilder() {
       const res = await dashboardAPI.share(currentDashboard.id);
       const shareUrl = `${window.location.origin}/dashboard/shared/${res.data.share_token}`;
       navigator.clipboard.writeText(shareUrl);
-      alert('Share link copied to clipboard!');
+      toast.success('Share link copied to clipboard!');
     } catch (err) {
-      alert('Failed to share');
+      toast.error('Failed to share');
     }
   };
 
@@ -140,7 +141,7 @@ export default function DashboardBuilder() {
       setDashboards(remaining);
       setCurrentDashboard(remaining[0] || null);
     } catch (err) {
-      alert('Failed to delete');
+      toast.error('Failed to delete');
     }
   };
 

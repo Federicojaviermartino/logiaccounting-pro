@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { documentsAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function DocumentUploader({ entityType, entityId, onUpload }) {
   const [uploading, setUploading] = useState(false);
@@ -21,12 +22,12 @@ export default function DocumentUploader({ entityType, entityId, onUpload }) {
     const file = files[0];
 
     if (!allowedTypes.includes(file.type)) {
-      alert('Invalid file type. Allowed: PDF, PNG, JPG, WEBP, DOCX, XLSX');
+      toast.error('Invalid file type. Allowed: PDF, PNG, JPG, WEBP, DOCX, XLSX');
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      alert('File too large. Maximum size: 10MB');
+      toast.info('File too large. Maximum size: 10MB');
       return;
     }
 
@@ -35,7 +36,7 @@ export default function DocumentUploader({ entityType, entityId, onUpload }) {
       const response = await documentsAPI.upload(entityType, entityId, file);
       if (onUpload) onUpload(response.data);
     } catch (error) {
-      alert('Failed to upload: ' + (error.response?.data?.detail || error.message));
+      toast.error('Failed to upload: ' + (error.response?.data?.detail || error.message));
     } finally {
       setUploading(false);
     }

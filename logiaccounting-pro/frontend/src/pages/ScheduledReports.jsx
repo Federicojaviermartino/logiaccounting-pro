@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { scheduledReportsAPI } from '../services/api';
+import toast from '../utils/toast';
 
 const DAYS_OF_WEEK = [
   { value: 0, label: 'Monday' },
@@ -68,7 +69,7 @@ export default function ScheduledReports() {
       resetForm();
       loadData();
     } catch (err) {
-      alert('Failed to create schedule');
+      toast.error('Failed to create schedule');
     }
   };
 
@@ -91,17 +92,17 @@ export default function ScheduledReports() {
       await scheduledReportsAPI.toggle(schedule.id);
       loadData();
     } catch (err) {
-      alert('Failed to toggle');
+      toast.error('Failed to toggle');
     }
   };
 
   const handleRunNow = async (schedule) => {
     try {
       const res = await scheduledReportsAPI.runNow(schedule.id);
-      alert(`Report generated! ${res.data.run_record.row_count} rows`);
+      toast.success(`Report generated! ${res.data.run_record.row_count} rows`);
       loadData();
     } catch (err) {
-      alert('Failed to run');
+      toast.error('Failed to run');
     }
   };
 
@@ -111,7 +112,7 @@ export default function ScheduledReports() {
       await scheduledReportsAPI.delete(schedule.id);
       loadData();
     } catch (err) {
-      alert('Failed to delete');
+      toast.error('Failed to delete');
     }
   };
 
@@ -121,7 +122,7 @@ export default function ScheduledReports() {
       setHistoryData(res.data.history || []);
       setSelectedSchedule(schedule);
     } catch (err) {
-      alert('Failed to load history');
+      toast.error('Failed to load history');
     }
   };
 

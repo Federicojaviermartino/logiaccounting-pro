@@ -25,6 +25,7 @@ import {
   formatSyncDirection,
   formatConflictResolution
 } from '../services/integrationsApi';
+import toast from '../utils/toast';
 
 const Integrations = () => {
   const { t } = useTranslation();
@@ -101,7 +102,7 @@ const Integrations = () => {
       }
     } catch (error) {
       console.error('Error initiating connection:', error);
-      alert('Failed to start connection process');
+      toast.error('Failed to start connection process');
     }
   };
 
@@ -118,7 +119,7 @@ const Integrations = () => {
       }
     } catch (error) {
       console.error('Error disconnecting:', error);
-      alert('Failed to disconnect integration');
+      toast.error('Failed to disconnect integration');
     }
   };
 
@@ -127,10 +128,10 @@ const Integrations = () => {
 
     try {
       const result = await testConnection(integrationId);
-      alert(result.success ? `✅ ${result.message}` : `❌ ${result.message}`);
+      result.success ? toast.success(result.message) : toast.error(result.message);
       loadData();
     } catch (error) {
-      alert(`❌ Connection test failed: ${error.message}`);
+      toast.error(`Connection test failed: ${error.message}`);
     } finally {
       setTesting({ ...testing, [integrationId]: false });
     }
@@ -142,7 +143,7 @@ const Integrations = () => {
 
     try {
       await triggerSync(integrationId, entityType, false);
-      alert('Sync started successfully');
+      toast.success('Sync started successfully');
 
       // Reload sync logs after a short delay
       setTimeout(() => {
@@ -151,7 +152,7 @@ const Integrations = () => {
         }
       }, 2000);
     } catch (error) {
-      alert(`Sync failed: ${error.message}`);
+      toast.error(`Sync failed: ${error.message}`);
     } finally {
       setSyncing({ ...syncing, [key]: false });
     }
@@ -163,7 +164,7 @@ const Integrations = () => {
       loadIntegrationDetails(integrationId);
       setShowConfigModal(false);
     } catch (error) {
-      alert(`Failed to add sync config: ${error.message}`);
+      toast.error(`Failed to add sync config: ${error.message}`);
     }
   };
 
@@ -172,7 +173,7 @@ const Integrations = () => {
       await updateSyncConfig(integrationId, configId, { enabled });
       loadIntegrationDetails(integrationId);
     } catch (error) {
-      alert(`Failed to update sync config: ${error.message}`);
+      toast.error(`Failed to update sync config: ${error.message}`);
     }
   };
 

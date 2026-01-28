@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { importAPI } from '../services/api';
+import toast from '../utils/toast';
 
 const STEPS = ['Upload', 'Map Fields', 'Validate', 'Import'];
 
@@ -70,7 +71,7 @@ export default function DataImport() {
 
       setStep(1);
     } catch (err) {
-      alert('Failed to parse file: ' + err.message);
+      toast.error('Failed to parse file: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -88,7 +89,7 @@ export default function DataImport() {
       setImportJob(res.data);
       setStep(2);
     } catch (err) {
-      alert('Validation failed');
+      toast.error('Validation failed');
     } finally {
       setLoading(false);
     }
@@ -102,7 +103,7 @@ export default function DataImport() {
       setStep(3);
       loadImports();
     } catch (err) {
-      alert('Import failed: ' + err.message);
+      toast.error('Import failed: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -114,7 +115,7 @@ export default function DataImport() {
       await importAPI.rollback(importId);
       loadImports();
     } catch (err) {
-      alert('Rollback failed');
+      toast.error('Rollback failed');
     }
   };
 

@@ -4,7 +4,7 @@ from decimal import Decimal
 from typing import Optional, List, Dict
 from uuid import UUID
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, true, false
 from sqlalchemy.orm import Session
 
 from app.accounting.models import Account, AccountType, JournalEntry, JournalEntryLine
@@ -319,13 +319,13 @@ class FinancialStatementService:
         
         query = select(Account).where(
             Account.customer_id == self.customer_id,
-            Account.is_active == True,
-            Account.is_header == False
+            Account.is_active.is_(True),
+            Account.is_header.is_(False)
         ).order_by(Account.code)
-        
+
         result = self.db.execute(query)
         accounts = result.scalars().all()
-        
+
         lines = []
         total_debits = Decimal(0)
         total_credits = Decimal(0)
@@ -448,8 +448,8 @@ class FinancialStatementService:
         query = select(Account).where(
             Account.customer_id == self.customer_id,
             Account.account_type.in_(account_types),
-            Account.is_active == True,
-            Account.is_header == False
+            Account.is_active.is_(True),
+            Account.is_header.is_(False)
         ).order_by(Account.code)
         
         result = self.db.execute(query)
@@ -507,6 +507,7 @@ class FinancialStatementService:
             .join(Account)
             .where(
                 JournalEntry.customer_id == self.customer_id,
+                Account.customer_id == self.customer_id,
                 JournalEntry.entry_date >= year_start,
                 JournalEntry.entry_date <= as_of_date,
                 JournalEntry.status == "posted",
@@ -534,6 +535,7 @@ class FinancialStatementService:
             .join(Account)
             .where(
                 JournalEntry.customer_id == self.customer_id,
+                Account.customer_id == self.customer_id,
                 JournalEntry.entry_date >= start_date,
                 JournalEntry.entry_date <= end_date,
                 JournalEntry.status == "posted",
@@ -572,11 +574,12 @@ class FinancialStatementService:
             .join(Account)
             .where(
                 JournalEntry.customer_id == self.customer_id,
+                Account.customer_id == self.customer_id,
                 JournalEntry.entry_date <= as_of_date,
                 JournalEntry.status == "posted"
             )
         )
-        
+
         if prefix:
             query = query.where(Account.code.like(f"{account_code}%"))
         else:

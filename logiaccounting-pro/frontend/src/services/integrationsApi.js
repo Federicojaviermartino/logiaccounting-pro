@@ -1,290 +1,194 @@
 /**
  * Phase 14: Integrations API Service
  * API client for external integrations management
+ * Uses shared axios instance from api.js for consistent auth & error handling.
  */
 
-const API_BASE = '/api/v1/integrations';
+import api from './api';
 
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  };
-};
-
-const handleResponse = async (response) => {
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'An error occurred' }));
-    throw new Error(error.detail || error.message || 'Request failed');
-  }
-  return response.json();
-};
+const BASE = '/api/v1/integrations';
 
 // ==================== Providers ====================
 
 export const getProviders = async (category = null) => {
-  const url = category ? `${API_BASE}/providers?category=${category}` : `${API_BASE}/providers`;
-  const response = await fetch(url, {
-    headers: getAuthHeaders()
-  });
-  const data = await handleResponse(response);
+  const params = category ? { category } : {};
+  const { data } = await api.get(`${BASE}/providers`, { params });
   return data.providers;
 };
 
 export const getProviderInfo = async (provider) => {
-  const response = await fetch(`${API_BASE}/providers/${provider}`, {
-    headers: getAuthHeaders()
-  });
-  return handleResponse(response);
+  const { data } = await api.get(`${BASE}/providers/${provider}`);
+  return data;
 };
 
 // ==================== Integrations CRUD ====================
 
 export const getIntegrations = async (category = null) => {
-  const url = category ? `${API_BASE}?category=${category}` : API_BASE;
-  const response = await fetch(url, {
-    headers: getAuthHeaders()
-  });
-  const data = await handleResponse(response);
+  const params = category ? { category } : {};
+  const { data } = await api.get(BASE, { params });
   return data.integrations;
 };
 
 export const getIntegration = async (integrationId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}`, {
-    headers: getAuthHeaders()
-  });
-  return handleResponse(response);
+  const { data } = await api.get(`${BASE}/${integrationId}`);
+  return data;
 };
 
-export const createIntegration = async (data) => {
-  const response = await fetch(API_BASE, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data)
-  });
-  return handleResponse(response);
+export const createIntegration = async (payload) => {
+  const { data } = await api.post(BASE, payload);
+  return data;
 };
 
-export const updateIntegration = async (integrationId, data) => {
-  const response = await fetch(`${API_BASE}/${integrationId}`, {
-    method: 'PATCH',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data)
-  });
-  return handleResponse(response);
+export const updateIntegration = async (integrationId, payload) => {
+  const { data } = await api.patch(`${BASE}/${integrationId}`, payload);
+  return data;
 };
 
 export const deleteIntegration = async (integrationId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders()
-  });
-  return handleResponse(response);
+  const { data } = await api.delete(`${BASE}/${integrationId}`);
+  return data;
 };
 
 // ==================== OAuth ====================
 
 export const initiateOAuth = async (provider, redirectUri, extraParams = null) => {
-  const response = await fetch(`${API_BASE}/oauth/initiate`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify({
-      provider,
-      redirect_uri: redirectUri,
-      extra_params: extraParams
-    })
+  const { data } = await api.post(`${BASE}/oauth/initiate`, {
+    provider,
+    redirect_uri: redirectUri,
+    extra_params: extraParams,
   });
-  return handleResponse(response);
+  return data;
 };
 
 export const completeOAuth = async (provider, code, state, redirectUri) => {
-  const response = await fetch(`${API_BASE}/oauth/callback/${provider}`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify({
-      code,
-      state,
-      redirect_uri: redirectUri
-    })
+  const { data } = await api.post(`${BASE}/oauth/callback/${provider}`, {
+    code,
+    state,
+    redirect_uri: redirectUri,
   });
-  return handleResponse(response);
+  return data;
 };
 
 export const refreshToken = async (integrationId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/refresh-token`, {
-    method: 'POST',
-    headers: getAuthHeaders()
-  });
-  return handleResponse(response);
+  const { data } = await api.post(`${BASE}/${integrationId}/refresh-token`);
+  return data;
 };
 
 // ==================== Connection Test ====================
 
 export const testConnection = async (integrationId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/test`, {
-    method: 'POST',
-    headers: getAuthHeaders()
-  });
-  return handleResponse(response);
+  const { data } = await api.post(`${BASE}/${integrationId}/test`);
+  return data;
 };
 
 // ==================== Sync Configuration ====================
 
 export const getSyncConfigs = async (integrationId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/sync-configs`, {
-    headers: getAuthHeaders()
-  });
-  const data = await handleResponse(response);
+  const { data } = await api.get(`${BASE}/${integrationId}/sync-configs`);
   return data.sync_configs;
 };
 
-export const createSyncConfig = async (integrationId, data) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/sync-configs`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data)
-  });
-  return handleResponse(response);
+export const createSyncConfig = async (integrationId, payload) => {
+  const { data } = await api.post(`${BASE}/${integrationId}/sync-configs`, payload);
+  return data;
 };
 
-export const updateSyncConfig = async (integrationId, configId, data) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/sync-configs/${configId}`, {
-    method: 'PATCH',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data)
-  });
-  return handleResponse(response);
+export const updateSyncConfig = async (integrationId, configId, payload) => {
+  const { data } = await api.patch(`${BASE}/${integrationId}/sync-configs/${configId}`, payload);
+  return data;
 };
 
 export const deleteSyncConfig = async (integrationId, configId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/sync-configs/${configId}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders()
-  });
-  return handleResponse(response);
+  const { data } = await api.delete(`${BASE}/${integrationId}/sync-configs/${configId}`);
+  return data;
 };
 
 // ==================== Field Mappings ====================
 
 export const getFieldMappings = async (integrationId, configId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/sync-configs/${configId}/mappings`, {
-    headers: getAuthHeaders()
-  });
-  const data = await handleResponse(response);
+  const { data } = await api.get(`${BASE}/${integrationId}/sync-configs/${configId}/mappings`);
   return data.mappings;
 };
 
-export const createFieldMapping = async (integrationId, configId, data) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/sync-configs/${configId}/mappings`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data)
-  });
-  return handleResponse(response);
+export const createFieldMapping = async (integrationId, configId, payload) => {
+  const { data } = await api.post(
+    `${BASE}/${integrationId}/sync-configs/${configId}/mappings`,
+    payload
+  );
+  return data;
 };
 
-export const updateFieldMapping = async (integrationId, configId, mappingId, data) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/sync-configs/${configId}/mappings/${mappingId}`, {
-    method: 'PATCH',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data)
-  });
-  return handleResponse(response);
+export const updateFieldMapping = async (integrationId, configId, mappingId, payload) => {
+  const { data } = await api.patch(
+    `${BASE}/${integrationId}/sync-configs/${configId}/mappings/${mappingId}`,
+    payload
+  );
+  return data;
 };
 
 export const deleteFieldMapping = async (integrationId, configId, mappingId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/sync-configs/${configId}/mappings/${mappingId}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders()
-  });
-  return handleResponse(response);
+  const { data } = await api.delete(
+    `${BASE}/${integrationId}/sync-configs/${configId}/mappings/${mappingId}`
+  );
+  return data;
 };
 
 // ==================== Synchronization ====================
 
 export const triggerSync = async (integrationId, entityType = null, fullSync = false) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/sync`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify({
-      entity_type: entityType,
-      full_sync: fullSync
-    })
+  const { data } = await api.post(`${BASE}/${integrationId}/sync`, {
+    entity_type: entityType,
+    full_sync: fullSync,
   });
-  return handleResponse(response);
+  return data;
 };
 
 export const getSyncLogs = async (integrationId, limit = 20, entityType = null) => {
-  let url = `${API_BASE}/${integrationId}/sync-logs?limit=${limit}`;
-  if (entityType) {
-    url += `&entity_type=${entityType}`;
-  }
-  const response = await fetch(url, {
-    headers: getAuthHeaders()
-  });
-  const data = await handleResponse(response);
+  const params = { limit };
+  if (entityType) params.entity_type = entityType;
+  const { data } = await api.get(`${BASE}/${integrationId}/sync-logs`, { params });
   return data.sync_logs;
 };
 
 export const getSyncLog = async (integrationId, logId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/sync-logs/${logId}`, {
-    headers: getAuthHeaders()
-  });
-  return handleResponse(response);
+  const { data } = await api.get(`${BASE}/${integrationId}/sync-logs/${logId}`);
+  return data;
 };
 
 // ==================== Webhooks ====================
 
 export const getWebhooks = async (integrationId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/webhooks`, {
-    headers: getAuthHeaders()
-  });
-  const data = await handleResponse(response);
+  const { data } = await api.get(`${BASE}/${integrationId}/webhooks`);
   return data.webhooks;
 };
 
-export const createWebhook = async (integrationId, data) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/webhooks`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data)
-  });
-  return handleResponse(response);
+export const createWebhook = async (integrationId, payload) => {
+  const { data } = await api.post(`${BASE}/${integrationId}/webhooks`, payload);
+  return data;
 };
 
 export const deleteWebhook = async (integrationId, webhookId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/webhooks/${webhookId}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders()
-  });
-  return handleResponse(response);
+  const { data } = await api.delete(`${BASE}/${integrationId}/webhooks/${webhookId}`);
+  return data;
 };
 
 // ==================== Data Access ====================
 
 export const getRemoteRecords = async (integrationId, entityType, page = 1, pageSize = 50) => {
-  const response = await fetch(
-    `${API_BASE}/${integrationId}/entities/${entityType}?page=${page}&page_size=${pageSize}`,
-    {
-      headers: getAuthHeaders()
-    }
-  );
-  return handleResponse(response);
+  const { data } = await api.get(`${BASE}/${integrationId}/entities/${entityType}`, {
+    params: { page, page_size: pageSize },
+  });
+  return data;
 };
 
 export const getRemoteRecord = async (integrationId, entityType, recordId) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/entities/${entityType}/${recordId}`, {
-    headers: getAuthHeaders()
-  });
-  return handleResponse(response);
+  const { data } = await api.get(`${BASE}/${integrationId}/entities/${entityType}/${recordId}`);
+  return data;
 };
 
 export const getEntitySchema = async (integrationId, entityType) => {
-  const response = await fetch(`${API_BASE}/${integrationId}/schema/${entityType}`, {
-    headers: getAuthHeaders()
-  });
-  return handleResponse(response);
+  const { data } = await api.get(`${BASE}/${integrationId}/schema/${entityType}`);
+  return data;
 };
 
 // ==================== Helpers ====================
@@ -298,7 +202,7 @@ export const getCategoryIcon = (category) => {
     payments: '💳',
     erp: '🏢',
     shipping: '📦',
-    generic: '🔌'
+    generic: '🔌',
   };
   return icons[category] || icons.generic;
 };
@@ -320,7 +224,7 @@ export const getProviderIcon = (provider) => {
     dynamics: '🔷',
     fedex: '🟧',
     ups: '🟤',
-    dhl: '🟡'
+    dhl: '🟡',
   };
   return icons[provider] || '🔌';
 };
@@ -332,14 +236,13 @@ export const getStatusColor = (status) => {
     pending: 'yellow',
     error: 'red',
     disconnected: 'gray',
-    syncing: 'blue'
+    syncing: 'blue',
   };
   return colors[status] || 'gray';
 };
 
 export const getHealthStatus = (health) => {
   if (!health) return { color: 'gray', label: 'Unknown' };
-
   if (health.score >= 90) return { color: 'green', label: 'Healthy' };
   if (health.score >= 70) return { color: 'yellow', label: 'Degraded' };
   return { color: 'red', label: 'Unhealthy' };
@@ -349,7 +252,7 @@ export const formatSyncDirection = (direction) => {
   const labels = {
     inbound: '← Import only',
     outbound: '→ Export only',
-    bidirectional: '↔ Two-way sync'
+    bidirectional: '↔ Two-way sync',
   };
   return labels[direction] || direction;
 };
@@ -359,7 +262,7 @@ export const formatConflictResolution = (resolution) => {
     last_write_wins: 'Last Write Wins',
     source_priority: 'Source Priority',
     manual_review: 'Manual Review',
-    merge: 'Smart Merge'
+    merge: 'Smart Merge',
   };
   return labels[resolution] || resolution;
 };

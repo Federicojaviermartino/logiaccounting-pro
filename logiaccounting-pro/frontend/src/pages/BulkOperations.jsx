@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { bulkAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import toast from '../utils/toast';
 
 const ENTITIES = [
   { value: 'materials', label: 'Materials', allowDelete: true },
@@ -30,7 +31,7 @@ export default function BulkOperations() {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      alert('Failed to download template');
+      toast.error('Failed to download template');
     }
   };
 
@@ -71,7 +72,7 @@ export default function BulkOperations() {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      alert('Export failed');
+      toast.error('Export failed');
     }
   };
 

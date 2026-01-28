@@ -10,6 +10,7 @@ import {
   syncInventory,
   importOrders
 } from '../services/ecommerceApi';
+import toast from '../utils/toast';
 
 const EcommerceStores = () => {
   const { t } = useTranslation();
@@ -68,9 +69,9 @@ const EcommerceStores = () => {
   const handleTestConnection = async (storeId) => {
     try {
       const result = await testConnection(storeId);
-      alert(result.success ? 'Connection successful!' : 'Connection failed');
+      toast.error(result.success ? 'Connection successful!' : 'Connection failed');
     } catch (error) {
-      alert('Connection test failed');
+      toast.error('Connection test failed');
     }
   };
 

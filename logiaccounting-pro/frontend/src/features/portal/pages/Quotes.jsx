@@ -8,6 +8,7 @@ import {
   Download, Eye, ChevronRight, DollarSign, AlertCircle,
   ArrowLeft, Edit3, X,
 } from 'lucide-react';
+import toast from '../../../utils/toast';
 
 export default function Quotes() {
   const [quotes, setQuotes] = useState([]);
@@ -164,7 +165,7 @@ export default function Quotes() {
       // API call would go here
       setShowRevisionModal(false);
       setRevisionComment('');
-      alert('Revision request submitted!');
+      toast.info('Revision request submitted!');
     } catch (error) {
       console.error('Failed to request revision:', error);
     }

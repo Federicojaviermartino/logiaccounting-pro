@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { currencyAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function CurrencySettings() {
   const [currencies, setCurrencies] = useState([]);
@@ -42,7 +43,7 @@ export default function CurrencySettings() {
       setNewRate('');
       loadData();
     } catch (err) {
-      alert('Failed to update rate');
+      toast.error('Failed to update rate');
     }
   };
 
@@ -52,7 +53,7 @@ export default function CurrencySettings() {
       setBaseCurrency(code);
       loadData();
     } catch (err) {
-      alert('Failed to set base currency');
+      toast.error('Failed to set base currency');
     }
   };
 
@@ -61,7 +62,7 @@ export default function CurrencySettings() {
       const res = await currencyAPI.convert(convertAmount, convertFrom, convertTo);
       setConvertResult(res.data);
     } catch (err) {
-      alert('Conversion failed');
+      toast.error('Conversion failed');
     }
   };
 

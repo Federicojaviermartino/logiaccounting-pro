@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { authAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -25,7 +26,7 @@ export default function Users() {
       await authAPI.updateUserStatus(userId, newStatus);
       loadData();
     } catch (error) {
-      alert('Failed to update status');
+      toast.error('Failed to update status');
     }
   };
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { paymentLinksAPI, gatewayAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function PaymentLinks() {
   const [links, setLinks] = useState([]);
@@ -64,7 +65,7 @@ export default function PaymentLinks() {
       });
       loadData();
     } catch (err) {
-      alert('Failed to create link');
+      toast.error('Failed to create link');
     }
   };
 
@@ -74,22 +75,22 @@ export default function PaymentLinks() {
       await paymentLinksAPI.cancel(linkId);
       loadData();
     } catch (err) {
-      alert('Failed to cancel');
+      toast.error('Failed to cancel');
     }
   };
 
   const handleSend = async (linkId) => {
     try {
       const res = await paymentLinksAPI.send(linkId);
-      alert(`Link sent to ${res.data.sent_to}`);
+      toast.success(`Link sent to ${res.data.sent_to}`);
     } catch (err) {
-      alert('Failed to send: ' + (err.response?.data?.detail || err.message));
+      toast.error('Failed to send: ' + (err.response?.data?.detail || err.message));
     }
   };
 
   const copyLink = (url) => {
     navigator.clipboard.writeText(url);
-    alert('Link copied to clipboard!');
+    toast.success('Link copied to clipboard!');
   };
 
   const getStatusBadge = (status) => {

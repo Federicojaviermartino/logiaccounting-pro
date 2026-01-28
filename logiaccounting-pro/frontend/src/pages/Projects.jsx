@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { projectsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import toast from '../utils/toast';
 
 export default function Projects() {
   const { user } = useAuth();
@@ -41,7 +42,7 @@ export default function Projects() {
       setModalOpen(false);
       loadData();
     } catch (error) {
-      alert(error.response?.data?.detail || 'Failed to save project');
+      toast.error(error.response?.data?.detail || 'Failed to save project');
     }
   };
 
@@ -51,7 +52,7 @@ export default function Projects() {
       await projectsAPI.deleteProject(id);
       loadData();
     } catch (error) {
-      alert('Failed to delete project');
+      toast.error('Failed to delete project');
     }
   };
 

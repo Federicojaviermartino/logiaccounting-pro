@@ -22,7 +22,7 @@ router = APIRouter(prefix="/payroll", tags=["Payroll"])
 # ==========================================
 
 @router.get("/periods", response_model=List[PayPeriodResponse])
-async def get_pay_periods(
+def get_pay_periods(
     year: Optional[int] = None,
     frequency: Optional[str] = None,
     status: Optional[str] = None,
@@ -31,18 +31,18 @@ async def get_pay_periods(
 ):
     """Get pay periods."""
     service = PayrollService(db, current_user.customer_id)
-    return await service.get_pay_periods(year, frequency, status)
+    return service.get_pay_periods(year, frequency, status)
 
 
 @router.post("/periods", response_model=PayPeriodResponse, status_code=status.HTTP_201_CREATED)
-async def create_pay_period(
+def create_pay_period(
     data: PayPeriodCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permissions(["payroll.manage"]))
 ):
     """Create pay period."""
     service = PayrollService(db, current_user.customer_id)
-    return await service.create_pay_period(
+    return service.create_pay_period(
         data.frequency, data.start_date, data.end_date, data.pay_date
     )
 
@@ -52,7 +52,7 @@ async def create_pay_period(
 # ==========================================
 
 @router.get("/runs", response_model=dict)
-async def get_payroll_runs(
+def get_payroll_runs(
     status: Optional[str] = None,
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=200),
@@ -61,7 +61,7 @@ async def get_payroll_runs(
 ):
     """Get payroll runs."""
     service = PayrollService(db, current_user.customer_id)
-    runs, total = await service.get_payroll_runs(status, skip, limit)
+    runs, total = service.get_payroll_runs(status, skip, limit)
     return {
         "items": [PayrollRunResponse.model_validate(r) for r in runs],
         "total": total, "skip": skip, "limit": limit
@@ -69,55 +69,55 @@ async def get_payroll_runs(
 
 
 @router.get("/runs/{run_id}", response_model=PayrollRunWithLines)
-async def get_payroll_run(
+def get_payroll_run(
     run_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """Get payroll run with employee lines."""
     service = PayrollService(db, current_user.customer_id)
-    return await service.get_payroll_run_details(run_id)
+    return service.get_payroll_run_details(run_id)
 
 
 @router.post("/runs", response_model=PayrollRunResponse, status_code=status.HTTP_201_CREATED)
-async def create_payroll_run(
+def create_payroll_run(
     data: PayrollRunCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permissions(["payroll.run"]))
 ):
     """Create payroll run."""
     service = PayrollService(db, current_user.customer_id)
-    return await service.create_payroll_run(data.pay_period_id, data.run_type, current_user.id)
+    return service.create_payroll_run(data.pay_period_id, data.run_type, current_user.id)
 
 
 @router.post("/runs/{run_id}/calculate", response_model=PayrollRunResponse)
-async def calculate_payroll(
+def calculate_payroll(
     run_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permissions(["payroll.run"]))
 ):
     """Calculate payroll for all employees."""
     service = PayrollService(db, current_user.customer_id)
-    return await service.calculate_payroll(run_id)
+    return service.calculate_payroll(run_id)
 
 
 @router.post("/runs/{run_id}/approve", response_model=PayrollRunResponse)
-async def approve_payroll(
+def approve_payroll(
     run_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permissions(["payroll.approve"]))
 ):
     """Approve payroll run."""
     service = PayrollService(db, current_user.customer_id)
-    return await service.approve_payroll(run_id, current_user.id)
+    return service.approve_payroll(run_id, current_user.id)
 
 
 @router.post("/runs/{run_id}/process", response_model=PayrollRunResponse)
-async def process_payments(
+def process_payments(
     run_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permissions(["payroll.process"]))
 ):
     """Process payments for approved payroll."""
     service = PayrollService(db, current_user.customer_id)
-    return await service.process_payments(run_id)
+    return service.process_payments(run_id)

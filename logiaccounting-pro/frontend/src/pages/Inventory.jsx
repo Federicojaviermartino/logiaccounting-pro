@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { inventoryAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import toast from '../utils/toast';
 
 export default function Inventory() {
   const { user } = useAuth();
@@ -52,7 +53,7 @@ export default function Inventory() {
       setModalOpen(false);
       loadData();
     } catch (error) {
-      alert(error.response?.data?.detail || 'Failed to save material');
+      toast.error(error.response?.data?.detail || 'Failed to save material');
     }
   };
 
@@ -62,7 +63,7 @@ export default function Inventory() {
       await inventoryAPI.deleteMaterial(id);
       loadData();
     } catch (error) {
-      alert('Failed to delete material');
+      toast.error('Failed to delete material');
     }
   };
 

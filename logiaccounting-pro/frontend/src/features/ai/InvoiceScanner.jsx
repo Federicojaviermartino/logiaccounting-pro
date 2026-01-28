@@ -5,6 +5,7 @@
 
 import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import toast from '../../utils/toast';
 
 const API_BASE = '/api/v1/ai/invoice';
 
@@ -85,7 +86,7 @@ export default function InvoiceScanner() {
         },
       });
       // In production, redirect to invoice creation with pre-filled data
-      alert('Invoice approved! Ready to create.');
+      toast.success('Invoice approved! Ready to create.');
     } catch (err) {
       setError('Failed to approve invoice');
     }

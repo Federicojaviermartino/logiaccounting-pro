@@ -17,7 +17,7 @@ router = APIRouter(prefix="/reports", tags=["Budget Reports"])
 
 
 @router.get("/budgets/{budget_id}/summary")
-async def get_budget_summary_report(
+def get_budget_summary_report(
     budget_id: UUID,
     format: str = Query("json", pattern="^(json|xlsx|pdf)$"),
     db: Session = Depends(get_db),
@@ -25,7 +25,7 @@ async def get_budget_summary_report(
 ):
     """Get budget summary report."""
     service = BudgetService(db, current_user.customer_id)
-    budget = await service.get_budget_by_id(budget_id, include_versions=True)
+    budget = service.get_budget_by_id(budget_id, include_versions=True)
 
     if format == "json":
         return {
@@ -91,7 +91,7 @@ async def get_budget_summary_report(
 
 
 @router.get("/budgets/{budget_id}/variance")
-async def get_variance_report(
+def get_variance_report(
     budget_id: UUID,
     period_type: str = Query("ytd", pattern="^(monthly|quarterly|ytd|annual)$"),
     year: Optional[int] = None,
@@ -102,7 +102,7 @@ async def get_variance_report(
 ):
     """Get variance analysis report."""
     variance_service = VarianceService(db, current_user.customer_id)
-    report = await variance_service.get_budget_vs_actual(budget_id, period_type, year, month)
+    report = variance_service.get_budget_vs_actual(budget_id, period_type, year, month)
 
     if format == "json":
         return report
@@ -175,7 +175,7 @@ async def get_variance_report(
 
 
 @router.get("/budgets/{budget_id}/export")
-async def export_budget(
+def export_budget(
     budget_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -184,7 +184,7 @@ async def export_budget(
     from openpyxl import Workbook
 
     service = BudgetService(db, current_user.customer_id)
-    budget = await service.get_budget_by_id(budget_id, include_versions=True)
+    budget = service.get_budget_by_id(budget_id, include_versions=True)
 
     wb = Workbook()
 

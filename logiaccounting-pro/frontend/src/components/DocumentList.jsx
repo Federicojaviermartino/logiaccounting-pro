@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { documentsAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function DocumentList({ entityType, entityId, onDelete }) {
   const [documents, setDocuments] = useState([]);
@@ -36,7 +37,7 @@ export default function DocumentList({ entityType, entityId, onDelete }) {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      alert('Failed to download document');
+      toast.error('Failed to download document');
     }
   };
 
@@ -47,7 +48,7 @@ export default function DocumentList({ entityType, entityId, onDelete }) {
       setDocuments(documents.filter(d => d.id !== docId));
       if (onDelete) onDelete(docId);
     } catch (error) {
-      alert('Failed to delete document');
+      toast.error('Failed to delete document');
     }
   };
 

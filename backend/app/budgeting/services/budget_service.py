@@ -17,6 +17,12 @@ from app.core.exceptions import NotFoundError, ValidationError, BusinessRuleErro
 class BudgetService:
     """Service for budget operations."""
 
+    BUDGET_UPDATABLE_FIELDS = frozenset({
+        "name", "description", "budget_type", "fiscal_year",
+        "start_date", "end_date", "department_id", "project_id",
+        "currency", "requires_approval", "allow_overspend",
+    })
+
     def __init__(self, db: Session, customer_id: UUID):
         self.db = db
         self.customer_id = customer_id
@@ -70,7 +76,7 @@ class BudgetService:
 
         update_data = data.model_dump(exclude_unset=True)
         for key, value in update_data.items():
-            if hasattr(budget, key):
+            if key in self.BUDGET_UPDATABLE_FIELDS:
                 setattr(budget, key, value)
 
         self.db.commit()
@@ -135,7 +141,7 @@ class BudgetService:
 
     async def create_version(self, budget_id: UUID, data: VersionCreate, created_by: Optional[UUID] = None) -> BudgetVersion:
         """Create budget version."""
-        budget = await self.get_budget_by_id(budget_id)
+        budget = await self.get_budget_by_id(budget_id, include_versions=True)
         version_number = len(budget.versions) + 1 if budget.versions else 1
 
         version = BudgetVersion(
@@ -251,7 +257,11 @@ class BudgetService:
 
     async def _copy_version_lines(self, source_version_id: UUID, target_version_id: UUID) -> None:
         """Copy budget lines from one version to another."""
-        query = select(BudgetLine).where(BudgetLine.version_id == source_version_id)
+        query = (
+            select(BudgetLine)
+            .where(BudgetLine.version_id == source_version_id)
+            .options(selectinload(BudgetLine.periods))
+        )
         result = self.db.execute(query)
         source_lines = result.scalars().all()
 

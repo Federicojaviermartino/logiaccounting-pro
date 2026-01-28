@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { transactionsAPI, inventoryAPI, projectsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import toast from '../utils/toast';
 
 export default function Transactions() {
   const { user } = useAuth();
@@ -54,7 +55,7 @@ export default function Transactions() {
       setModalOpen(false);
       loadData();
     } catch (error) {
-      alert(error.response?.data?.detail || 'Failed to save transaction');
+      toast.error(error.response?.data?.detail || 'Failed to save transaction');
     }
   };
 
@@ -64,7 +65,7 @@ export default function Transactions() {
       await transactionsAPI.deleteTransaction(id);
       loadData();
     } catch (error) {
-      alert('Failed to delete');
+      toast.error('Failed to delete');
     }
   };
 

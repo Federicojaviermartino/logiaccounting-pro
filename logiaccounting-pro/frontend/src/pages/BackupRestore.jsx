@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { backupAPI } from '../services/api';
+import toast from '../utils/toast';
 
 const ENTITIES = [
   { value: 'materials', label: 'Materials' },
@@ -43,9 +44,9 @@ export default function BackupRestore() {
         include_users: includeUsers
       });
       loadBackups();
-      alert('Backup created successfully!');
+      toast.success('Backup created successfully!');
     } catch (err) {
-      alert('Failed to create backup');
+      toast.error('Failed to create backup');
     } finally {
       setCreating(false);
     }
@@ -62,7 +63,7 @@ export default function BackupRestore() {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      alert('Download failed');
+      toast.error('Download failed');
     }
   };
 
@@ -72,7 +73,7 @@ export default function BackupRestore() {
       await backupAPI.delete(backup.id);
       loadBackups();
     } catch (err) {
-      alert('Delete failed');
+      toast.error('Delete failed');
     }
   };
 
@@ -88,10 +89,10 @@ export default function BackupRestore() {
     setRestoring(true);
     try {
       const res = await backupAPI.restoreFromFile(file, restoreMode);
-      alert(`Restore complete! Restored: ${JSON.stringify(res.data.restored)}`);
+      toast.success(`Restore complete! Restored: ${JSON.stringify(res.data.restored)}`);
       fileInputRef.current.value = '';
     } catch (err) {
-      alert('Restore failed');
+      toast.error('Restore failed');
     } finally {
       setRestoring(false);
     }

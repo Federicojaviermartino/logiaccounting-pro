@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { calendarAPI } from '../services/api';
+import toast from '../utils/toast';
 
 const VIEWS = ['month', 'week', 'day', 'agenda'];
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -100,7 +101,7 @@ export default function Calendar() {
       setNewEvent({ title: '', type: 'custom', start: '', end: '', all_day: true, description: '' });
       loadEvents();
     } catch (err) {
-      alert('Failed to create event');
+      toast.error('Failed to create event');
     }
   };
 
@@ -111,17 +112,17 @@ export default function Calendar() {
       setSelectedEvent(null);
       loadEvents();
     } catch (err) {
-      alert('Failed to delete');
+      toast.error('Failed to delete');
     }
   };
 
   const handleGenerateEvents = async () => {
     try {
       const res = await calendarAPI.generate();
-      alert(`Generated ${res.data.generated} events from payments and projects`);
+      toast.success(`Generated ${res.data.generated} events from payments and projects`);
       loadEvents();
     } catch (err) {
-      alert('Failed to generate events');
+      toast.error('Failed to generate events');
     }
   };
 

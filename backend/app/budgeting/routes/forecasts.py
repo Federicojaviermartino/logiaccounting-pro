@@ -19,7 +19,7 @@ router = APIRouter(prefix="/forecasts", tags=["Rolling Forecasts"])
 
 
 @router.get("", response_model=dict)
-async def get_forecasts(
+def get_forecasts(
     budget_id: Optional[UUID] = None,
     status: Optional[str] = None,
     skip: int = Query(0, ge=0),
@@ -53,7 +53,7 @@ async def get_forecasts(
 
 
 @router.get("/{forecast_id}", response_model=ForecastWithLines)
-async def get_forecast(
+def get_forecast(
     forecast_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -66,7 +66,7 @@ async def get_forecast(
 
 
 @router.post("", response_model=ForecastResponse, status_code=status.HTTP_201_CREATED)
-async def create_forecast(
+def create_forecast(
     data: ForecastCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permissions(["budgets.edit"]))
@@ -98,7 +98,7 @@ async def create_forecast(
 
 
 @router.put("/{forecast_id}", response_model=ForecastResponse)
-async def update_forecast(
+def update_forecast(
     forecast_id: UUID,
     data: ForecastUpdate,
     db: Session = Depends(get_db),
@@ -109,9 +109,11 @@ async def update_forecast(
     if not forecast or forecast.customer_id != current_user.customer_id:
         raise NotFoundError(f"Forecast not found: {forecast_id}")
 
+    FORECAST_UPDATABLE_FIELDS = {"name", "description", "base_date", "forecast_months", "forecast_method"}
     update_data = data.model_dump(exclude_unset=True)
     for key, value in update_data.items():
-        setattr(forecast, key, value)
+        if key in FORECAST_UPDATABLE_FIELDS:
+            setattr(forecast, key, value)
 
     db.commit()
     db.refresh(forecast)
@@ -119,7 +121,7 @@ async def update_forecast(
 
 
 @router.delete("/{forecast_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_forecast(
+def delete_forecast(
     forecast_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permissions(["budgets.delete"]))
@@ -134,7 +136,7 @@ async def delete_forecast(
 
 
 @router.post("/{forecast_id}/generate")
-async def generate_forecast(
+def generate_forecast(
     forecast_id: UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permissions(["budgets.edit"]))

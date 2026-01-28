@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { recurringAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function RecurringItems() {
   const [loading, setLoading] = useState(true);
@@ -63,7 +64,7 @@ export default function RecurringItems() {
       resetForm();
       loadTemplates();
     } catch (error) {
-      alert('Failed to save template: ' + (error.response?.data?.detail || error.message));
+      toast.error('Failed to save template: ' + (error.response?.data?.detail || error.message));
     }
   };
 
@@ -89,7 +90,7 @@ export default function RecurringItems() {
       await recurringAPI.delete(id);
       loadTemplates();
     } catch (error) {
-      alert('Failed to delete template');
+      toast.error('Failed to delete template');
     }
   };
 
@@ -102,7 +103,7 @@ export default function RecurringItems() {
       }
       loadTemplates();
     } catch (error) {
-      alert('Failed to update template status');
+      toast.error('Failed to update template status');
     }
   };
 
@@ -111,17 +112,17 @@ export default function RecurringItems() {
       const response = await recurringAPI.preview(templateId, 5);
       setPreviewOccurrences(response.data.occurrences || []);
     } catch (error) {
-      alert('Failed to load preview');
+      toast.error('Failed to load preview');
     }
   };
 
   const handleGenerateNow = async (templateId) => {
     try {
       await recurringAPI.generateNow(templateId);
-      alert('Transaction generated successfully!');
+      toast.success('Transaction generated successfully!');
       loadTemplates();
     } catch (error) {
-      alert('Failed to generate transaction: ' + (error.response?.data?.detail || error.message));
+      toast.error('Failed to generate transaction: ' + (error.response?.data?.detail || error.message));
     }
   };
 

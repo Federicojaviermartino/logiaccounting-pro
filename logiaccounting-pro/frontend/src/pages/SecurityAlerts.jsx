@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { alertsAPI, alertRulesAPI } from '../services/auditApi';
+import toast from '../utils/toast';
 
 export default function SecurityAlerts() {
   const [alerts, setAlerts] = useState([]);
@@ -68,7 +69,7 @@ export default function SecurityAlerts() {
       await alertsAPI.acknowledge(alertId);
       loadAlerts();
     } catch (err) {
-      alert('Failed to acknowledge: ' + (err.response?.data?.detail || err.message));
+      toast.error('Failed to acknowledge: ' + (err.response?.data?.detail || err.message));
     }
   };
 
@@ -80,7 +81,7 @@ export default function SecurityAlerts() {
       setResolveNotes('');
       loadAlerts();
     } catch (err) {
-      alert('Failed to resolve: ' + (err.response?.data?.detail || err.message));
+      toast.error('Failed to resolve: ' + (err.response?.data?.detail || err.message));
     }
   };
 
@@ -90,7 +91,7 @@ export default function SecurityAlerts() {
       await alertsAPI.dismiss(alertId, 'Dismissed by user');
       loadAlerts();
     } catch (err) {
-      alert('Failed to dismiss: ' + (err.response?.data?.detail || err.message));
+      toast.error('Failed to dismiss: ' + (err.response?.data?.detail || err.message));
     }
   };
 
@@ -106,7 +107,7 @@ export default function SecurityAlerts() {
       resetRuleForm();
       loadRules();
     } catch (err) {
-      alert('Failed to save rule: ' + (err.response?.data?.detail || err.message));
+      toast.error('Failed to save rule: ' + (err.response?.data?.detail || err.message));
     }
   };
 
@@ -116,7 +117,7 @@ export default function SecurityAlerts() {
       await alertRulesAPI.deleteRule(ruleId);
       loadRules();
     } catch (err) {
-      alert('Failed to delete: ' + (err.response?.data?.detail || err.message));
+      toast.error('Failed to delete: ' + (err.response?.data?.detail || err.message));
     }
   };
 

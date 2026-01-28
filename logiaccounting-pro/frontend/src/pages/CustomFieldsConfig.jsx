@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { customFieldsAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function CustomFieldsConfig() {
   const [fields, setFields] = useState([]);
@@ -76,7 +77,7 @@ export default function CustomFieldsConfig() {
       resetForm();
       loadFields();
     } catch (err) {
-      alert('Failed to save field');
+      toast.error('Failed to save field');
     }
   };
 
@@ -112,7 +113,7 @@ export default function CustomFieldsConfig() {
       await customFieldsAPI.delete(field.id);
       loadFields();
     } catch (err) {
-      alert('Failed to delete');
+      toast.error('Failed to delete');
     }
   };
 
@@ -121,7 +122,7 @@ export default function CustomFieldsConfig() {
       await customFieldsAPI.update(field.id, { active: !field.active });
       loadFields();
     } catch (err) {
-      alert('Failed to toggle');
+      toast.error('Failed to toggle');
     }
   };
 

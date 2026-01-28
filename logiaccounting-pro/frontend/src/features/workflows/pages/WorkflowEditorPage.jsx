@@ -23,6 +23,7 @@ import {
   DelayNode,
   EndNode,
 } from '../components/nodes';
+import toast from '../../../utils/toast';
 
 const nodeTypes = {
   trigger: TriggerNode,
@@ -119,7 +120,7 @@ export function WorkflowEditorPage() {
     const criticalErrors = errors.filter(e => e.type === 'error');
 
     if (criticalErrors.length > 0) {
-      alert('Please fix the following errors:\n' + criticalErrors.map(e => e.message).join('\n'));
+      toast.error('Please fix the following errors:\n' + criticalErrors.map(e => e.message).join('\n'));
       return;
     }
 
@@ -141,7 +142,7 @@ export function WorkflowEditorPage() {
       }
       markClean();
     } catch (error) {
-      alert('Failed to save workflow: ' + error.message);
+      toast.error('Failed to save workflow: ' + error.message);
     } finally {
       setIsSaving(false);
     }

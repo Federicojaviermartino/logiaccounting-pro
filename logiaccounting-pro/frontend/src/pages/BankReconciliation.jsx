@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { reconciliationAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function BankReconciliation() {
   const [statements, setStatements] = useState([]);
@@ -84,18 +85,18 @@ export default function BankReconciliation() {
       setShowImport(false);
       setImportData({ bank_name: '', account_number: '', period_start: '', period_end: '', entries: [] });
     } catch (err) {
-      alert('Import failed');
+      toast.error('Import failed');
     }
   };
 
   const handleAutoMatch = async () => {
     try {
       const res = await reconciliationAPI.autoMatch(currentStatement.id);
-      alert(`Auto-matched: ${res.data.auto_matched}, Suggested: ${res.data.suggested}`);
+      toast.success(`Auto-matched: ${res.data.auto_matched}, Suggested: ${res.data.suggested}`);
       const updated = await reconciliationAPI.get(currentStatement.id);
       setCurrentStatement(updated.data);
     } catch (err) {
-      alert('Auto-match failed');
+      toast.error('Auto-match failed');
     }
   };
 
@@ -108,7 +109,7 @@ export default function BankReconciliation() {
       setSelectedEntry(null);
       loadUnmatchedTransactions();
     } catch (err) {
-      alert('Match failed');
+      toast.error('Match failed');
     }
   };
 
@@ -119,22 +120,22 @@ export default function BankReconciliation() {
       setCurrentStatement(updated.data);
       loadUnmatchedTransactions();
     } catch (err) {
-      alert('Unmatch failed');
+      toast.error('Unmatch failed');
     }
   };
 
   const handleComplete = async () => {
     if (currentStatement.unmatched_count > 0) {
-      alert('Cannot complete: unmatched entries remain');
+      toast.warning('Cannot complete: unmatched entries remain');
       return;
     }
     try {
       await reconciliationAPI.complete(currentStatement.id);
       const updated = await reconciliationAPI.get(currentStatement.id);
       setCurrentStatement(updated.data);
-      alert('Reconciliation complete!');
+      toast.success('Reconciliation complete!');
     } catch (err) {
-      alert('Failed to complete');
+      toast.error('Failed to complete');
     }
   };
 

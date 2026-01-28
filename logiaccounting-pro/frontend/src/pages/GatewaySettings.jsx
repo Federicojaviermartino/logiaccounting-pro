@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { gatewayAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function GatewaySettings() {
   const [gateways, setGateways] = useState([]);
@@ -27,10 +28,10 @@ export default function GatewaySettings() {
     setTesting(provider);
     try {
       const res = await gatewayAPI.test(provider);
-      alert(res.data.message);
+      toast.info(res.data.message);
       loadGateways();
     } catch (err) {
-      alert('Test failed: ' + (err.response?.data?.detail || err.message));
+      toast.error('Test failed: ' + (err.response?.data?.detail || err.message));
     } finally {
       setTesting(null);
     }
@@ -41,7 +42,7 @@ export default function GatewaySettings() {
       await gatewayAPI.update(provider, { enabled: !enabled });
       loadGateways();
     } catch (err) {
-      alert('Failed to update');
+      toast.error('Failed to update');
     }
   };
 
@@ -50,7 +51,7 @@ export default function GatewaySettings() {
       await gatewayAPI.update(provider, { is_default: true });
       loadGateways();
     } catch (err) {
-      alert('Failed to set default');
+      toast.error('Failed to set default');
     }
   };
 
@@ -59,7 +60,7 @@ export default function GatewaySettings() {
       await gatewayAPI.update(provider, { mode });
       loadGateways();
     } catch (err) {
-      alert('Failed to change mode');
+      toast.error('Failed to change mode');
     }
   };
 
@@ -71,7 +72,7 @@ export default function GatewaySettings() {
       setCredentials({});
       loadGateways();
     } catch (err) {
-      alert('Failed to save credentials');
+      toast.error('Failed to save credentials');
     }
   };
 

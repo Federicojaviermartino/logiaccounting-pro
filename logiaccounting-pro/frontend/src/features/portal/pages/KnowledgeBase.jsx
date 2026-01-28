@@ -3,6 +3,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import {
   Search, Book, ChevronRight, ThumbsUp, ThumbsDown,
   Eye, Rocket, CreditCard, User, Folder, Wrench, ArrowLeft,
@@ -126,13 +127,15 @@ If you need any help, don't hesitate to create a support ticket!`,
             {selectedArticle.view_count} views
           </div>
           <div className="content" dangerouslySetInnerHTML={{
-            __html: selectedArticle.content
-              .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-              .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-              .replace(/- (.*$)/gm, '<li>$1</li>')
-              .replace(/\d\. (.*$)/gm, '<li>$1</li>')
-              .replace(/\n\n/g, '</p><p>')
+            __html: DOMPurify.sanitize(
+              selectedArticle.content
+                .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+                .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/- (.*$)/gm, '<li>$1</li>')
+                .replace(/\d\. (.*$)/gm, '<li>$1</li>')
+                .replace(/\n\n/g, '</p><p>')
+            )
           }} />
           <div className="helpful">
             <span>Was this helpful?</span>

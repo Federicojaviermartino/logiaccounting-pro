@@ -12,13 +12,23 @@ from app.documents.schemas.folder import (
     FolderCreate, FolderUpdate, FolderResponse, FolderTree, FolderContents
 )
 
+import re
+
+# Characters not allowed in folder names (path separators and null bytes)
+_UNSAFE_FOLDER_CHARS = re.compile(r'[/\\:\x00]')
+
+
+def _sanitize_folder_name(name: str) -> str:
+    """Remove path separators and null bytes from folder names."""
+    return _UNSAFE_FOLDER_CHARS.sub('_', name).strip()
+
 
 class FolderService:
     """Service for folder management."""
-    
+
     def __init__(self, db: Session):
         self.db = db
-    
+
     async def create_folder(
         self,
         customer_id: UUID,
@@ -26,6 +36,7 @@ class FolderService:
         data: FolderCreate
     ) -> Folder:
         """Create a new folder."""
+        data.name = _sanitize_folder_name(data.name)
         path = f"/{data.name}"
         depth = 0
         
@@ -78,11 +89,14 @@ class FolderService:
             await self._update_child_paths(customer_id, old_path, new_path)
             folder.path = new_path
         
+        _ALLOWED_FIELDS = frozenset({'name', 'description', 'color', 'icon', 'is_active'})
         for field, value in update_data.items():
-            if field != 'name' or 'name' not in update_data:
+            if field not in _ALLOWED_FIELDS:
+                continue
+            if field == 'name':
+                folder.name = _sanitize_folder_name(value)
+            else:
                 setattr(folder, field, value)
-            elif field == 'name':
-                folder.name = value
         
         folder.updated_at = datetime.utcnow()
         self.db.commit()

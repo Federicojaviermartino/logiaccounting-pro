@@ -62,16 +62,28 @@ from app.models.gateway_store import init_gateway_database
 from app.models.webhook_store import init_webhook_database
 from app.middleware.tenant_context import TenantMiddleware
 from app.middleware.gateway import RequestLoggerMiddleware, GatewayMiddleware
+from app.security.middleware.headers import SecurityHeadersMiddleware
+from app.security.middleware.rate_limit import RateLimitMiddleware, RateLimitRule
+from app.performance.monitoring.logging_config import setup_logging, LoggingMiddleware
+
+import logging
+
+# Initialize structured logging on import
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize database on startup"""
+    logger.info("Starting LogiAccounting Pro API")
     init_database()
     init_tenant_database()
     init_gateway_database()
     init_webhook_database()
+    logger.info("Database initialization complete")
     yield
+    logger.info("Shutting down LogiAccounting Pro API")
 
 
 app = FastAPI(
@@ -81,20 +93,39 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration
+# CORS configuration - explicit origins only (wildcard with credentials is invalid)
+ALLOWED_ORIGINS = os.getenv("CORS_ORIGINS", "").split(",") if os.getenv("CORS_ORIGINS") else [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "https://logiaccounting-pro.onrender.com",
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:5173",
-        "https://logiaccounting-pro.onrender.com",
-        "*"  # Allow all origins in production (frontend served from same origin)
-    ],
+    allow_origins=[o.strip() for o in ALLOWED_ORIGINS if o.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Security headers middleware (CSP, HSTS, X-Frame-Options, etc.)
+app.add_middleware(SecurityHeadersMiddleware)
+
+# Rate limiting - stricter limits on auth endpoints
+app.add_middleware(
+    RateLimitMiddleware,
+    default_limit=200,
+    default_window=60,
+    rules=[
+        RateLimitRule(requests=10, window_seconds=60, path_prefix="/api/v1/auth/login", methods=["POST"]),
+        RateLimitRule(requests=5, window_seconds=60, path_prefix="/api/v1/auth/register", methods=["POST"]),
+        RateLimitRule(requests=5, window_seconds=60, path_prefix="/api/v1/auth/password", methods=["POST", "PUT"]),
+        RateLimitRule(requests=10, window_seconds=60, path_prefix="/api/v1/sso", methods=["POST"]),
+    ],
+)
+
+# Structured logging middleware (correlation IDs, request timing)
+app.add_middleware(LoggingMiddleware)
 
 # Tenant middleware for multi-tenancy support
 app.add_middleware(TenantMiddleware, require_tenant=False)
@@ -222,7 +253,7 @@ async def health_check():
 @app.get("/api/v1/info")
 async def api_info():
     """API information"""
-    return {
+    info = {
         "name": "LogiAccounting Pro",
         "version": "2.0.0",
         "description": "Enterprise logistics and accounting platform with AI-powered features",
@@ -233,12 +264,14 @@ async def api_info():
             "anomaly_detection": "Fraud prevention & duplicate detection (Statistical ML + Isolation Forest)",
             "payment_scheduler": "Optimized payment scheduling (Constraint optimization)"
         },
-        "demo_credentials": {
-            "admin": "admin@logiaccounting.demo / Demo2024!Admin",
-            "client": "client@logiaccounting.demo / Demo2024!Client",
-            "supplier": "supplier@logiaccounting.demo / Demo2024!Supplier"
-        }
     }
+    if os.getenv("DEMO_MODE", "").lower() == "true":
+        info["demo_credentials"] = {
+            "admin": os.getenv("DEMO_ADMIN_EMAIL", ""),
+            "client": os.getenv("DEMO_CLIENT_EMAIL", ""),
+            "supplier": os.getenv("DEMO_SUPPLIER_EMAIL", ""),
+        }
+    return info
 
 
 # Serve React frontend in production
@@ -249,7 +282,10 @@ if os.path.exists(frontend_dist):
     @app.get("/{full_path:path}")
     async def serve_frontend(full_path: str):
         """Serve React SPA for all non-API routes"""
-        file_path = os.path.join(frontend_dist, full_path)
+        file_path = os.path.normpath(os.path.join(frontend_dist, full_path))
+        # Prevent path traversal outside frontend dist directory
+        if not file_path.startswith(os.path.normpath(frontend_dist)):
+            return FileResponse(os.path.join(frontend_dist, "index.html"))
         if os.path.exists(file_path) and os.path.isfile(file_path):
             return FileResponse(file_path)
         return FileResponse(os.path.join(frontend_dist, "index.html"))

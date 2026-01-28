@@ -8,6 +8,7 @@ import {
   FileText, ChevronRight, Users, Target, BarChart3,
   ArrowLeft, MessageSquare, Download, ThumbsUp, Star,
 } from 'lucide-react';
+import toast from '../../../utils/toast';
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
@@ -134,7 +135,7 @@ export default function Projects() {
       // API call would go here
       setFeedbackText('');
       setFeedbackRating(0);
-      alert('Feedback submitted successfully!');
+      toast.success('Feedback submitted successfully!');
     } catch (error) {
       console.error('Failed to submit feedback:', error);
     }

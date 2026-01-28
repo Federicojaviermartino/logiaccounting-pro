@@ -4,6 +4,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, T
 import { Bar, Doughnut } from 'react-chartjs-2';
 import { useAuth } from '../contexts/AuthContext';
 import { reportsAPI, paymentsAPI, cashflowAPI, anomalyAPI } from '../services/api';
+import toast from '../utils/toast';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
@@ -79,10 +80,10 @@ export default function Dashboard() {
     if (!window.confirm('Confirm this payment as paid? All parties will be notified.')) return;
     try {
       await paymentsAPI.markAsPaid(paymentId, new Date().toISOString());
-      alert('Payment marked as paid! All parties have been notified.');
+      toast.success('Payment marked as paid! All parties have been notified.');
       loadData();
     } catch (error) {
-      alert('Failed to mark payment as paid');
+      toast.error('Failed to mark payment as paid');
     }
   };
 

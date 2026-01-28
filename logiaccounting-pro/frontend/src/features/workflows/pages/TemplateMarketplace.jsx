@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Star, Download, Eye, Sparkles, Zap } from 'lucide-react';
 import { workflowAPI } from '../../../services/api';
+import toast from '../../../utils/toast';
 
 export default function TemplateMarketplace() {
   const [templates, setTemplates] = useState([]);
@@ -33,10 +34,10 @@ export default function TemplateMarketplace() {
     try {
       setInstalling(templateId);
       const result = await workflowAPI.installTemplate(templateId, {});
-      alert(`Installed! Workflow: ${result.data.workflow_id}`);
+      toast.info(`Installed! Workflow: ${result.data.workflow_id}`);
       loadData();
     } catch (error) {
-      alert('Failed to install');
+      toast.error('Failed to install');
     } finally {
       setInstalling(null);
     }

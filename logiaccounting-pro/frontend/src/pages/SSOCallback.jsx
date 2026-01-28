@@ -11,10 +11,18 @@ export default function SSOCallback() {
   const { setUser, setToken } = useAuth();
 
   useEffect(() => {
+    const isValidRedirect = (path) => {
+      if (!path) return false;
+      // Only allow relative paths starting with /
+      // Block protocol-relative URLs (//) and absolute URLs
+      return path.startsWith('/') && !path.startsWith('//');
+    };
+
     const processCallback = async () => {
       const token = searchParams.get('token');
       const errorMsg = searchParams.get('message') || searchParams.get('error');
-      const redirect = searchParams.get('redirect');
+      const rawRedirect = searchParams.get('redirect');
+      const redirect = isValidRedirect(rawRedirect) ? rawRedirect : null;
 
       if (errorMsg) {
         setStatus('error');
@@ -29,13 +37,12 @@ export default function SSOCallback() {
       }
 
       try {
-        localStorage.setItem('token', token);
+        setToken(token);
 
         const response = await authAPI.getMe();
         const user = response.data;
 
-        localStorage.setItem('user', JSON.stringify(user));
-        setToken(token);
+        sessionStorage.setItem('user', JSON.stringify(user));
         setUser(user);
 
         setStatus('success');
@@ -47,7 +54,7 @@ export default function SSOCallback() {
         console.error('SSO callback error:', err);
         setStatus('error');
         setError('Failed to complete authentication');
-        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
       }
     };
 

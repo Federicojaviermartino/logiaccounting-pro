@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { HELP_CATEGORIES } from '../data/helpContent';
 
 export default function HelpCenter() {
@@ -64,7 +65,7 @@ export default function HelpCenter() {
         <div className="section">
           <article
             className="help-article"
-            dangerouslySetInnerHTML={{ __html: renderMarkdown(selectedArticle.content) }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderMarkdown(selectedArticle.content)) }}
           />
         </div>
       ) : selectedCategory ? (

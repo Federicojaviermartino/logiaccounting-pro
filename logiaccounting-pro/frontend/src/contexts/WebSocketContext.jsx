@@ -14,10 +14,10 @@ export function WebSocketProvider({ children }) {
     if (!token || wsRef.current?.readyState === WebSocket.OPEN) return;
 
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${wsProtocol}//${window.location.host}/ws?token=${token}`;
+    const wsUrl = `${wsProtocol}//${window.location.host}/ws`;
 
     try {
-      wsRef.current = new WebSocket(wsUrl);
+      wsRef.current = new WebSocket(wsUrl, [token]);
 
       wsRef.current.onopen = () => {
         console.log('WebSocket connected');

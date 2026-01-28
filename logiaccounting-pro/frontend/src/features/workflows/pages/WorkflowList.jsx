@@ -24,6 +24,7 @@ import {
   MousePointer,
 } from 'lucide-react';
 import { workflowAPI } from '../services/workflowAPI';
+import toast from '../../../utils/toast';
 
 const WorkflowList = () => {
   const { t } = useTranslation();
@@ -128,7 +129,7 @@ const WorkflowList = () => {
   const handleExecute = async (workflowId) => {
     try {
       const result = await workflowAPI.executeWorkflow(workflowId);
-      alert(`Workflow started. Execution ID: ${result.execution_id}`);
+      toast.info(`Workflow started. Execution ID: ${result.execution_id}`);
     } catch (error) {
       console.error('Failed to execute workflow:', error);
     }

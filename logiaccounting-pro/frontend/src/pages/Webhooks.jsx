@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { webhookAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function Webhooks() {
   const [webhooks, setWebhooks] = useState([]);
@@ -63,7 +64,7 @@ export default function Webhooks() {
       setFormData({ url: '', events: [], description: '', is_active: true });
       loadData();
     } catch (err) {
-      alert('Failed to create webhook: ' + (err.response?.data?.detail || err.message));
+      toast.error('Failed to create webhook: ' + (err.response?.data?.detail || err.message));
     }
   };
 
@@ -72,7 +73,7 @@ export default function Webhooks() {
       await webhookAPI.update(webhook.id, { is_active: !webhook.is_active });
       loadData();
     } catch (err) {
-      alert('Failed to update webhook');
+      toast.error('Failed to update webhook');
     }
   };
 
@@ -82,7 +83,7 @@ export default function Webhooks() {
       await webhookAPI.delete(webhook.id);
       loadData();
     } catch (err) {
-      alert('Failed to delete webhook');
+      toast.error('Failed to delete webhook');
     }
   };
 
@@ -90,12 +91,12 @@ export default function Webhooks() {
     try {
       const res = await webhookAPI.test(webhook.id);
       if (res.data.success) {
-        alert(`Test successful! Response time: ${res.data.delivery?.response_time_ms || 0}ms`);
+        toast.success(`Test successful! Response time: ${res.data.delivery?.response_time_ms || 0}ms`);
       } else {
-        alert(`Test failed: ${res.data.delivery?.error_message || 'Unknown error'}`);
+        toast.error(`Test failed: ${res.data.delivery?.error_message || 'Unknown error'}`);
       }
     } catch (err) {
-      alert('Test failed: ' + (err.response?.data?.detail || err.message));
+      toast.error('Test failed: ' + (err.response?.data?.detail || err.message));
     }
   };
 
@@ -106,7 +107,7 @@ export default function Webhooks() {
       setNewSecretResult(res.data.secret);
       loadData();
     } catch (err) {
-      alert('Failed to rotate secret');
+      toast.error('Failed to rotate secret');
     }
   };
 
@@ -124,7 +125,7 @@ export default function Webhooks() {
       });
       setShowDeliveries(webhook);
     } catch (err) {
-      alert('Failed to load deliveries');
+      toast.error('Failed to load deliveries');
     }
   };
 
@@ -134,7 +135,7 @@ export default function Webhooks() {
       setStats(res.data.stats);
       setShowStats(webhook);
     } catch (err) {
-      alert('Failed to load stats');
+      toast.error('Failed to load stats');
     }
   };
 
@@ -142,13 +143,13 @@ export default function Webhooks() {
     try {
       const res = await webhookAPI.retryDelivery(webhookId, deliveryId);
       if (res.data.success) {
-        alert('Retry successful!');
+        toast.success('Retry successful!');
         handleViewDeliveries({ id: webhookId });
       } else {
-        alert('Retry failed');
+        toast.error('Retry failed');
       }
     } catch (err) {
-      alert('Retry failed: ' + (err.response?.data?.detail || err.message));
+      toast.error('Retry failed: ' + (err.response?.data?.detail || err.message));
     }
   };
 
@@ -179,7 +180,7 @@ export default function Webhooks() {
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
-    alert('Copied to clipboard!');
+    toast.success('Copied to clipboard!');
   };
 
   const filteredEvents = selectedCategory

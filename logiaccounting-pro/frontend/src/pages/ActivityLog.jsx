@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { activityAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import toast from '../utils/toast';
 
 export default function ActivityLog() {
   const { user } = useAuth();
@@ -91,7 +92,7 @@ export default function ActivityLog() {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      alert('Export failed');
+      toast.error('Export failed');
     }
   };
 

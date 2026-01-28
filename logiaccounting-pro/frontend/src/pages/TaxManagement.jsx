@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { taxAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function TaxManagement() {
   const [taxes, setTaxes] = useState([]);
@@ -64,7 +65,7 @@ export default function TaxManagement() {
       resetForm();
       loadInitialData();
     } catch (err) {
-      alert('Failed to save tax');
+      toast.error('Failed to save tax');
     }
   };
 
@@ -74,7 +75,7 @@ export default function TaxManagement() {
       await taxAPI.delete(taxId);
       loadInitialData();
     } catch (err) {
-      alert('Failed to delete');
+      toast.error('Failed to delete');
     }
   };
 
@@ -83,7 +84,7 @@ export default function TaxManagement() {
       await taxAPI.update(tax.id, { active: !tax.active });
       loadInitialData();
     } catch (err) {
-      alert('Failed to toggle');
+      toast.error('Failed to toggle');
     }
   };
 
@@ -92,7 +93,7 @@ export default function TaxManagement() {
       await taxAPI.update(tax.id, { is_default: true });
       loadInitialData();
     } catch (err) {
-      alert('Failed to set default');
+      toast.error('Failed to set default');
     }
   };
 
@@ -129,7 +130,7 @@ export default function TaxManagement() {
       });
       setCalcData({ ...calcData, result: res.data });
     } catch (err) {
-      alert('Calculation failed');
+      toast.error('Calculation failed');
     }
   };
 
@@ -138,7 +139,7 @@ export default function TaxManagement() {
       const res = await taxAPI.getReport(reportPeriod.start, reportPeriod.end);
       setReport(res.data);
     } catch (err) {
-      alert('Failed to generate report');
+      toast.error('Failed to generate report');
     }
   };
 

@@ -8,6 +8,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def utc_now() -> datetime:
+    """Return the current UTC time as a timezone-aware datetime.
+
+    Prefer this over ``datetime.utcnow()`` which returns a naive datetime
+    and is deprecated since Python 3.12.
+    """
+    return datetime.now(timezone.utc)
+
+
 TIMEZONE_OFFSETS: Dict[str, int] = {
     "UTC": 0,
     "GMT": 0,

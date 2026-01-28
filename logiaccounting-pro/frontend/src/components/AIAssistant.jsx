@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { useTranslation } from 'react-i18next';
 import { assistantAPI } from '../services/api';
 
@@ -87,7 +88,9 @@ export default function AIAssistant() {
           <div
             className="message-text"
             dangerouslySetInnerHTML={{
-              __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')
+              __html: DOMPurify.sanitize(
+                msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')
+              )
             }}
           />
           {msg.suggestions && msg.suggestions.length > 0 && (

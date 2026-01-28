@@ -154,53 +154,55 @@ export default function Layout({ children }) {
 
   return (
     <div className="app-layout">
-      <aside className="sidebar">
+      <a className="skip-link" href="#main-content">Skip to main content</a>
+      <aside className="sidebar" role="complementary" aria-label="Application sidebar">
         <div className="sidebar-header">
-          <span className="sidebar-logo">📦</span>
+          <span className="sidebar-logo" aria-hidden="true">📦</span>
           <span className="sidebar-title">LogiAccounting</span>
         </div>
-        
-        <nav className="sidebar-nav">
+
+        <nav className="sidebar-nav" aria-label="Main navigation">
           {navItems.map((item, index) => {
             if (!item.roles.includes(user?.role)) return null;
-            
+
             if (item.section) {
               return (
-                <div key={`section-${index}`} className="nav-section">
-                  <div className="nav-section-title">{item.section}</div>
+                <div key={`section-${index}`} className="nav-section" role="group" aria-label={item.section}>
+                  <div className="nav-section-title" id={`nav-section-${index}`}>{item.section}</div>
                 </div>
               );
             }
-            
+
             return (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                aria-current={location.pathname === item.path ? 'page' : undefined}
               >
-                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-icon" aria-hidden="true">{item.icon}</span>
                 <span>{item.label}</span>
               </NavLink>
             );
           })}
         </nav>
-        
+
         <div className="sidebar-footer">
-          <button className="logout-btn" onClick={handleLogout}>
-            <span>🚪</span>
+          <button className="logout-btn" onClick={handleLogout} aria-label="Log out of your account">
+            <span aria-hidden="true">🚪</span>
             <span>Logout</span>
           </button>
         </div>
       </aside>
-      
-      <main className="main-content">
-        <header className="page-header">
+
+      <main className="main-content" id="main-content" tabIndex={-1}>
+        <header className="page-header" role="banner">
           <h1 className="page-title">{pageTitles[location.pathname] || 'Dashboard'}</h1>
-          <div className="header-right">
+          <div className="header-right" role="toolbar" aria-label="Page actions">
             <LanguageSelector />
             <ThemeToggle />
             <NotificationBell />
-            <div className="user-info">
+            <div className="user-info" aria-label={`Logged in as ${user?.first_name} ${user?.last_name}`}>
               <div className="user-name">{user?.first_name} {user?.last_name}</div>
               <div className="user-role">{user?.role}</div>
             </div>

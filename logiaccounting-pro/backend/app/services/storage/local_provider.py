@@ -30,8 +30,12 @@ class LocalStorageProvider(StorageProvider):
         os.makedirs(self.base_path, exist_ok=True)
 
     def _get_full_path(self, bucket: str, key: str) -> str:
-        """Get full filesystem path"""
-        return os.path.join(self.base_path, bucket, key)
+        """Get full filesystem path with path traversal protection."""
+        full_path = os.path.normpath(os.path.join(self.base_path, bucket, key))
+        base = os.path.normpath(self.base_path)
+        if not full_path.startswith(base + os.sep) and full_path != base:
+            raise ValueError("Invalid path: path traversal detected")
+        return full_path
 
     def _ensure_directory(self, file_path: str):
         """Ensure parent directory exists"""

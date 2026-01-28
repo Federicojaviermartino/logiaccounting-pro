@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 import { cashflowAPI, anomalyAPI, schedulerAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import toast from '../utils/toast';
 
 ChartJS.register(
   CategoryScale, LinearScale, PointElement, LineElement,
@@ -57,7 +58,7 @@ export default function AIDashboard() {
       const res = await anomalyAPI.runScan();
       setAnomalies(res.data);
     } catch (error) {
-      alert('Scan failed: ' + (error.response?.data?.detail || error.message));
+      toast.error('Scan failed: ' + (error.response?.data?.detail || error.message));
     }
   };
 

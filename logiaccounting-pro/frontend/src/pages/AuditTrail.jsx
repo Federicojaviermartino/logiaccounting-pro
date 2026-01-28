@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { auditLogsAPI, integrityAPI, changeHistoryAPI, auditReportsAPI } from '../services/auditApi';
+import toast from '../utils/toast';
 
 export default function AuditTrail() {
   const [logs, setLogs] = useState([]);
@@ -75,15 +76,14 @@ export default function AuditTrail() {
     setVerifying(true);
     try {
       const res = await integrityAPI.verify();
-      alert(res.data.is_valid
-        ? 'Integrity verification passed! All logs are intact.'
-        : `Integrity issues found: ${res.data.issues_count} problems detected.`
-      );
+      res.data.is_valid
+        ? toast.success('Integrity verification passed! All logs are intact.')
+        : toast.warning(`Integrity issues found: ${res.data.issues_count} problems detected.`);
       // Refresh integrity status
       const statusRes = await integrityAPI.getStatus();
       setIntegrityStatus(statusRes.data.status);
     } catch (err) {
-      alert('Verification failed: ' + (err.response?.data?.detail || err.message));
+      toast.error('Verification failed: ' + (err.response?.data?.detail || err.message));
     } finally {
       setVerifying(false);
     }
@@ -112,7 +112,7 @@ export default function AuditTrail() {
         downloadBlob(res.data, `audit_logs.${format}`);
       }
     } catch (err) {
-      alert('Export failed: ' + (err.response?.data?.detail || err.message));
+      toast.error('Export failed: ' + (err.response?.data?.detail || err.message));
     }
   };
 
@@ -125,12 +125,12 @@ export default function AuditTrail() {
 
       if (format === 'json') {
         console.log('Report:', res.data.report);
-        alert('Report generated! Check console for details.');
+        toast.success('Report generated! Check console for details.');
       } else {
         downloadBlob(res.data, `${reportType}.${format}`);
       }
     } catch (err) {
-      alert('Report generation failed: ' + (err.response?.data?.detail || err.message));
+      toast.error('Report generation failed: ' + (err.response?.data?.detail || err.message));
     }
   };
 

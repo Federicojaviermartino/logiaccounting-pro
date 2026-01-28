@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { complianceAPI, soxAPI, gdprAPI, soc2API } from '../services/auditApi';
+import toast from '../utils/toast';
 
 export default function ComplianceDashboard() {
   const [frameworks, setFrameworks] = useState([]);
@@ -47,7 +48,7 @@ export default function ComplianceDashboard() {
       setFrameworkDetails(res.data);
     } catch (err) {
       console.error('Failed to load framework details:', err);
-      alert('Failed to load framework: ' + (err.response?.data?.detail || err.message));
+      toast.error('Failed to load framework: ' + (err.response?.data?.detail || err.message));
     }
   };
 
@@ -56,11 +57,11 @@ export default function ComplianceDashboard() {
     try {
       const res = await complianceAPI.runCheck(frameworkId);
       setFrameworkDetails(res.data);
-      alert(`Compliance check completed! Score: ${res.data.summary?.overall_score?.toFixed(1)}%`);
+      toast.success(`Compliance check completed! Score: ${res.data.summary?.overall_score?.toFixed(1)}%`);
       // Refresh dashboard
       loadDashboard();
     } catch (err) {
-      alert('Compliance check failed: ' + (err.response?.data?.detail || err.message));
+      toast.error('Compliance check failed: ' + (err.response?.data?.detail || err.message));
     } finally {
       setRunning(false);
     }
@@ -71,7 +72,7 @@ export default function ComplianceDashboard() {
       const res = await complianceAPI.generateReport(frameworkId, format, true);
       if (format === 'json') {
         console.log('Report:', res.data.report);
-        alert('Report generated! Check console for details.');
+        toast.success('Report generated! Check console for details.');
       } else {
         const blob = res.data;
         const url = URL.createObjectURL(blob);
@@ -82,7 +83,7 @@ export default function ComplianceDashboard() {
         URL.revokeObjectURL(url);
       }
     } catch (err) {
-      alert('Report generation failed: ' + (err.response?.data?.detail || err.message));
+      toast.error('Report generation failed: ' + (err.response?.data?.detail || err.message));
     }
   };
 

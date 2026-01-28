@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { settingsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
+import toast from '../utils/toast';
 
 export default function Settings() {
   const { user } = useAuth();
@@ -65,9 +66,9 @@ export default function Settings() {
         setTheme(preferences.theme);
       }
 
-      alert('Preferences saved successfully!');
+      toast.success('Preferences saved successfully!');
     } catch (error) {
-      alert('Failed to save preferences');
+      toast.error('Failed to save preferences');
     } finally {
       setSaving(false);
     }
@@ -77,9 +78,9 @@ export default function Settings() {
     setSaving(true);
     try {
       await settingsAPI.updateSystemSettings(systemSettings);
-      alert('System settings saved successfully!');
+      toast.success('System settings saved successfully!');
     } catch (error) {
-      alert('Failed to save system settings');
+      toast.error('Failed to save system settings');
     } finally {
       setSaving(false);
     }

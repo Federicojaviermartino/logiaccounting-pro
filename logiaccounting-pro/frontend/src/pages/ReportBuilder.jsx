@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { reportBuilderAPI } from '../services/api';
+import toast from '../utils/toast';
 
 const REPORT_TYPES = [
   { value: 'financial', label: 'Financial Report', icon: '💰' },
@@ -79,7 +80,7 @@ export default function ReportBuilder() {
       setPreviewData(res.data);
       setStep(4);
     } catch (err) {
-      alert('Preview failed');
+      toast.error('Preview failed');
     } finally {
       setLoading(false);
     }
@@ -118,7 +119,7 @@ export default function ReportBuilder() {
         window.URL.revokeObjectURL(url);
       }
     } catch (err) {
-      alert('Generation failed');
+      toast.error('Generation failed');
     } finally {
       setLoading(false);
     }
@@ -126,7 +127,7 @@ export default function ReportBuilder() {
 
   const handleSaveTemplate = async () => {
     if (!templateName.trim()) {
-      alert('Please enter a template name');
+      toast.warning('Please enter a template name');
       return;
     }
 
@@ -146,9 +147,9 @@ export default function ReportBuilder() {
 
       await reportBuilderAPI.saveTemplate(template);
       loadTemplates();
-      alert('Template saved!');
+      toast.success('Template saved!');
     } catch (err) {
-      alert('Failed to save template');
+      toast.error('Failed to save template');
     }
   };
 

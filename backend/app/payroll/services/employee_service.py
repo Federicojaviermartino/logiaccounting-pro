@@ -16,6 +16,18 @@ from app.core.exceptions import NotFoundError, ValidationError, BusinessRuleErro
 class EmployeeService:
     """Service for employee operations."""
 
+    EMPLOYEE_UPDATABLE_FIELDS = frozenset({
+        "first_name", "last_name", "email", "phone", "date_of_birth",
+        "gender", "address", "city", "state", "postal_code", "country",
+        "employment_status", "employment_type", "department_id",
+        "job_title", "manager_id", "hire_date",
+    })
+
+    TAX_UPDATABLE_FIELDS = frozenset({
+        "tax_id", "filing_status", "federal_allowances",
+        "state_allowances", "additional_withholding",
+    })
+
     def __init__(self, db: Session, customer_id: UUID):
         self.db = db
         self.customer_id = customer_id
@@ -67,7 +79,7 @@ class EmployeeService:
             update_data["employment_type"] = EmploymentType(update_data["employment_type"])
 
         for key, value in update_data.items():
-            if hasattr(employee, key):
+            if key in self.EMPLOYEE_UPDATABLE_FIELDS:
                 setattr(employee, key, value)
 
         self.db.commit()
@@ -80,7 +92,7 @@ class EmployeeService:
 
         update_data = data.model_dump(exclude_unset=True)
         for key, value in update_data.items():
-            if hasattr(employee, key):
+            if key in self.TAX_UPDATABLE_FIELDS:
                 setattr(employee, key, value)
 
         self.db.commit()
@@ -89,7 +101,7 @@ class EmployeeService:
 
     async def terminate_employee(self, employee_id: UUID, data: TerminateEmployee) -> Employee:
         """Terminate employee."""
-        employee = await self.get_employee_by_id(employee_id)
+        employee = await self.get_employee_by_id(employee_id, include_contracts=True)
 
         if employee.employment_status == EmploymentStatus.TERMINATED:
             raise BusinessRuleError("Employee is already terminated")
@@ -181,7 +193,7 @@ class EmployeeService:
 
     async def create_contract(self, employee_id: UUID, data: ContractCreate) -> EmployeeContract:
         """Create employee contract."""
-        employee = await self.get_employee_by_id(employee_id)
+        employee = await self.get_employee_by_id(employee_id, include_contracts=True)
 
         # Generate contract number
         count = len(employee.contracts) if employee.contracts else 0

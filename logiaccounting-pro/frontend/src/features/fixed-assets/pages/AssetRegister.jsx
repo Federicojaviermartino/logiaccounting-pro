@@ -9,6 +9,7 @@ import {
   MoreVertical, Eye, Edit2, Trash2, Package
 } from 'lucide-react';
 import { assetsAPI, categoriesAPI } from '../services/fixedAssetsAPI';
+import toast from '../../../utils/toast';
 
 const STATUS_COLORS = {
   draft: 'bg-gray-100 text-gray-700',
@@ -79,7 +80,7 @@ export default function AssetRegister() {
 
   const handleDelete = (asset) => {
     if (asset.status !== 'draft') {
-      alert('Only draft assets can be deleted');
+      toast.success('Only draft assets can be deleted');
       return;
     }
     if (confirm(`Delete asset ${asset.asset_number}?`)) {

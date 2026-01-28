@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { ssoAPI } from '../services/ssoApi';
 
-const credentials = {
-  admin: { email: 'admin@logiaccounting.demo', password: 'Demo2024!Admin' },
-  client: { email: 'client@logiaccounting.demo', password: 'Demo2024!Client' },
-  supplier: { email: 'supplier@logiaccounting.demo', password: 'Demo2024!Supplier' }
-};
+const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true';
+
+const credentials = DEMO_MODE ? {
+  admin: { email: import.meta.env.VITE_DEMO_ADMIN_EMAIL || '', password: import.meta.env.VITE_DEMO_ADMIN_PASS || '' },
+  client: { email: import.meta.env.VITE_DEMO_CLIENT_EMAIL || '', password: import.meta.env.VITE_DEMO_CLIENT_PASS || '' },
+  supplier: { email: import.meta.env.VITE_DEMO_SUPPLIER_EMAIL || '', password: import.meta.env.VITE_DEMO_SUPPLIER_PASS || '' }
+} : null;
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -79,24 +81,26 @@ export default function Login() {
   };
 
   const quickLogin = (role) => {
+    if (!credentials?.[role]) return;
     setEmail(credentials[role].email);
     setPassword(credentials[role].password);
     setSsoConnection(null);
   };
 
   return (
-    <div className="login-page">
+    <div className="login-page" role="main">
       <div className="login-container">
-        <div className="login-logo">📦</div>
+        <div className="login-logo" aria-hidden="true">📦</div>
         <h1 className="login-title">LogiAccounting Pro</h1>
         <p className="login-subtitle">Enterprise Logistics & Accounting</p>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="error-message" role="alert" aria-live="assertive">{error}</div>}
 
-        <form className="login-form" onSubmit={handleSubmit}>
+        <form className="login-form" onSubmit={handleSubmit} aria-label="Sign in">
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label" htmlFor="login-email">Email</label>
             <input
+              id="login-email"
               type="email"
               className="form-input"
               value={email}
@@ -105,9 +109,10 @@ export default function Login() {
               placeholder="your@email.com"
               required
               autoComplete="email"
+              aria-describedby={checkingSSO ? 'sso-hint' : undefined}
             />
             {checkingSSO && (
-              <small className="form-hint">Checking for SSO...</small>
+              <small className="form-hint" id="sso-hint" aria-live="polite">Checking for SSO...</small>
             )}
           </div>
 
@@ -134,8 +139,9 @@ export default function Login() {
           )}
 
           <div className="form-group">
-            <label className="form-label">Password</label>
+            <label className="form-label" htmlFor="login-password">Password</label>
             <input
+              id="login-password"
               type="password"
               className="form-input"
               value={password}
@@ -155,29 +161,22 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="demo-section">
-          <div className="demo-title">🎭 Demo Credentials - Click to autofill:</div>
-          <div className="quick-login-btns">
-            <button type="button" className="quick-btn" onClick={() => quickLogin('admin')}>
-              👑 Admin
-            </button>
-            <button type="button" className="quick-btn" onClick={() => quickLogin('client')}>
-              🧑‍💼 Client
-            </button>
-            <button type="button" className="quick-btn" onClick={() => quickLogin('supplier')}>
-              🏭 Supplier
-            </button>
+        {DEMO_MODE && credentials && (
+          <div className="demo-section">
+            <div className="demo-title">Demo Credentials - Click to autofill:</div>
+            <div className="quick-login-btns">
+              <button type="button" className="quick-btn" onClick={() => quickLogin('admin')}>
+                Admin
+              </button>
+              <button type="button" className="quick-btn" onClick={() => quickLogin('client')}>
+                Client
+              </button>
+              <button type="button" className="quick-btn" onClick={() => quickLogin('supplier')}>
+                Supplier
+              </button>
+            </div>
           </div>
-          <div className="credential-item">
-            <strong>Admin:</strong> <code>admin@logiaccounting.demo</code> / <code>Demo2024!Admin</code>
-          </div>
-          <div className="credential-item">
-            <strong>Client:</strong> <code>client@logiaccounting.demo</code> / <code>Demo2024!Client</code>
-          </div>
-          <div className="credential-item">
-            <strong>Supplier:</strong> <code>supplier@logiaccounting.demo</code> / <code>Demo2024!Supplier</code>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

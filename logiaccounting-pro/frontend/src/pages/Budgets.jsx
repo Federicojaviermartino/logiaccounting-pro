@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { budgetsAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function Budgets() {
   const [loading, setLoading] = useState(true);
@@ -55,7 +56,7 @@ export default function Budgets() {
       resetForm();
       loadData();
     } catch (error) {
-      alert('Failed to save budget: ' + (error.response?.data?.detail || error.message));
+      toast.error('Failed to save budget: ' + (error.response?.data?.detail || error.message));
     }
   };
 
@@ -79,7 +80,7 @@ export default function Budgets() {
       await budgetsAPI.delete(id);
       loadData();
     } catch (error) {
-      alert('Failed to delete budget');
+      toast.error('Failed to delete budget');
     }
   };
 

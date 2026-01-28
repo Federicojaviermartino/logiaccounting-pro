@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { movementsAPI, inventoryAPI, projectsAPI } from '../services/api';
+import toast from '../utils/toast';
 
 export default function Movements() {
   const [movements, setMovements] = useState([]);
@@ -41,7 +42,7 @@ export default function Movements() {
       setModalOpen(false);
       loadData();
     } catch (error) {
-      alert(error.response?.data?.detail || 'Failed to save movement');
+      toast.error(error.response?.data?.detail || 'Failed to save movement');
     }
   };
 
