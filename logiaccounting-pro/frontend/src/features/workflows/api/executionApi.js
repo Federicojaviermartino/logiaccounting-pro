@@ -1,6 +1,7 @@
 /**
  * Execution API - Workflow execution monitoring and management
  */
+import { getAuthHeaders } from '../../../utils/tokenService';
 
 const API_BASE = '/api/v1';
 
@@ -14,7 +15,7 @@ export async function getExecutions(params = {}) {
 
   const response = await fetch(`${API_BASE}/executions?${queryString}`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -29,7 +30,7 @@ export async function getExecutions(params = {}) {
 export async function getExecution(executionId) {
   const response = await fetch(`${API_BASE}/executions/${executionId}`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -44,7 +45,7 @@ export async function getExecution(executionId) {
 export async function getExecutionSteps(executionId) {
   const response = await fetch(`${API_BASE}/executions/${executionId}/steps`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -59,7 +60,7 @@ export async function getExecutionSteps(executionId) {
 export async function getExecutionLogs(executionId) {
   const response = await fetch(`${API_BASE}/executions/${executionId}/logs`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -75,7 +76,7 @@ export async function cancelExecution(executionId) {
   const response = await fetch(`${API_BASE}/executions/${executionId}/cancel`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -91,7 +92,7 @@ export async function retryExecution(executionId) {
   const response = await fetch(`${API_BASE}/executions/${executionId}/retry`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -111,7 +112,7 @@ export async function getExecutionStats(params = {}) {
 
   const response = await fetch(`${API_BASE}/executions/stats/summary?${queryString}`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 

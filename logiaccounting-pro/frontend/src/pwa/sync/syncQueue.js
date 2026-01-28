@@ -4,6 +4,7 @@
  */
 
 import { getDB } from '../storage/database';
+import { getAuthToken } from '../../utils/tokenService';
 
 const SYNC_PRIORITIES = {
   CRITICAL: 1,    // Approvals, payments
@@ -122,7 +123,7 @@ class SyncQueue {
    * Process single queue item
    */
   async processItem(item) {
-    const token = localStorage.getItem('token');
+    const token = getAuthToken();
 
     const response = await fetch(item.endpoint, {
       method: item.method,

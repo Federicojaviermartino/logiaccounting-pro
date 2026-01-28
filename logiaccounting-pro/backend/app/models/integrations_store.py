@@ -3,7 +3,10 @@ Phase 14: External Integrations Hub - Data Store
 In-memory data store for integrations
 """
 
+import logging
 from datetime import datetime, timedelta
+
+logger = logging.getLogger(__name__)
 from typing import Optional, List, Dict, Any
 from uuid import uuid4
 from enum import Enum
@@ -859,4 +862,4 @@ def init_integrations_database():
         "status": IntegrationStatus.DISCONNECTED,
     })
 
-    print("Integrations database initialized")
+    logger.info("Integrations database initialized")

@@ -44,6 +44,21 @@ export default function Login() {
     checkSSODomain(email);
   };
 
+  // Validate SSO redirect URLs to prevent open redirect attacks
+  const isValidSSORedirect = (url) => {
+    if (!url) return false;
+    try {
+      const parsed = new URL(url);
+      // Only allow HTTPS URLs for SSO redirects (security requirement)
+      if (parsed.protocol !== 'https:') return false;
+      // Block javascript: and data: protocols
+      if (['javascript:', 'data:', 'vbscript:'].includes(parsed.protocol)) return false;
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const handleSSOLogin = async () => {
     if (!ssoConnection) return;
 
@@ -56,7 +71,13 @@ export default function Login() {
         email: email,
       });
 
-      window.location.href = response.data.redirect_url;
+      const redirectUrl = response.data.redirect_url;
+      if (isValidSSORedirect(redirectUrl)) {
+        window.location.href = redirectUrl;
+      } else {
+        setError('Invalid SSO redirect URL received');
+        setLoading(false);
+      }
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to initiate SSO login');
       setLoading(false);

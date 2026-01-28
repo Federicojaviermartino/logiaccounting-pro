@@ -6,6 +6,7 @@
 import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import toast from '../../utils/toast';
+import { getAuthToken } from '../../utils/tokenService';
 
 const API_BASE = '/api/v1/ai/invoice';
 
@@ -38,7 +39,7 @@ export default function InvoiceScanner() {
       const res = await fetch(`${API_BASE}/scan`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${getAuthToken()}`,
         },
         body: formData,
       });
@@ -82,7 +83,7 @@ export default function InvoiceScanner() {
       await fetch(`${API_BASE}/scans/${scanResult.id}/approve`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${getAuthToken()}`,
         },
       });
       // In production, redirect to invoice creation with pre-filled data

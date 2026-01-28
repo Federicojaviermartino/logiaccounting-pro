@@ -2,6 +2,9 @@
 In-memory data store for LogiAccounting Pro
 Ready for PostgreSQL/SQLAlchemy migration
 """
+import logging
+
+logger = logging.getLogger(__name__)
 
 from datetime import datetime
 from typing import Optional, List, Dict, Any
@@ -286,8 +289,8 @@ def init_database():
         "start_date": "2024-01-15"
     })
     
-    print("Database initialized with demo data")
-    print(f"Users: {len(db.users._data)}, Categories: {len(db.categories._data)}, Locations: {len(db.locations._data)}")
+    logger.info("Database initialized with demo data: Users=%d, Categories=%d, Locations=%d",
+                len(db.users._data), len(db.categories._data), len(db.locations._data))
 
     # Initialize Phase 13 Document Database
     from app.models.document_store import init_document_database

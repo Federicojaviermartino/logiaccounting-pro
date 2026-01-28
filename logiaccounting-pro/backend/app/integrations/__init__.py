@@ -2,6 +2,9 @@
 Integrations Module
 Central hub for all integration providers
 """
+import logging
+
+logger = logging.getLogger(__name__)
 
 from app.integrations.base import (
     BaseIntegration,
@@ -41,6 +44,4 @@ def init_integrations():
     # Import providers to register them
     from app.integrations.providers import stripe, paypal, quickbooks, xero, zapier, slack
 
-    print(f"[Integrations] Registered {len(registry.provider_ids)} providers:")
-    for provider_id in registry.provider_ids:
-        print(f"  - {provider_id}")
+    logger.info("Registered %d integration providers: %s", len(registry.provider_ids), ", ".join(registry.provider_ids))

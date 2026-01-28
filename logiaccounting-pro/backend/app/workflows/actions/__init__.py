@@ -2,6 +2,9 @@
 Workflow Actions Module
 Registers all available actions
 """
+import logging
+
+logger = logging.getLogger(__name__)
 
 from app.workflows.actions.base import (
     BaseAction,
@@ -37,7 +40,7 @@ def register_default_actions(engine):
 
         engine.register_action(action_id, handler)
 
-    print(f"[Workflows] Registered {len(action_registry._actions)} actions")
+    logger.info("Registered %d workflow actions", len(action_registry._actions))
 
 
 def get_action(action_id: str) -> BaseAction:

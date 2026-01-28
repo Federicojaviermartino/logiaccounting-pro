@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAuthHeaders } from '../../utils/tokenService';
 
 const API_BASE = '/api/v1/ai/payments';
 
@@ -26,7 +27,7 @@ export default function PaymentOptimizer() {
       setLoading(true);
       const res = await fetch(`${API_BASE}/recommendations?status=${filter}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          ...getAuthHeaders(),
         },
       });
       const data = await res.json();
@@ -42,7 +43,7 @@ export default function PaymentOptimizer() {
     try {
       const res = await fetch(`${API_BASE}/savings`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          ...getAuthHeaders(),
         },
       });
       const data = await res.json();
@@ -57,7 +58,7 @@ export default function PaymentOptimizer() {
       await fetch(`${API_BASE}/recommendations/${id}/accept`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          ...getAuthHeaders(),
         },
       });
       fetchRecommendations();
@@ -72,8 +73,7 @@ export default function PaymentOptimizer() {
       await fetch(`${API_BASE}/recommendations/${id}/reject`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({ reason: 'User declined' }),
       });

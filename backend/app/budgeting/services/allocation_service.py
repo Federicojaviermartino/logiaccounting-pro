@@ -6,7 +6,7 @@ from uuid import UUID
 from calendar import monthrange
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.budgeting.models.budget import BudgetVersion
 from app.budgeting.models.budget_line import BudgetLine, BudgetPeriod, DistributionMethod
@@ -248,8 +248,10 @@ class AllocationService:
             raise NotFoundError(f"Version not found: {version_id}")
         return version
 
-    async def _get_line(self, line_id: UUID) -> BudgetLine:
+    async def _get_line(self, line_id: UUID, include_periods: bool = True) -> BudgetLine:
         query = select(BudgetLine).where(BudgetLine.id == line_id)
+        if include_periods:
+            query = query.options(selectinload(BudgetLine.periods))
         result = self.db.execute(query)
         line = result.scalar_one_or_none()
         if not line:

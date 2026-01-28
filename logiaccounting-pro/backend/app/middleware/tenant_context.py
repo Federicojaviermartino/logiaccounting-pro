@@ -2,6 +2,9 @@
 Tenant Context and Middleware
 Phase 16 - Multi-tenant request handling and tenant resolution
 """
+import logging
+
+logger = logging.getLogger(__name__)
 
 from contextvars import ContextVar
 from typing import Optional, Dict, Any, Callable
@@ -278,7 +281,7 @@ class TenantMiddleware(BaseHTTPMiddleware):
 
         except Exception as e:
             # Log error and continue without tenant context
-            print(f"Tenant middleware error: {e}")
+            logger.error("Tenant middleware error: %s", e, exc_info=True)
             return await call_next(request)
 
         finally:

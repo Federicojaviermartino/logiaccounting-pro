@@ -1,6 +1,7 @@
 /**
  * Workflow API - CRUD operations for workflow management
  */
+import { getAuthHeaders } from '../../../utils/tokenService';
 
 const API_BASE = '/api/v1';
 
@@ -14,8 +15,7 @@ export async function getWorkflows(params = {}) {
 
   const response = await fetch(`${API_BASE}/workflows?${queryString}`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
     },
   });
 
@@ -30,8 +30,7 @@ export async function getWorkflows(params = {}) {
 export async function getWorkflow(workflowId) {
   const response = await fetch(`${API_BASE}/workflows/${workflowId}`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
     },
   });
 
@@ -47,8 +46,7 @@ export async function createWorkflow(workflowData) {
   const response = await fetch(`${API_BASE}/workflows`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
     },
     body: JSON.stringify(workflowData),
   });
@@ -65,8 +63,7 @@ export async function updateWorkflow(workflowId, workflowData) {
   const response = await fetch(`${API_BASE}/workflows/${workflowId}`, {
     method: 'PUT',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
     },
     body: JSON.stringify(workflowData),
   });
@@ -83,7 +80,7 @@ export async function deleteWorkflow(workflowId) {
   const response = await fetch(`${API_BASE}/workflows/${workflowId}`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -97,7 +94,7 @@ export async function activateWorkflow(workflowId) {
   const response = await fetch(`${API_BASE}/workflows/${workflowId}/activate`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -113,7 +110,7 @@ export async function pauseWorkflow(workflowId) {
   const response = await fetch(`${API_BASE}/workflows/${workflowId}/pause`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -129,8 +126,7 @@ export async function triggerWorkflow(workflowId, triggerData = {}) {
   const response = await fetch(`${API_BASE}/workflows/${workflowId}/trigger`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
     },
     body: JSON.stringify(triggerData),
   });
@@ -147,8 +143,7 @@ export async function testWorkflow(workflowId, testData) {
   const response = await fetch(`${API_BASE}/workflows/${workflowId}/test`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
     },
     body: JSON.stringify(testData),
   });
@@ -164,7 +159,7 @@ export async function testWorkflow(workflowId, testData) {
 export async function getWorkflowVersions(workflowId) {
   const response = await fetch(`${API_BASE}/workflows/${workflowId}/versions`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -180,7 +175,7 @@ export async function rollbackWorkflow(workflowId, version) {
   const response = await fetch(`${API_BASE}/workflows/${workflowId}/rollback/${version}`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 

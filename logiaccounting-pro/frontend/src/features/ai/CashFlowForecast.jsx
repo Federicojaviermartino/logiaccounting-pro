@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAuthHeaders } from '../../utils/tokenService';
 
 const API_BASE = '/api/v1/ai/cashflow';
 
@@ -24,7 +25,7 @@ export default function CashFlowForecast() {
       setLoading(true);
       const res = await fetch(`${API_BASE}/summary`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          ...getAuthHeaders(),
         },
       });
       const data = await res.json();
@@ -43,8 +44,7 @@ export default function CashFlowForecast() {
       const res = await fetch(`${API_BASE}/forecast`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({
           transactions: [],

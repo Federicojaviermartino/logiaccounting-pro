@@ -1,6 +1,9 @@
 """
 Activity Logger - Tracks all user actions for audit trail
 """
+import logging
+
+logger = logging.getLogger(__name__)
 
 from datetime import datetime
 from typing import Optional, Dict, Any
@@ -167,7 +170,7 @@ def log_activity(action: str, entity_type: str):
                         entity_name=entity_name
                     )
             except Exception as e:
-                print(f"Activity logging failed: {e}")
+                logger.error("Activity logging failed: %s", e, exc_info=True)
 
             return result
         return wrapper

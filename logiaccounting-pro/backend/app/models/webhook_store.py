@@ -3,7 +3,10 @@ Webhook Data Store
 Webhook endpoints, deliveries, and event types for Phase 17
 """
 
+import logging
 from datetime import datetime, timedelta
+
+logger = logging.getLogger(__name__)
 from typing import Optional, List, Dict, Any
 from uuid import uuid4
 import secrets
@@ -599,4 +602,4 @@ def get_all_categories() -> List[str]:
 
 def init_webhook_database():
     """Initialize webhook database (called from main)"""
-    print("Webhook database initialized")
+    logger.info("Webhook database initialized")

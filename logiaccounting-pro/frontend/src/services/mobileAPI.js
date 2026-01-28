@@ -5,6 +5,7 @@
 
 import axios from 'axios';
 import { offlineStorage } from '../pwa/offlineStorage';
+import { getPortalToken, clearPortalToken } from '../utils/tokenService';
 
 const API_BASE = '/api/mobile/v1';
 
@@ -15,7 +16,7 @@ const api = axios.create({
 
 // Add auth token to requests
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('portal_token');
+  const token = getPortalToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -34,7 +35,7 @@ api.interceptors.response.use(
     }
 
     if (error.response?.status === 401) {
-      localStorage.removeItem('portal_token');
+      clearPortalToken();
       window.location.href = '/portal/login';
     }
 

@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAuthHeaders } from '../../utils/tokenService';
 
 const API_BASE = '/api/v1/ai/anomaly';
 
@@ -33,7 +34,7 @@ export default function AnomalyDashboard() {
 
       const res = await fetch(`${API_BASE}/anomalies?${params}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          ...getAuthHeaders(),
         },
       });
       const data = await res.json();
@@ -49,7 +50,7 @@ export default function AnomalyDashboard() {
     try {
       const res = await fetch(`${API_BASE}/stats`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          ...getAuthHeaders(),
         },
       });
       const data = await res.json();
@@ -64,8 +65,7 @@ export default function AnomalyDashboard() {
       await fetch(`${API_BASE}/anomalies/${id}/resolve`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({ resolution_notes: notes }),
       });
@@ -81,8 +81,7 @@ export default function AnomalyDashboard() {
       await fetch(`${API_BASE}/anomalies/${id}/dismiss`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({ reason: 'False positive' }),
       });

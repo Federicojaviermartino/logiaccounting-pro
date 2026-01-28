@@ -2,6 +2,9 @@
 Document Management Store - Phase 13
 Enhanced document models with categories, versions, shares, comments, and signatures
 """
+import logging
+
+logger = logging.getLogger(__name__)
 
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
@@ -405,4 +408,4 @@ def init_document_database():
     for tag in default_tags:
         doc_db.tags.create(tag)
 
-    print(f"Document database initialized: {len(doc_db.categories._data)} categories, {len(doc_db.tags._data)} tags")
+    logger.info("Document database initialized: %d categories, %d tags", len(doc_db.categories._data), len(doc_db.tags._data))

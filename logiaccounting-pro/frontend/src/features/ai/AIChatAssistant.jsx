@@ -5,6 +5,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAuthHeaders } from '../../utils/tokenService';
 
 const API_BASE = '/api/v1/ai/assistant';
 
@@ -29,7 +30,7 @@ export default function AIChatAssistant({ embedded = false }) {
     try {
       const res = await fetch(`${API_BASE}/conversations`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          ...getAuthHeaders(),
         },
       });
       const data = await res.json();
@@ -43,7 +44,7 @@ export default function AIChatAssistant({ embedded = false }) {
     try {
       const res = await fetch(`${API_BASE}/conversations/${conversationId}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          ...getAuthHeaders(),
         },
       });
       const data = await res.json();
@@ -66,8 +67,7 @@ export default function AIChatAssistant({ embedded = false }) {
       const res = await fetch(`${API_BASE}/chat`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({
           message: userMessage,
@@ -101,8 +101,7 @@ export default function AIChatAssistant({ embedded = false }) {
       await fetch(`${API_BASE}/messages/${messageId}/feedback`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
+          ...getAuthHeaders(),
         },
         body: JSON.stringify({ feedback }),
       });

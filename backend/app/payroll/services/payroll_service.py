@@ -126,7 +126,7 @@ class PayrollService:
 
     async def calculate_payroll(self, run_id: UUID) -> PayrollRun:
         """Calculate payroll for all employees."""
-        payroll_run = await self._get_payroll_run(run_id)
+        payroll_run = await self._get_payroll_run(run_id, include_lines=True)
 
         if payroll_run.status != PayrollRunStatus.DRAFT:
             raise BusinessRuleError("Payroll run is not in draft status")
@@ -423,7 +423,7 @@ class PayrollService:
 
     async def process_payments(self, run_id: UUID) -> PayrollRun:
         """Process payments for approved payroll."""
-        payroll_run = await self._get_payroll_run(run_id)
+        payroll_run = await self._get_payroll_run(run_id, include_lines=True)
 
         if payroll_run.status != PayrollRunStatus.APPROVED:
             raise BusinessRuleError("Payroll must be approved before processing payments")
@@ -531,9 +531,19 @@ class PayrollService:
             raise NotFoundError(f"Pay period not found: {period_id}")
         return period
 
-    async def _get_payroll_run(self, run_id: UUID) -> PayrollRun:
+    async def _get_payroll_run(self, run_id: UUID, include_lines: bool = False) -> PayrollRun:
         """Get payroll run by ID."""
-        run = self.db.get(PayrollRun, run_id)
-        if not run or run.customer_id != self.customer_id:
+        if include_lines:
+            query = select(PayrollRun).where(
+                PayrollRun.id == run_id,
+                PayrollRun.customer_id == self.customer_id
+            ).options(selectinload(PayrollRun.payroll_lines))
+            result = self.db.execute(query)
+            run = result.scalar_one_or_none()
+        else:
+            run = self.db.get(PayrollRun, run_id)
+            if run and run.customer_id != self.customer_id:
+                run = None
+        if not run:
             raise NotFoundError(f"Payroll run not found: {run_id}")
         return run

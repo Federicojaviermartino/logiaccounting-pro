@@ -3,7 +3,10 @@ Multi-Tenancy Data Store
 Phase 16 - Enterprise multi-tenant architecture with isolation
 """
 
+import logging
 from datetime import datetime, timedelta
+
+logger = logging.getLogger(__name__)
 from typing import Optional, List, Dict, Any
 from uuid import uuid4
 from enum import Enum
@@ -1043,4 +1046,4 @@ def init_tenant_database():
     })
     tenant_db.features.initialize_tier_features(enterprise_tenant["id"], TenantTier.ENTERPRISE.value)
 
-    print("Tenant database initialized with demo data")
+    logger.info("Tenant database initialized with demo data")

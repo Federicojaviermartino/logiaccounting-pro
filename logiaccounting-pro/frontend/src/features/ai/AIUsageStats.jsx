@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAuthHeaders } from '../../utils/tokenService';
 
 const API_BASE = '/api/v1/ai';
 
@@ -34,7 +35,7 @@ export default function AIUsageStats() {
     try {
       const res = await fetch(`${API_BASE}/usage?days=${period}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          ...getAuthHeaders(),
         },
       });
       const data = await res.json();
@@ -48,7 +49,7 @@ export default function AIUsageStats() {
     try {
       const res = await fetch(`${API_BASE}/config`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          ...getAuthHeaders(),
         },
       });
       const data = await res.json();
@@ -62,7 +63,7 @@ export default function AIUsageStats() {
     try {
       const res = await fetch(`${API_BASE}/health`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          ...getAuthHeaders(),
         },
       });
       const data = await res.json();

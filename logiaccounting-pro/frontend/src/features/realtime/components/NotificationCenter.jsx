@@ -30,12 +30,27 @@ const NotificationCenter = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const isValidRedirectUrl = (url) => {
+    if (!url) return false;
+    // Allow relative paths starting with /
+    if (url.startsWith('/') && !url.startsWith('//')) {
+      return true;
+    }
+    // Allow same-origin absolute URLs
+    try {
+      const parsed = new URL(url, window.location.origin);
+      return parsed.origin === window.location.origin;
+    } catch {
+      return false;
+    }
+  };
+
   const handleNotificationClick = (notification) => {
     if (!notification.is_read) {
       markRead(notification.id);
     }
 
-    if (notification.action_url) {
+    if (notification.action_url && isValidRedirectUrl(notification.action_url)) {
       window.location.href = notification.action_url;
     }
 

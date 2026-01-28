@@ -3,7 +3,10 @@ Gateway Data Store
 API Keys, Rate Limits, Request Logs for Phase 17
 """
 
+import logging
 from datetime import datetime, timedelta
+
+logger = logging.getLogger(__name__)
 from typing import Optional, List, Dict, Any
 from uuid import uuid4
 import hashlib
@@ -484,4 +487,4 @@ gateway_db = GatewayDatabase()
 
 def init_gateway_database():
     """Initialize gateway database (called from main)"""
-    print("Gateway database initialized")
+    logger.info("Gateway database initialized")

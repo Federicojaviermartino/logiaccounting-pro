@@ -3,7 +3,10 @@ Audit & Compliance Data Store
 Phase 15 - Audit trail, compliance, and regulatory framework
 """
 
+import logging
 from datetime import datetime, timedelta
+
+logger = logging.getLogger(__name__)
 from typing import Optional, List, Dict, Any
 from uuid import uuid4
 import hashlib
@@ -760,4 +763,4 @@ def init_audit_database():
     for log in sample_logs:
         audit_db.audit_logs.create(log)
 
-    print("Audit database initialized with default data")
+    logger.info("Audit database initialized with default data")

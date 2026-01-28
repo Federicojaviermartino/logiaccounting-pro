@@ -1,6 +1,7 @@
 /**
  * Push Notification Service
  */
+import { getAuthToken } from '../../utils/tokenService';
 
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 
@@ -100,7 +101,7 @@ class PushService {
    * Send subscription to backend
    */
   async sendSubscriptionToServer(subscription) {
-    const token = localStorage.getItem('token');
+    const token = getAuthToken();
 
     const response = await fetch('/api/v1/notifications/subscribe', {
       method: 'POST',
@@ -124,7 +125,7 @@ class PushService {
    * Remove subscription from backend
    */
   async removeSubscriptionFromServer(subscription) {
-    const token = localStorage.getItem('token');
+    const token = getAuthToken();
 
     await fetch('/api/v1/notifications/unsubscribe', {
       method: 'POST',

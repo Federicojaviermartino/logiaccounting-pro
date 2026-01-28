@@ -1,6 +1,7 @@
 /**
  * Rules API - Business rules management
  */
+import { getAuthHeaders } from '../../../utils/tokenService';
 
 const API_BASE = '/api/v1';
 
@@ -13,7 +14,7 @@ export async function getRules(params = {}) {
 
   const response = await fetch(`${API_BASE}/rules?${queryString}`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -28,7 +29,7 @@ export async function getRules(params = {}) {
 export async function getRule(ruleId) {
   const response = await fetch(`${API_BASE}/rules/${ruleId}`, {
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -44,8 +45,7 @@ export async function createRule(ruleData) {
   const response = await fetch(`${API_BASE}/rules`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
     },
     body: JSON.stringify(ruleData),
   });
@@ -62,8 +62,7 @@ export async function updateRule(ruleId, ruleData) {
   const response = await fetch(`${API_BASE}/rules/${ruleId}`, {
     method: 'PUT',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
     },
     body: JSON.stringify(ruleData),
   });
@@ -80,7 +79,7 @@ export async function deleteRule(ruleId) {
   const response = await fetch(`${API_BASE}/rules/${ruleId}`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -94,7 +93,7 @@ export async function activateRule(ruleId) {
   const response = await fetch(`${API_BASE}/rules/${ruleId}/activate`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -110,7 +109,7 @@ export async function pauseRule(ruleId) {
   const response = await fetch(`${API_BASE}/rules/${ruleId}/pause`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      ...getAuthHeaders(),
     },
   });
 
@@ -126,8 +125,7 @@ export async function testRule(ruleId, testData) {
   const response = await fetch(`${API_BASE}/rules/${ruleId}/test`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
     },
     body: JSON.stringify(testData),
   });
@@ -144,8 +142,7 @@ export async function evaluateExpression(expression, variables) {
   const response = await fetch(`${API_BASE}/rules/evaluate`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
+      ...getAuthHeaders(),
     },
     body: JSON.stringify({ expression, variables }),
   });

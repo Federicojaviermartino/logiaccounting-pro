@@ -5,7 +5,7 @@ from typing import Optional, List, Tuple
 from uuid import UUID
 
 from sqlalchemy import select, func, and_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.budgeting.models.budget import Budget, BudgetVersion
 from app.budgeting.models.budget_line import BudgetLine, BudgetPeriod, VarianceType
@@ -41,10 +41,10 @@ class VarianceService:
         if not budget.active_version_id:
             raise BusinessRuleError("Budget has no active version")
 
-        # Get lines for active version
+        # Get lines for active version with eager loading of periods
         query = select(BudgetLine).where(
             BudgetLine.version_id == budget.active_version_id
-        ).order_by(BudgetLine.account_code)
+        ).options(selectinload(BudgetLine.periods)).order_by(BudgetLine.account_code)
 
         result = self.db.execute(query)
         lines = result.scalars().all()
@@ -160,10 +160,10 @@ class VarianceService:
         if not budget.active_version_id:
             raise BusinessRuleError("Budget has no active version")
 
-        # Get all lines for active version
+        # Get all lines for active version with eager loading of periods
         query = select(BudgetLine).where(
             BudgetLine.version_id == budget.active_version_id
-        )
+        ).options(selectinload(BudgetLine.periods))
         result = self.db.execute(query)
         lines = result.scalars().all()
 
