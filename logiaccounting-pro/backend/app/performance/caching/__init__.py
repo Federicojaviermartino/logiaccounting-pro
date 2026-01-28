@@ -12,10 +12,12 @@ Components:
 
 from app.performance.caching.redis_client import RedisManager, redis_manager
 from app.performance.caching.cache_manager import CacheManager, cache_manager
-from app.performance.caching.cache_keys import CacheKeyBuilder, cache_keys, CacheTags, CacheTTL
+from app.performance.caching.cache_keys import CacheKeyBuilder, cache_keys, CacheTags, CacheTTL, CacheNamespace
 from app.performance.caching.decorators import cached, invalidate_cache, cache_aside
 from app.performance.caching.invalidation import invalidation_service, invalidate_entity
+from app.performance.caching.invalidation import invalidation_service as cache_invalidation_service
 from app.performance.caching.warmup import warmup_service
+from app.performance.caching.warmup import warmup_service as cache_warmup_service
 
 __all__ = [
     "RedisManager",
@@ -32,4 +34,7 @@ __all__ = [
     "invalidation_service",
     "invalidate_entity",
     "warmup_service",
+    "CacheNamespace",
+    "cache_invalidation_service",
+    "cache_warmup_service",
 ]
