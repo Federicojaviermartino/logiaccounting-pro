@@ -3,7 +3,7 @@ Database connection manager with read replica support and connection pooling.
 """
 import asyncio
 import logging
-from typing import Optional, List, AsyncGenerator
+from typing import Any, Optional, List, AsyncGenerator
 from contextlib import asynccontextmanager
 from enum import Enum
 
