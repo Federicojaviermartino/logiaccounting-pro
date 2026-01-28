@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 import re
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -124,36 +126,36 @@ class DateConditionHelper:
     @staticmethod
     def days_ago(days: int) -> datetime:
         """Get datetime for N days ago."""
-        return datetime.utcnow() - timedelta(days=days)
+        return utc_now() - timedelta(days=days)
 
     @staticmethod
     def days_from_now(days: int) -> datetime:
         """Get datetime for N days from now."""
-        return datetime.utcnow() + timedelta(days=days)
+        return utc_now() + timedelta(days=days)
 
     @staticmethod
     def start_of_day(dt: datetime = None) -> datetime:
         """Get start of day."""
-        dt = dt or datetime.utcnow()
+        dt = dt or utc_now()
         return dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
     @staticmethod
     def end_of_day(dt: datetime = None) -> datetime:
         """Get end of day."""
-        dt = dt or datetime.utcnow()
+        dt = dt or utc_now()
         return dt.replace(hour=23, minute=59, second=59, microsecond=999999)
 
     @staticmethod
     def start_of_week(dt: datetime = None) -> datetime:
         """Get start of week (Monday)."""
-        dt = dt or datetime.utcnow()
+        dt = dt or utc_now()
         days_since_monday = dt.weekday()
         return DateConditionHelper.start_of_day(dt - timedelta(days=days_since_monday))
 
     @staticmethod
     def start_of_month(dt: datetime = None) -> datetime:
         """Get start of month."""
-        dt = dt or datetime.utcnow()
+        dt = dt or utc_now()
         return dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
     @staticmethod
@@ -161,7 +163,7 @@ class DateConditionHelper:
         """Check if a date is overdue."""
         if isinstance(date_value, str):
             date_value = datetime.fromisoformat(date_value.replace("Z", "+00:00"))
-        reference = reference or datetime.utcnow()
+        reference = reference or utc_now()
         return date_value < reference
 
     @staticmethod
@@ -169,7 +171,7 @@ class DateConditionHelper:
         """Get days until a date."""
         if isinstance(date_value, str):
             date_value = datetime.fromisoformat(date_value.replace("Z", "+00:00"))
-        delta = date_value - datetime.utcnow()
+        delta = date_value - utc_now()
         return delta.days
 
     @staticmethod
@@ -177,7 +179,7 @@ class DateConditionHelper:
         """Get days since a date."""
         if isinstance(date_value, str):
             date_value = datetime.fromisoformat(date_value.replace("Z", "+00:00"))
-        delta = datetime.utcnow() - date_value
+        delta = utc_now() - date_value
         return delta.days
 
 

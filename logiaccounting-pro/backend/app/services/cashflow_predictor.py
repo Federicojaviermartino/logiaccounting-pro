@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, List, Any, Tuple
 from dataclasses import dataclass, asdict
 import json
+from app.utils.datetime_utils import utc_now
 
 # Optional imports for ML capabilities
 try:
@@ -116,7 +117,7 @@ class CashFlowPredictor:
         summary = self._calculate_summary(predictions, current_balance)
 
         return CashFlowForecast(
-            generated_at=datetime.utcnow().isoformat(),
+            generated_at=utc_now().isoformat(),
             period_days=days,
             current_balance=current_balance,
             predictions=[p.to_dict() if hasattr(p, 'to_dict') else asdict(p) for p in predictions],
@@ -169,7 +170,7 @@ class CashFlowPredictor:
         Use Prophet for time series forecasting
         """
         predictions = []
-        today = datetime.utcnow().date()
+        today = utc_now().date()
 
         # Train income model
         income_forecast = None
@@ -283,7 +284,7 @@ class CashFlowPredictor:
         Uses moving averages and basic seasonality
         """
         predictions = []
-        today = datetime.utcnow().date()
+        today = utc_now().date()
 
         # Calculate averages
         avg_income = income_df["y"].mean() if not income_df.empty else 0
@@ -347,7 +348,7 @@ class CashFlowPredictor:
         avg_daily_expense = expense_total / num_days if expense_total > 0 else 0
 
         predictions = []
-        today = datetime.utcnow().date()
+        today = utc_now().date()
 
         for i in range(days):
             pred_date = today + timedelta(days=i + 1)
@@ -366,7 +367,7 @@ class CashFlowPredictor:
         current_balance = income_total - expense_total
 
         return CashFlowForecast(
-            generated_at=datetime.utcnow().isoformat(),
+            generated_at=utc_now().isoformat(),
             period_days=days,
             current_balance=round(current_balance, 2),
             predictions=predictions,
@@ -419,7 +420,7 @@ class CashFlowPredictor:
         Analyze how active projects will impact cash flow
         """
         impacts = []
-        today = datetime.utcnow().date()
+        today = utc_now().date()
         end_date = today + timedelta(days=days)
 
         for project in projects:

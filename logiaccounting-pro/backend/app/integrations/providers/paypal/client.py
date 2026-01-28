@@ -17,6 +17,7 @@ from app.integrations.base import (
     SyncResult,
 )
 from app.integrations.registry import register_integration
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -111,8 +112,8 @@ class PayPalIntegration(BaseIntegration):
 
             # Demo mode
             if self._client_id and self._client_secret:
-                self._access_token = f"A21AADemo_{datetime.utcnow().timestamp()}"
-                self._token_expires_at = datetime.utcnow()
+                self._access_token = f"A21AADemo_{utc_now().timestamp()}"
+                self._token_expires_at = utc_now()
                 return True
 
             return False
@@ -141,11 +142,11 @@ class PayPalIntegration(BaseIntegration):
 
         # Demo response
         return {
-            "id": f"ORDER-{datetime.utcnow().timestamp()}",
+            "id": f"ORDER-{utc_now().timestamp()}",
             "status": "CREATED",
             "links": [
                 {
-                    "href": f"https://www.sandbox.paypal.com/checkoutnow?token=ORDER-{datetime.utcnow().timestamp()}",
+                    "href": f"https://www.sandbox.paypal.com/checkoutnow?token=ORDER-{utc_now().timestamp()}",
                     "rel": "approve",
                     "method": "GET",
                 },
@@ -161,7 +162,7 @@ class PayPalIntegration(BaseIntegration):
             "purchase_units": [{
                 "payments": {
                     "captures": [{
-                        "id": f"CAPTURE-{datetime.utcnow().timestamp()}",
+                        "id": f"CAPTURE-{utc_now().timestamp()}",
                         "status": "COMPLETED",
                         "amount": {"currency_code": "USD", "value": "100.00"},
                     }],
@@ -186,7 +187,7 @@ class PayPalIntegration(BaseIntegration):
             }
 
         return {
-            "id": f"REFUND-{datetime.utcnow().timestamp()}",
+            "id": f"REFUND-{utc_now().timestamp()}",
             "status": "COMPLETED",
             "amount": {"currency_code": currency, "value": amount or "100.00"},
         }
@@ -198,10 +199,10 @@ class PayPalIntegration(BaseIntegration):
         total = sum(float(item.get("amount", 0)) * int(item.get("quantity", 1)) for item in items)
 
         return {
-            "id": f"INV2-{datetime.utcnow().timestamp()}",
+            "id": f"INV2-{utc_now().timestamp()}",
             "status": "DRAFT",
             "detail": {
-                "invoice_number": f"INV-{int(datetime.utcnow().timestamp())}",
+                "invoice_number": f"INV-{int(utc_now().timestamp())}",
                 "currency_code": "USD",
             },
             "amount": {"value": str(total)},

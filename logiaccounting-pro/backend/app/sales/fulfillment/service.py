@@ -13,6 +13,7 @@ from sqlalchemy import select, func, and_, or_
 from sqlalchemy.orm import Session, selectinload
 from fastapi import Depends, HTTPException, status
 
+from app.utils.datetime_utils import utc_now
 from app.database import get_db
 from app.sales.fulfillment.models import (
     PickList, PickListLine, Shipment, ShipmentLine,
@@ -70,7 +71,7 @@ class PickListService:
             pick_date=data.pick_date or date.today(),
             due_date=data.due_date,
             assigned_to=data.assigned_to,
-            assigned_at=datetime.utcnow() if data.assigned_to else None,
+            assigned_at=utc_now() if data.assigned_to else None,
             notes=data.notes,
             status=PickListStatusEnum.DRAFT.value,
             created_by=created_by,
@@ -138,9 +139,9 @@ class PickListService:
             setattr(pick_list, field, value)
 
         if "assigned_to" in update_data and update_data["assigned_to"]:
-            pick_list.assigned_at = datetime.utcnow()
+            pick_list.assigned_at = utc_now()
 
-        pick_list.updated_at = datetime.utcnow()
+        pick_list.updated_at = utc_now()
 
         self.db.commit()
         self.db.refresh(pick_list)
@@ -247,7 +248,7 @@ class PickListService:
             )
 
         pick_list.status = PickListStatusEnum.RELEASED.value
-        pick_list.updated_at = datetime.utcnow()
+        pick_list.updated_at = utc_now()
 
         self.db.commit()
         self.db.refresh(pick_list)
@@ -273,10 +274,10 @@ class PickListService:
             )
 
         pick_list.status = PickListStatusEnum.IN_PROGRESS.value
-        pick_list.started_at = datetime.utcnow()
+        pick_list.started_at = utc_now()
         if user_id and not pick_list.assigned_to:
             pick_list.assigned_to = user_id
-            pick_list.assigned_at = datetime.utcnow()
+            pick_list.assigned_at = utc_now()
 
         self.db.commit()
         self.db.refresh(pick_list)
@@ -318,7 +319,7 @@ class PickListService:
             if confirm_line.notes:
                 line.notes = confirm_line.notes
 
-            line.picked_at = datetime.utcnow()
+            line.picked_at = utc_now()
             line.picked_by = picked_by
 
             if line.quantity_picked >= line.quantity_requested:
@@ -353,7 +354,7 @@ class PickListService:
             )
 
         pick_list.status = PickListStatusEnum.COMPLETED.value
-        pick_list.completed_at = datetime.utcnow()
+        pick_list.completed_at = utc_now()
 
         for line in pick_list.lines:
             if line.status == PickLineStatusEnum.PICKED.value:
@@ -435,7 +436,7 @@ class PickListService:
             pick_date=date.today(),
             due_date=request.due_date,
             assigned_to=request.assigned_to,
-            assigned_at=datetime.utcnow() if request.assigned_to else None,
+            assigned_at=utc_now() if request.assigned_to else None,
             status=PickListStatusEnum.DRAFT.value,
             created_by=created_by,
         )
@@ -597,7 +598,7 @@ class ShipmentService:
         for field, value in update_data.items():
             setattr(shipment, field, value)
 
-        shipment.updated_at = datetime.utcnow()
+        shipment.updated_at = utc_now()
 
         self.db.commit()
         self.db.refresh(shipment)
@@ -707,7 +708,7 @@ class ShipmentService:
             )
 
         shipment.status = ShipmentStatusEnum.PACKED.value
-        shipment.updated_at = datetime.utcnow()
+        shipment.updated_at = utc_now()
 
         self.db.commit()
         self.db.refresh(shipment)
@@ -735,7 +736,7 @@ class ShipmentService:
 
         shipment.status = ShipmentStatusEnum.SHIPPED.value
         shipment.ship_date = request.ship_date or date.today()
-        shipment.shipped_at = datetime.utcnow()
+        shipment.shipped_at = utc_now()
         shipment.shipped_by = shipped_by
 
         if request.tracking_number:

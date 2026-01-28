@@ -15,6 +15,8 @@ from enum import Enum
 from typing import Optional, Tuple, List, Dict, Any
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -160,13 +162,13 @@ class MFAManager:
     def generate_sms_code(self, user_id: str, phone_number: str) -> Tuple[str, datetime]:
         """Generate SMS verification code."""
         code = "".join(secrets.choice("0123456789") for _ in range(self.sms_code_length))
-        expires_at = datetime.utcnow() + timedelta(minutes=5)
+        expires_at = utc_now() + timedelta(minutes=5)
 
         self._pending_codes[f"sms:{user_id}"] = {
             "code": code,
             "phone_number": phone_number,
             "expires_at": expires_at,
-            "created_at": datetime.utcnow(),
+            "created_at": utc_now(),
         }
 
         logger.info(f"Generated SMS code for user {user_id}")
@@ -185,7 +187,7 @@ class MFAManager:
 
         pending = self._pending_codes[key]
 
-        if datetime.utcnow() > pending["expires_at"]:
+        if utc_now() > pending["expires_at"]:
             del self._pending_codes[key]
             return MFAVerificationResult(
                 success=False,
@@ -210,13 +212,13 @@ class MFAManager:
     def generate_email_code(self, user_id: str, email: str) -> Tuple[str, datetime]:
         """Generate email verification code."""
         code = "".join(secrets.choice("0123456789") for _ in range(self.email_code_length))
-        expires_at = datetime.utcnow() + timedelta(minutes=10)
+        expires_at = utc_now() + timedelta(minutes=10)
 
         self._pending_codes[f"email:{user_id}"] = {
             "code": code,
             "email": email,
             "expires_at": expires_at,
-            "created_at": datetime.utcnow(),
+            "created_at": utc_now(),
         }
 
         logger.info(f"Generated email code for user {user_id}")
@@ -235,7 +237,7 @@ class MFAManager:
 
         pending = self._pending_codes[key]
 
-        if datetime.utcnow() > pending["expires_at"]:
+        if utc_now() > pending["expires_at"]:
             del self._pending_codes[key]
             return MFAVerificationResult(
                 success=False,
@@ -293,7 +295,7 @@ class MFAManager:
         Returns:
             Tuple of (allowed, remaining_attempts, lockout_until)
         """
-        now = datetime.utcnow()
+        now = utc_now()
         cutoff = now - timedelta(minutes=self.lockout_duration_minutes)
 
         if user_id not in self._attempt_tracker:
@@ -320,7 +322,7 @@ class MFAManager:
             self._attempt_tracker[user_id] = []
 
         if not success:
-            self._attempt_tracker[user_id].append(datetime.utcnow())
+            self._attempt_tracker[user_id].append(utc_now())
         else:
             self._attempt_tracker[user_id] = []
 

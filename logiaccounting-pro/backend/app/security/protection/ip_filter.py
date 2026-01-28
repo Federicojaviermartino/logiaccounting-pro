@@ -10,6 +10,8 @@ from enum import Enum
 import threading
 import re
 
+from app.utils.datetime_utils import utc_now
+
 
 class IPFilterAction(str, Enum):
     """Action to take for filtered IPs."""
@@ -47,14 +49,14 @@ class IPFilterRule:
     expires_at: Optional[datetime] = None
     organization_id: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=utc_now)
     created_by: Optional[str] = None
 
     def is_expired(self) -> bool:
         """Check if rule has expired."""
         if not self.expires_at:
             return False
-        return datetime.utcnow() > self.expires_at
+        return utc_now() > self.expires_at
 
     def matches(self, ip: str) -> bool:
         """Check if IP matches this rule."""
@@ -215,7 +217,7 @@ class IPFilter:
         rule_id = f"blocklist-{ip_or_network.replace('/', '-')}"
         expires_at = None
         if expires_in_hours:
-            expires_at = datetime.utcnow() + timedelta(hours=expires_in_hours)
+            expires_at = utc_now() + timedelta(hours=expires_in_hours)
 
         rule = IPFilterRule(
             id=rule_id,
@@ -239,7 +241,7 @@ class IPFilter:
     ) -> None:
         """Temporarily block an IP address."""
         with self._lock:
-            self._temporary_blocks[ip] = datetime.utcnow() + timedelta(minutes=duration_minutes)
+            self._temporary_blocks[ip] = utc_now() + timedelta(minutes=duration_minutes)
 
     def unblock(self, ip: str) -> bool:
         """Remove temporary block from an IP."""
@@ -259,7 +261,7 @@ class IPFilter:
         """Check if IP is temporarily blocked."""
         with self._lock:
             if ip in self._temporary_blocks:
-                if datetime.utcnow() < self._temporary_blocks[ip]:
+                if utc_now() < self._temporary_blocks[ip]:
                     return self._temporary_blocks[ip]
                 del self._temporary_blocks[ip]
         return None
@@ -353,7 +355,7 @@ class IPFilter:
 
         with self._lock:
             for ip, expires in self._temporary_blocks.items():
-                if datetime.utcnow() < expires:
+                if utc_now() < expires:
                     blocked.append({
                         "ip": ip,
                         "type": "temporary",
@@ -378,7 +380,7 @@ class IPFilter:
         count = 0
 
         with self._lock:
-            current_time = datetime.utcnow()
+            current_time = utc_now()
 
             expired_temps = [ip for ip, exp in self._temporary_blocks.items() if exp < current_time]
             for ip in expired_temps:
@@ -442,7 +444,7 @@ class IPFilter:
                 expires_at=datetime.fromisoformat(data["expires_at"]) if data.get("expires_at") else None,
                 organization_id=data.get("organization_id"),
                 metadata=data.get("metadata", {}),
-                created_at=datetime.fromisoformat(data["created_at"]) if data.get("created_at") else datetime.utcnow(),
+                created_at=datetime.fromisoformat(data["created_at"]) if data.get("created_at") else utc_now(),
                 created_by=data.get("created_by"),
             )
             self.add_rule(rule)

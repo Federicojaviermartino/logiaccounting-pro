@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import re
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 
 
 class CollaborationService:
@@ -66,8 +67,8 @@ class CollaborationService:
             "thread_id": thread_id,
             "replies_count": 0,
             "is_edited": False,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat()
         }
 
         self._comments[comment_id] = comment
@@ -94,7 +95,7 @@ class CollaborationService:
         comment["content"] = content
         comment["mentions"] = self._extract_mentions(content)
         comment["is_edited"] = True
-        comment["updated_at"] = datetime.utcnow().isoformat()
+        comment["updated_at"] = utc_now().isoformat()
 
         return comment
 
@@ -211,7 +212,7 @@ class CollaborationService:
             "status": "pending",
             "notes": notes,
             "completed_at": None,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
 
         self._tasks[task_id] = task
@@ -230,7 +231,7 @@ class CollaborationService:
 
         # Set completed_at when status changes to completed
         if updates.get("status") == "completed" and not task["completed_at"]:
-            task["completed_at"] = datetime.utcnow().isoformat()
+            task["completed_at"] = utc_now().isoformat()
 
         return task
 
@@ -275,7 +276,7 @@ class CollaborationService:
 
     def get_overdue_tasks(self) -> List[dict]:
         """Get all overdue tasks"""
-        today = datetime.utcnow().date().isoformat()
+        today = utc_now().date().isoformat()
         return [
             t for t in self._tasks.values()
             if t["status"] not in ["completed", "cancelled"]

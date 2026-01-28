@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 from datetime import datetime
 from typing import Optional, List, Dict, Any
+from app.utils.datetime_utils import utc_now
 from uuid import uuid4
 from passlib.context import CryptContext
 
@@ -34,8 +35,8 @@ class BaseStore:
         item = {
             "id": str(uuid4()),
             **data,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat()
         }
         self._data.append(item)
         return item
@@ -43,7 +44,7 @@ class BaseStore:
     def update(self, item_id: str, data: Dict) -> Optional[Dict]:
         for i, item in enumerate(self._data):
             if item["id"] == item_id:
-                self._data[i] = {**item, **data, "updated_at": datetime.utcnow().isoformat()}
+                self._data[i] = {**item, **data, "updated_at": utc_now().isoformat()}
                 return self._data[i]
         return None
     
@@ -75,7 +76,7 @@ class UserStore(BaseStore):
         for user in self._data:
             if user["id"] == user_id:
                 user["password"] = hashed_password
-                user["updated_at"] = datetime.utcnow().isoformat()
+                user["updated_at"] = utc_now().isoformat()
                 return True
         return False
 
@@ -106,7 +107,7 @@ class MaterialStore(BaseStore):
         for m in self._data:
             if m["id"] == material_id:
                 m["quantity"] += delta
-                m["updated_at"] = datetime.utcnow().isoformat()
+                m["updated_at"] = utc_now().isoformat()
                 return m
         return None
 
@@ -116,7 +117,7 @@ class PaymentStore(BaseStore):
     
     def find_all(self, filters: Optional[Dict] = None) -> List[Dict]:
         results = sorted(self._data, key=lambda x: x.get("due_date", ""), reverse=False)
-        now = datetime.utcnow()
+        now = utc_now()
         
         for p in results:
             if p["status"] != "paid":
@@ -143,8 +144,8 @@ class PaymentStore(BaseStore):
         for p in self._data:
             if p["id"] == payment_id:
                 p["status"] = "paid"
-                p["paid_date"] = paid_date or datetime.utcnow().isoformat()
-                p["updated_at"] = datetime.utcnow().isoformat()
+                p["paid_date"] = paid_date or utc_now().isoformat()
+                p["updated_at"] = utc_now().isoformat()
                 return p
         return None
 

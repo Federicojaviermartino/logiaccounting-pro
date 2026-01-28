@@ -9,6 +9,8 @@ from datetime import datetime
 from enum import Enum
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -160,7 +162,7 @@ class BaseIntegration(ABC):
 
     def _update_last_sync(self):
         """Update last sync timestamp."""
-        self._last_sync = datetime.utcnow()
+        self._last_sync = utc_now()
 
     def _log_error(self, message: str, exc: Exception = None):
         """Log integration error."""
@@ -183,12 +185,12 @@ class WebhookEvent:
     """Represents an incoming webhook event."""
 
     def __init__(self, provider: str, event_type: str, payload: Dict, raw_payload: bytes = None):
-        self.id = f"wh_{datetime.utcnow().timestamp()}"
+        self.id = f"wh_{utc_now().timestamp()}"
         self.provider = provider
         self.event_type = event_type
         self.payload = payload
         self.raw_payload = raw_payload
-        self.received_at = datetime.utcnow()
+        self.received_at = utc_now()
         self.processed = False
         self.error = None
 
@@ -210,7 +212,7 @@ class SyncResult:
     def __init__(self, entity_type: str, direction: str):
         self.entity_type = entity_type
         self.direction = direction
-        self.started_at = datetime.utcnow()
+        self.started_at = utc_now()
         self.completed_at = None
         self.created = 0
         self.updated = 0
@@ -219,7 +221,7 @@ class SyncResult:
         self.errors = []
 
     def complete(self):
-        self.completed_at = datetime.utcnow()
+        self.completed_at = utc_now()
 
     @property
     def total_processed(self) -> int:

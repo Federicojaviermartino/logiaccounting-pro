@@ -7,6 +7,8 @@ from datetime import datetime
 from typing import Dict, List, Optional
 import uuid
 
+from app.utils.datetime_utils import utc_now
+
 
 class EcommerceConnectionService:
     """Singleton service for managing e-commerce connections"""
@@ -65,9 +67,9 @@ class EcommerceConnectionService:
                     "low_stock_threshold": 10
                 },
                 "last_sync": {
-                    "products": datetime.utcnow().isoformat() + "Z",
-                    "orders": datetime.utcnow().isoformat() + "Z",
-                    "inventory": datetime.utcnow().isoformat() + "Z"
+                    "products": utc_now().isoformat() + "Z",
+                    "orders": utc_now().isoformat() + "Z",
+                    "inventory": utc_now().isoformat() + "Z"
                 },
                 "stats": {
                     "total_products": 5,
@@ -94,9 +96,9 @@ class EcommerceConnectionService:
                     "low_stock_threshold": 10
                 },
                 "last_sync": {
-                    "products": datetime.utcnow().isoformat() + "Z",
-                    "orders": datetime.utcnow().isoformat() + "Z",
-                    "inventory": datetime.utcnow().isoformat() + "Z"
+                    "products": utc_now().isoformat() + "Z",
+                    "orders": utc_now().isoformat() + "Z",
+                    "inventory": utc_now().isoformat() + "Z"
                 },
                 "stats": {
                     "total_products": 4,
@@ -123,9 +125,9 @@ class EcommerceConnectionService:
                     "low_stock_threshold": 20
                 },
                 "last_sync": {
-                    "products": datetime.utcnow().isoformat() + "Z",
-                    "orders": datetime.utcnow().isoformat() + "Z",
-                    "inventory": datetime.utcnow().isoformat() + "Z"
+                    "products": utc_now().isoformat() + "Z",
+                    "orders": utc_now().isoformat() + "Z",
+                    "inventory": utc_now().isoformat() + "Z"
                 },
                 "stats": {
                     "total_products": 3,
@@ -176,7 +178,7 @@ class EcommerceConnectionService:
                 "synced_products": 0,
                 "imported_orders": 0
             },
-            "created_at": datetime.utcnow().isoformat() + "Z"
+            "created_at": utc_now().isoformat() + "Z"
         }
 
         self._stores[store_id] = store
@@ -213,7 +215,7 @@ class EcommerceConnectionService:
         """Update last sync timestamp"""
         if store_id in self._stores:
             self._stores[store_id]["last_sync"][sync_type] = (
-                datetime.utcnow().isoformat() + "Z"
+                utc_now().isoformat() + "Z"
             )
 
     def update_stats(self, store_id: str, stats: dict):

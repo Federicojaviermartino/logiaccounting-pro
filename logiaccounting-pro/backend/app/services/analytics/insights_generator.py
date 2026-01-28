@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any
 from collections import defaultdict
 
+from app.utils.datetime_utils import utc_now
+
 
 class InsightsGenerator:
     """
@@ -31,7 +33,7 @@ class InsightsGenerator:
         projects = self.db.projects.find_all()
 
         return {
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'summary': self._generate_summary(transactions),
             'key_insights': self._generate_key_insights(transactions, payments, materials, projects),
             'opportunities': self._identify_opportunities(transactions, payments),
@@ -44,10 +46,10 @@ class InsightsGenerator:
         transactions = self.db.transactions.find_all()
         payments = self.db.payments.find_all()
 
-        week_ago = datetime.utcnow() - timedelta(days=7)
-        two_weeks_ago = datetime.utcnow() - timedelta(days=14)
+        week_ago = utc_now() - timedelta(days=7)
+        two_weeks_ago = utc_now() - timedelta(days=14)
 
-        this_week = self._get_period_metrics(transactions, week_ago, datetime.utcnow())
+        this_week = self._get_period_metrics(transactions, week_ago, utc_now())
         last_week = self._get_period_metrics(transactions, two_weeks_ago, week_ago)
 
         revenue_change = self._calc_change(this_week['revenue'], last_week['revenue'])
@@ -60,7 +62,7 @@ class InsightsGenerator:
 
         return {
             'period': 'Last 7 Days',
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'metrics': {
                 'revenue': round(this_week['revenue'], 2),
                 'expenses': round(this_week['expenses'], 2),
@@ -80,7 +82,7 @@ class InsightsGenerator:
 
     def _generate_summary(self, transactions: List[Dict]) -> Dict[str, Any]:
         """Generate overall business summary"""
-        now = datetime.utcnow()
+        now = utc_now()
         thirty_days = timedelta(days=30)
 
         current = self._get_period_metrics(transactions, now - thirty_days, now)
@@ -229,7 +231,7 @@ class InsightsGenerator:
                 'action': 'Place emergency orders'
             })
 
-        current = self._get_period_metrics(transactions, datetime.utcnow() - timedelta(days=30), datetime.utcnow())
+        current = self._get_period_metrics(transactions, utc_now() - timedelta(days=30), utc_now())
         if current['profit'] < 0:
             risks.append({
                 'type': 'cashflow',
@@ -246,7 +248,7 @@ class InsightsGenerator:
         """Generate actionable recommendations"""
         recommendations = []
 
-        current = self._get_period_metrics(transactions, datetime.utcnow() - timedelta(days=30), datetime.utcnow())
+        current = self._get_period_metrics(transactions, utc_now() - timedelta(days=30), utc_now())
         margin = (current['profit'] / current['revenue'] * 100) if current['revenue'] > 0 else 0
 
         if margin < 10:
@@ -315,7 +317,7 @@ class InsightsGenerator:
     def _get_monthly_totals(self, transactions: List[Dict], tx_type: str, months: int) -> List[float]:
         """Get monthly totals for last N months"""
         monthly = defaultdict(float)
-        cutoff = datetime.utcnow() - timedelta(days=months * 31)
+        cutoff = utc_now() - timedelta(days=months * 31)
 
         for tx in transactions:
             if tx.get('type') != tx_type:
@@ -353,7 +355,7 @@ class InsightsGenerator:
 
         try:
             due = datetime.fromisoformat(due_date[:10])
-            return datetime.utcnow() <= due <= datetime.utcnow() + timedelta(days=days)
+            return utc_now() <= due <= utc_now() + timedelta(days=days)
         except (ValueError, AttributeError):
             return False
 
@@ -364,7 +366,7 @@ class InsightsGenerator:
 
         try:
             due = datetime.fromisoformat(due_date[:10])
-            return datetime.utcnow() > due
+            return utc_now() > due
         except (ValueError, AttributeError):
             return False
 

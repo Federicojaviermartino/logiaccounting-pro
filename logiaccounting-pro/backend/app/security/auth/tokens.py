@@ -11,6 +11,7 @@ from enum import Enum
 from typing import Optional, Dict, Any, List, Set
 import logging
 
+from app.utils.datetime_utils import utc_now
 import jwt
 from jwt.exceptions import (
     ExpiredSignatureError,
@@ -49,7 +50,7 @@ class TokenPayload:
 
     def is_expired(self) -> bool:
         """Check if token is expired."""
-        return datetime.utcnow() > self.expires_at
+        return utc_now() > self.expires_at
 
     def has_scope(self, scope: str) -> bool:
         """Check if token has a specific scope."""
@@ -158,7 +159,7 @@ class TokenManager:
         Returns:
             Encoded JWT token string
         """
-        now = datetime.utcnow()
+        now = utc_now()
         exp = expiry or self._expiry.get(token_type, timedelta(hours=1))
         expires_at = now + exp
 
@@ -482,7 +483,7 @@ class TokenManager:
                 jti_str = jti.decode() if isinstance(jti, bytes) else jti
                 await self._add_to_revocation_list(
                     jti_str,
-                    datetime.utcnow() + timedelta(days=7),
+                    utc_now() + timedelta(days=7),
                 )
 
             await self.redis.delete(user_key)
@@ -496,7 +497,7 @@ class TokenManager:
         """Add a token JTI to the revocation list."""
         if self.redis:
             key = f"revoked_token:{jti}"
-            ttl = int((expires_at - datetime.utcnow()).total_seconds())
+            ttl = int((expires_at - utc_now()).total_seconds())
             if ttl > 0:
                 await self.redis.setex(key, ttl, "1")
         else:
@@ -546,7 +547,7 @@ class TokenManager:
                 "subject": payload.get("sub"),
                 "issued_at": datetime.fromtimestamp(payload.get("iat", 0)).isoformat(),
                 "expires_at": datetime.fromtimestamp(payload.get("exp", 0)).isoformat(),
-                "is_expired": datetime.fromtimestamp(payload.get("exp", 0)) < datetime.utcnow(),
+                "is_expired": datetime.fromtimestamp(payload.get("exp", 0)) < utc_now(),
                 "jti": payload.get("jti"),
             }
         except Exception:

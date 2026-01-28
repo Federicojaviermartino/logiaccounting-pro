@@ -8,6 +8,7 @@ from typing import Optional, List, Tuple, Dict, Any
 from uuid import UUID
 import logging
 
+from app.utils.datetime_utils import utc_now
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 from sqlalchemy.orm import selectinload
@@ -117,7 +118,7 @@ class MFAService:
         if self.manager.verify_totp(settings.totp_secret, code):
             settings.totp_enabled = True
             settings.totp_verified = True
-            settings.totp_verified_at = datetime.utcnow()
+            settings.totp_verified_at = utc_now()
             settings.enabled = True
             settings.primary_method = MFAMethodType.TOTP
 
@@ -177,7 +178,7 @@ class MFAService:
         if result.success:
             settings.sms_enabled = True
             settings.sms_verified = True
-            settings.sms_verified_at = datetime.utcnow()
+            settings.sms_verified_at = utc_now()
             settings.enabled = True
 
             if not settings.primary_method:
@@ -229,7 +230,7 @@ class MFAService:
         if result.success:
             settings.email_enabled = True
             settings.email_verified = True
-            settings.email_verified_at = datetime.utcnow()
+            settings.email_verified_at = utc_now()
             settings.enabled = True
 
             if not settings.primary_method:
@@ -273,7 +274,7 @@ class MFAService:
             self.db.add(recovery_code)
 
         settings.recovery_codes_generated = True
-        settings.recovery_codes_generated_at = datetime.utcnow()
+        settings.recovery_codes_generated_at = utc_now()
         settings.recovery_codes_remaining = len(codes)
 
         await self.db.commit()
@@ -442,7 +443,7 @@ class MFAService:
         challenge = MFAChallenge(
             mfa_settings_id=settings.id,
             method=MFAMethodType(method.value),
-            expires_at=datetime.utcnow() + timedelta(minutes=expiry_minutes),
+            expires_at=utc_now() + timedelta(minutes=expiry_minutes),
             ip_address=ip_address,
             user_agent=user_agent[:512] if user_agent else None,
             session_id=session_id,
@@ -469,7 +470,7 @@ class MFAService:
 
         token_hash = hashlib.sha256(device_token.encode()).hexdigest()
 
-        expires_at = datetime.utcnow() + timedelta(
+        expires_at = utc_now() + timedelta(
             days=self.mfa_policy.remember_device_days
         )
 

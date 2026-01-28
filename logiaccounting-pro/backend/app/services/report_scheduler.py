@@ -6,6 +6,7 @@ Automate report generation and delivery
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 
 
 def generate_report_data(report_type: str, columns: list, filters: dict) -> dict:
@@ -85,7 +86,7 @@ class ReportSchedulerService:
             "next_run": next_run,
             "run_count": 0,
             "created_by": created_by,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
 
         self._schedules[schedule_id] = schedule
@@ -99,7 +100,7 @@ class ReportSchedulerService:
         day_of_month: Optional[int] = None
     ) -> str:
         """Calculate next run datetime"""
-        now = datetime.utcnow()
+        now = utc_now()
         hour, minute = map(int, time_of_day.split(':'))
 
         # Start with today at the specified time
@@ -186,7 +187,7 @@ class ReportSchedulerService:
         run_record = {
             "schedule_id": schedule_id,
             "schedule_name": schedule["name"],
-            "run_at": datetime.utcnow().isoformat(),
+            "run_at": utc_now().isoformat(),
             "status": "success",
             "recipients": schedule["recipients"],
             "format": schedule["format"],
@@ -196,7 +197,7 @@ class ReportSchedulerService:
         self._history.append(run_record)
 
         # Update schedule
-        schedule["last_run"] = datetime.utcnow().isoformat()
+        schedule["last_run"] = utc_now().isoformat()
         schedule["run_count"] += 1
         schedule["next_run"] = self._calculate_next_run(
             schedule["frequency"],
@@ -224,7 +225,7 @@ class ReportSchedulerService:
 
     def get_due_schedules(self) -> List[dict]:
         """Get schedules that are due to run"""
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         return [
             s for s in self._schedules.values()
             if s["active"] and s["next_run"] and s["next_run"] <= now

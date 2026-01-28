@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import Dict, List, Optional
 from app.models.store import db
 from app.utils.activity_logger import activity_logger
+from app.utils.datetime_utils import utc_now
 
 
 class ApprovalService:
@@ -77,8 +78,8 @@ class ApprovalService:
             "approvals": [],
             "requested_by": requested_by,
             "requested_by_email": requested_by_email,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat()
         }
 
         self._approvals[approval_id] = approval
@@ -121,16 +122,16 @@ class ApprovalService:
             "approver_role": approver_role,
             "action": "approved",
             "comment": comment,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": utc_now().isoformat()
         })
 
         if len(approval["approvals"]) >= approval["required_levels"]:
             approval["status"] = "approved"
-            approval["completed_at"] = datetime.utcnow().isoformat()
+            approval["completed_at"] = utc_now().isoformat()
         else:
             approval["current_level"] = len(approval["approvals"]) + 1
 
-        approval["updated_at"] = datetime.utcnow().isoformat()
+        approval["updated_at"] = utc_now().isoformat()
 
         activity_logger.log(
             user_id=approver_id,
@@ -163,8 +164,8 @@ class ApprovalService:
         approval["status"] = "rejected"
         approval["rejected_by"] = rejector_id
         approval["rejection_reason"] = reason
-        approval["completed_at"] = datetime.utcnow().isoformat()
-        approval["updated_at"] = datetime.utcnow().isoformat()
+        approval["completed_at"] = utc_now().isoformat()
+        approval["updated_at"] = utc_now().isoformat()
 
         approval["approvals"].append({
             "approver_id": rejector_id,
@@ -172,7 +173,7 @@ class ApprovalService:
             "approver_role": rejector_role,
             "action": "rejected",
             "comment": reason,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": utc_now().isoformat()
         })
 
         activity_logger.log(

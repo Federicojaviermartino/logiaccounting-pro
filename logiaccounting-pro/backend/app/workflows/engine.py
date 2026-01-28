@@ -9,6 +9,8 @@ from uuid import uuid4
 import asyncio
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 from app.workflows.models import (
     Workflow, WorkflowNode, WorkflowExecution, StepExecution,
     ExecutionStatus, NodeType
@@ -62,7 +64,7 @@ class WorkflowEngine:
 
         try:
             execution.status = ExecutionStatus.RUNNING
-            execution.started_at = datetime.utcnow()
+            execution.started_at = utc_now()
 
             # Get starting nodes
             start_nodes = workflow.get_start_nodes()
@@ -75,23 +77,23 @@ class WorkflowEngine:
 
             # Mark as completed
             execution.status = ExecutionStatus.COMPLETED
-            execution.completed_at = datetime.utcnow()
+            execution.completed_at = utc_now()
 
             # Update workflow stats
             workflow.run_count += 1
             workflow.success_count += 1
-            workflow.last_run_at = datetime.utcnow()
+            workflow.last_run_at = utc_now()
 
             logger.info(f"Workflow {workflow.id} completed successfully")
 
         except Exception as e:
             execution.status = ExecutionStatus.FAILED
             execution.error = str(e)
-            execution.completed_at = datetime.utcnow()
+            execution.completed_at = utc_now()
 
             workflow.run_count += 1
             workflow.failure_count += 1
-            workflow.last_run_at = datetime.utcnow()
+            workflow.last_run_at = utc_now()
 
             logger.error(f"Workflow {workflow.id} failed: {e}")
 
@@ -110,7 +112,7 @@ class WorkflowEngine:
         # Create step execution
         step = execution.add_step(node_id)
         step.status = ExecutionStatus.RUNNING
-        step.started_at = datetime.utcnow()
+        step.started_at = utc_now()
         execution.current_node_id = node_id
 
         try:
@@ -129,7 +131,7 @@ class WorkflowEngine:
                     await self._execute_node(workflow, execution, next_id, resolver, evaluator)
 
                 step.status = ExecutionStatus.COMPLETED
-                step.completed_at = datetime.utcnow()
+                step.completed_at = utc_now()
                 return  # Don't continue to normal next nodes
 
             elif node.type == NodeType.LOOP:
@@ -145,7 +147,7 @@ class WorkflowEngine:
                 pass  # End node, nothing to do
 
             step.status = ExecutionStatus.COMPLETED
-            step.completed_at = datetime.utcnow()
+            step.completed_at = utc_now()
 
             # Store outputs in context
             for output_name in node.outputs:
@@ -160,7 +162,7 @@ class WorkflowEngine:
         except Exception as e:
             step.status = ExecutionStatus.FAILED
             step.error = str(e)
-            step.completed_at = datetime.utcnow()
+            step.completed_at = utc_now()
             raise
 
     async def _execute_action(self, node: WorkflowNode, step: StepExecution, resolver: VariableResolver):
@@ -238,7 +240,7 @@ class WorkflowEngine:
             if isinstance(target_time, str):
                 target_time = datetime.fromisoformat(target_time)
 
-            now = datetime.utcnow()
+            now = utc_now()
             if target_time > now:
                 delay = (target_time - now).total_seconds()
                 step.output_data["delay_until"] = target_time.isoformat()
@@ -270,7 +272,7 @@ class WorkflowEngine:
         execution = self._running_executions.get(execution_id)
         if execution:
             execution.status = ExecutionStatus.CANCELLED
-            execution.completed_at = datetime.utcnow()
+            execution.completed_at = utc_now()
             return True
         return False
 

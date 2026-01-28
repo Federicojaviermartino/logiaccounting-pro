@@ -5,6 +5,7 @@ Phase 16 - Enterprise multi-tenant architecture with isolation
 
 import logging
 from datetime import datetime, timedelta
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 from typing import Optional, List, Dict, Any
@@ -173,7 +174,7 @@ class TenantStore:
 
     def create(self, data: Dict) -> Dict:
         """Create a new tenant"""
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         tenant_id = data.get("id") or f"tenant-{uuid4().hex[:12]}"
         slug = data.get("slug") or self._generate_slug(data.get("name", "tenant"))
 
@@ -262,7 +263,7 @@ class TenantStore:
                 self._data[i] = {
                     **tenant,
                     **data,
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -271,14 +272,14 @@ class TenantStore:
         """Activate a tenant"""
         return self.update(tenant_id, {
             "status": TenantStatus.ACTIVE.value,
-            "activated_at": datetime.utcnow().isoformat()
+            "activated_at": utc_now().isoformat()
         })
 
     def suspend(self, tenant_id: str, reason: str = None) -> Optional[Dict]:
         """Suspend a tenant"""
         data = {
             "status": TenantStatus.SUSPENDED.value,
-            "suspended_at": datetime.utcnow().isoformat()
+            "suspended_at": utc_now().isoformat()
         }
         if reason:
             data["suspension_reason"] = reason
@@ -288,7 +289,7 @@ class TenantStore:
         """Soft delete a tenant"""
         return self.update(tenant_id, {
             "status": TenantStatus.DELETED.value,
-            "deleted_at": datetime.utcnow().isoformat()
+            "deleted_at": utc_now().isoformat()
         })
 
 
@@ -300,7 +301,7 @@ class TenantDomainStore:
 
     def create(self, data: Dict) -> Dict:
         """Create a domain mapping"""
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         domain = {
             "id": str(uuid4()),
             "tenant_id": data.get("tenant_id"),
@@ -343,7 +344,7 @@ class TenantDomainStore:
                 self._data[i] = {
                     **domain,
                     **data,
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -352,7 +353,7 @@ class TenantDomainStore:
         """Mark domain as verified"""
         return self.update(domain_id, {
             "is_verified": True,
-            "verified_at": datetime.utcnow().isoformat()
+            "verified_at": utc_now().isoformat()
         })
 
     def delete(self, domain_id: str) -> bool:
@@ -371,7 +372,7 @@ class TenantSettingsStore:
 
     def create(self, data: Dict) -> Dict:
         """Create or initialize settings for a tenant"""
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         settings = {
             "id": str(uuid4()),
             "tenant_id": data.get("tenant_id"),
@@ -420,7 +421,7 @@ class TenantSettingsStore:
                 self._data[i] = {
                     **settings,
                     **data,
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -441,7 +442,7 @@ class TenantSubscriptionStore:
 
     def create(self, data: Dict) -> Dict:
         """Create a subscription"""
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         subscription = {
             "id": str(uuid4()),
             "tenant_id": data.get("tenant_id"),
@@ -485,7 +486,7 @@ class TenantSubscriptionStore:
                 self._data[i] = {
                     **sub,
                     **data,
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -493,7 +494,7 @@ class TenantSubscriptionStore:
     def cancel(self, sub_id: str, at_period_end: bool = True) -> Optional[Dict]:
         """Cancel a subscription"""
         data = {
-            "cancelled_at": datetime.utcnow().isoformat(),
+            "cancelled_at": utc_now().isoformat(),
             "cancel_at_period_end": at_period_end
         }
         if not at_period_end:
@@ -509,7 +510,7 @@ class TenantQuotaStore:
 
     def create(self, data: Dict) -> Dict:
         """Create quota record for tenant"""
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         tier = data.get("tier", TenantTier.FREE.value)
         limits = TIER_QUOTAS.get(TenantTier(tier), TIER_QUOTAS[TenantTier.FREE])
 
@@ -551,7 +552,7 @@ class TenantQuotaStore:
                 self._data[i] = {
                     **quota,
                     **data,
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -626,14 +627,14 @@ class TenantQuotaStore:
         """Reset daily counters (API calls)"""
         return self.update(tenant_id, {
             "current_api_calls_today": 0,
-            "api_calls_reset_at": datetime.utcnow().isoformat()
+            "api_calls_reset_at": utc_now().isoformat()
         })
 
     def reset_monthly_counters(self, tenant_id: str) -> Optional[Dict]:
         """Reset monthly counters (invoices)"""
         return self.update(tenant_id, {
             "current_invoices_month": 0,
-            "invoices_reset_at": datetime.utcnow().isoformat()
+            "invoices_reset_at": utc_now().isoformat()
         })
 
     def update_tier_limits(self, tenant_id: str, tier: str) -> Optional[Dict]:
@@ -659,7 +660,7 @@ class TenantFeatureStore:
 
     def create(self, data: Dict) -> Dict:
         """Create feature flag for tenant"""
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         feature = {
             "id": str(uuid4()),
             "tenant_id": data.get("tenant_id"),
@@ -695,7 +696,7 @@ class TenantFeatureStore:
             if feature.get("expires_at"):
                 try:
                     expires = datetime.fromisoformat(feature["expires_at"])
-                    if datetime.utcnow() > expires:
+                    if utc_now() > expires:
                         return False
                 except (ValueError, TypeError):
                     pass
@@ -744,7 +745,7 @@ class TenantFeatureStore:
                 self._data[i] = {
                     **feature,
                     **data,
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -777,10 +778,10 @@ class TenantInvitationStore:
 
     def create(self, data: Dict) -> Dict:
         """Create invitation"""
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         expires_at = data.get("expires_at")
         if not expires_at:
-            expires_at = (datetime.utcnow() + timedelta(days=7)).isoformat()
+            expires_at = (utc_now() + timedelta(days=7)).isoformat()
 
         invitation = {
             "id": str(uuid4()),
@@ -829,7 +830,7 @@ class TenantInvitationStore:
                 self._data[i] = {
                     **inv,
                     **data,
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -838,7 +839,7 @@ class TenantInvitationStore:
         """Mark invitation as accepted"""
         return self.update(invitation_id, {
             "status": "accepted",
-            "accepted_at": datetime.utcnow().isoformat(),
+            "accepted_at": utc_now().isoformat(),
             "accepted_by_user_id": user_id
         })
 
@@ -855,7 +856,7 @@ class TenantInvitationStore:
         if expires_at:
             try:
                 expires = datetime.fromisoformat(expires_at)
-                if datetime.utcnow() > expires:
+                if utc_now() > expires:
                     return False
             except (ValueError, TypeError):
                 pass
@@ -878,7 +879,7 @@ class TenantMemberStore:
 
     def create(self, data: Dict) -> Dict:
         """Add user to tenant"""
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         member = {
             "id": str(uuid4()),
             "tenant_id": data.get("tenant_id"),
@@ -923,7 +924,7 @@ class TenantMemberStore:
                 self._data[i] = {
                     **member,
                     **data,
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None

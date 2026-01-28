@@ -12,6 +12,7 @@ from cryptography.fernet import Fernet
 
 from app.integrations.base import BaseIntegration, IntegrationStatus
 from app.integrations.registry import registry
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,8 @@ class Connection:
         self.credentials: Dict[str, Any] = {}
         self.settings: Dict[str, Any] = {}
         self.metadata: Dict[str, Any] = {}
-        self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.created_at = utc_now()
+        self.updated_at = utc_now()
         self.connected_at: Optional[datetime] = None
         self.last_sync_at: Optional[datetime] = None
         self.last_error: Optional[str] = None
@@ -124,7 +125,7 @@ class ConnectionManager:
         if settings:
             connection.settings.update(settings)
 
-        connection.updated_at = datetime.utcnow()
+        connection.updated_at = utc_now()
 
         # Invalidate cached instance
         if connection_id in self._instances:
@@ -152,7 +153,7 @@ class ConnectionManager:
 
             if success:
                 connection.status = IntegrationStatus.CONNECTED
-                connection.connected_at = datetime.utcnow()
+                connection.connected_at = utc_now()
                 connection.last_error = None
                 logger.info(f"Connection {connection_id} established")
             else:
@@ -181,7 +182,7 @@ class ConnectionManager:
 
             connection.status = IntegrationStatus.DISCONNECTED
             connection.credentials = {}
-            connection.updated_at = datetime.utcnow()
+            connection.updated_at = utc_now()
 
             logger.info(f"Connection {connection_id} disconnected")
             return True
@@ -206,7 +207,7 @@ class ConnectionManager:
             return {
                 "success": success,
                 "status": connection.status.value,
-                "tested_at": datetime.utcnow().isoformat(),
+                "tested_at": utc_now().isoformat(),
             }
 
         except Exception as e:
@@ -227,7 +228,7 @@ class ConnectionManager:
 
             if new_credentials:
                 connection.credentials = self._encrypt_credentials(new_credentials)
-                connection.updated_at = datetime.utcnow()
+                connection.updated_at = utc_now()
                 logger.info(f"Tokens refreshed for connection {connection_id}")
                 return True
 

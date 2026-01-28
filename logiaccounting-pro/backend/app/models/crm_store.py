@@ -6,6 +6,7 @@ In-memory storage for CRM entities
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 from uuid import uuid4
+from app.utils.datetime_utils import utc_now
 
 
 class CRMStore:
@@ -36,7 +37,7 @@ class CRMStore:
             "id": pipeline_id,
             "name": "Sales Pipeline",
             "is_default": True,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
         }
 
         default_stages = [
@@ -70,8 +71,8 @@ class CRMStore:
             "status": "new",
             "score": 0,
             "rating": "cold",
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat(),
             **data,
         }
         self._leads[lead_id] = lead
@@ -85,7 +86,7 @@ class CRMStore:
         """Update lead"""
         if lead_id not in self._leads:
             return None
-        updates["updated_at"] = datetime.utcnow().isoformat()
+        updates["updated_at"] = utc_now().isoformat()
         self._leads[lead_id].update(updates)
         return self._leads[lead_id]
 
@@ -184,7 +185,7 @@ class CRMStore:
 
         self.update_lead(lead_id, {
             "status": "converted",
-            "converted_at": datetime.utcnow().isoformat(),
+            "converted_at": utc_now().isoformat(),
             "converted_contact_id": result.get("contact_id"),
             "converted_opportunity_id": result.get("opportunity_id"),
         })
@@ -202,8 +203,8 @@ class CRMStore:
             "id": contact_id,
             "do_not_call": False,
             "do_not_email": False,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat(),
             **data,
         }
         self._contacts[contact_id] = contact
@@ -217,7 +218,7 @@ class CRMStore:
         """Update contact"""
         if contact_id not in self._contacts:
             return None
-        updates["updated_at"] = datetime.utcnow().isoformat()
+        updates["updated_at"] = utc_now().isoformat()
         self._contacts[contact_id].update(updates)
         return self._contacts[contact_id]
 
@@ -302,8 +303,8 @@ class CRMStore:
             "id": company_id,
             "type": "prospect",
             "health_score": 50,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat(),
             **data,
         }
         self._companies[company_id] = company
@@ -317,7 +318,7 @@ class CRMStore:
         """Update company"""
         if company_id not in self._companies:
             return None
-        updates["updated_at"] = datetime.utcnow().isoformat()
+        updates["updated_at"] = utc_now().isoformat()
         self._companies[company_id].update(updates)
         return self._companies[company_id]
 
@@ -429,10 +430,10 @@ class CRMStore:
             "currency": "USD",
             "stage_history": [{
                 "stage_id": data.get("stage_id"),
-                "entered_at": datetime.utcnow().isoformat(),
+                "entered_at": utc_now().isoformat(),
             }],
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat(),
             **data,
         }
         self._opportunities[opp_id] = opportunity
@@ -453,7 +454,7 @@ class CRMStore:
             stage_history = opp.get("stage_history", [])
             stage_history.append({
                 "stage_id": updates["stage_id"],
-                "entered_at": datetime.utcnow().isoformat(),
+                "entered_at": utc_now().isoformat(),
             })
             updates["stage_history"] = stage_history
 
@@ -462,12 +463,12 @@ class CRMStore:
                 updates["probability"] = stage.get("probability", 0)
                 if stage.get("is_won"):
                     updates["status"] = "won"
-                    updates["actual_close_date"] = datetime.utcnow().isoformat()
+                    updates["actual_close_date"] = utc_now().isoformat()
                 elif stage.get("is_lost"):
                     updates["status"] = "lost"
-                    updates["actual_close_date"] = datetime.utcnow().isoformat()
+                    updates["actual_close_date"] = utc_now().isoformat()
 
-        updates["updated_at"] = datetime.utcnow().isoformat()
+        updates["updated_at"] = utc_now().isoformat()
         self._opportunities[opp_id].update(updates)
         return self._opportunities[opp_id]
 
@@ -525,8 +526,8 @@ class CRMStore:
         activity = {
             "id": activity_id,
             "status": "scheduled",
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat(),
             **data,
         }
         self._activities[activity_id] = activity
@@ -540,7 +541,7 @@ class CRMStore:
         """Update activity"""
         if activity_id not in self._activities:
             return None
-        updates["updated_at"] = datetime.utcnow().isoformat()
+        updates["updated_at"] = utc_now().isoformat()
         self._activities[activity_id].update(updates)
         return self._activities[activity_id]
 
@@ -594,7 +595,7 @@ class CRMStore:
         """Mark activity as completed"""
         return self.update_activity(activity_id, {
             "status": "completed",
-            "completed_at": datetime.utcnow().isoformat(),
+            "completed_at": utc_now().isoformat(),
             "outcome": outcome,
         })
 
@@ -628,7 +629,7 @@ class CRMStore:
         pipeline = {
             "id": pipeline_id,
             "is_default": False,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
             **data,
         }
         self._pipelines[pipeline_id] = pipeline

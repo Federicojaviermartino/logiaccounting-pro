@@ -8,6 +8,7 @@ from typing import List, Optional, Dict, Any
 from uuid import uuid4
 from decimal import Decimal
 
+from app.utils.datetime_utils import utc_now
 from app.models.crm_store import crm_store
 
 
@@ -60,7 +61,7 @@ class QuoteService:
             "contact_id": contact_id,
             "company_id": company_id,
             "status": "draft",
-            "valid_until": (datetime.utcnow() + timedelta(days=valid_days)).isoformat(),
+            "valid_until": (utc_now() + timedelta(days=valid_days)).isoformat(),
             "currency": currency,
             "subtotal": 0,
             "discount_percent": 0,
@@ -72,8 +73,8 @@ class QuoteService:
             "notes": notes,
             "items": [],
             "created_by": created_by,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat(),
             **kwargs,
         }
 
@@ -89,7 +90,7 @@ class QuoteService:
         if quote["status"] not in ["draft", "pending_approval"]:
             raise ValueError(f"Cannot edit quote in status: {quote['status']}")
 
-        updates["updated_at"] = datetime.utcnow().isoformat()
+        updates["updated_at"] = utc_now().isoformat()
         quote.update(updates)
 
         return quote
@@ -254,7 +255,7 @@ class QuoteService:
         quote["discount_amount"] = round(discount_amount, 2)
         quote["tax_amount"] = round(tax_amount, 2)
         quote["total"] = round(total, 2)
-        quote["updated_at"] = datetime.utcnow().isoformat()
+        quote["updated_at"] = utc_now().isoformat()
 
     # ==========================================
     # WORKFLOW
@@ -273,9 +274,9 @@ class QuoteService:
             raise ValueError("Quote must have at least one item")
 
         quote["status"] = "pending_approval"
-        quote["submitted_at"] = datetime.utcnow().isoformat()
+        quote["submitted_at"] = utc_now().isoformat()
         quote["submitted_by"] = user_id
-        quote["updated_at"] = datetime.utcnow().isoformat()
+        quote["updated_at"] = utc_now().isoformat()
 
         return quote
 
@@ -289,9 +290,9 @@ class QuoteService:
             raise ValueError("Quote is not pending approval")
 
         quote["status"] = "approved"
-        quote["approved_at"] = datetime.utcnow().isoformat()
+        quote["approved_at"] = utc_now().isoformat()
         quote["approved_by"] = user_id
-        quote["updated_at"] = datetime.utcnow().isoformat()
+        quote["updated_at"] = utc_now().isoformat()
 
         return quote
 
@@ -303,9 +304,9 @@ class QuoteService:
 
         quote["status"] = "draft"  # Return to draft for revision
         quote["rejection_reason"] = reason
-        quote["rejected_at"] = datetime.utcnow().isoformat()
+        quote["rejected_at"] = utc_now().isoformat()
         quote["rejected_by"] = user_id
-        quote["updated_at"] = datetime.utcnow().isoformat()
+        quote["updated_at"] = utc_now().isoformat()
 
         return quote
 
@@ -319,10 +320,10 @@ class QuoteService:
             raise ValueError("Quote must be approved before sending")
 
         quote["status"] = "sent"
-        quote["sent_at"] = datetime.utcnow().isoformat()
+        quote["sent_at"] = utc_now().isoformat()
         quote["sent_by"] = user_id
         quote["sent_to_email"] = email
-        quote["updated_at"] = datetime.utcnow().isoformat()
+        quote["updated_at"] = utc_now().isoformat()
 
         return quote
 
@@ -335,7 +336,7 @@ class QuoteService:
         if quote["status"] == "sent":
             quote["status"] = "viewed"
 
-        quote["viewed_at"] = datetime.utcnow().isoformat()
+        quote["viewed_at"] = utc_now().isoformat()
         quote["view_count"] = quote.get("view_count", 0) + 1
 
         return quote
@@ -351,20 +352,20 @@ class QuoteService:
 
         # Check expiry
         if quote.get("valid_until"):
-            if datetime.fromisoformat(quote["valid_until"]) < datetime.utcnow():
+            if datetime.fromisoformat(quote["valid_until"]) < utc_now():
                 quote["status"] = "expired"
                 raise ValueError("Quote has expired")
 
         quote["status"] = "accepted"
-        quote["accepted_at"] = datetime.utcnow().isoformat()
+        quote["accepted_at"] = utc_now().isoformat()
         quote["customer_signature"] = signature
-        quote["updated_at"] = datetime.utcnow().isoformat()
+        quote["updated_at"] = utc_now().isoformat()
 
         # Update opportunity if linked
         if quote.get("opportunity_id"):
             crm_store.update_opportunity(quote["opportunity_id"], {
                 "status": "won",
-                "actual_close_date": datetime.utcnow().isoformat(),
+                "actual_close_date": utc_now().isoformat(),
             })
 
         return quote
@@ -376,9 +377,9 @@ class QuoteService:
             raise ValueError(f"Quote not found: {quote_id}")
 
         quote["status"] = "rejected"
-        quote["declined_at"] = datetime.utcnow().isoformat()
+        quote["declined_at"] = utc_now().isoformat()
         quote["decline_reason"] = reason
-        quote["updated_at"] = datetime.utcnow().isoformat()
+        quote["updated_at"] = utc_now().isoformat()
 
         return quote
 
@@ -425,9 +426,9 @@ class QuoteService:
 
         # Update quote
         quote["status"] = "converted"
-        quote["converted_at"] = datetime.utcnow().isoformat()
+        quote["converted_at"] = utc_now().isoformat()
         quote["converted_by"] = user_id
-        quote["updated_at"] = datetime.utcnow().isoformat()
+        quote["updated_at"] = utc_now().isoformat()
 
         return {
             "quote": quote,

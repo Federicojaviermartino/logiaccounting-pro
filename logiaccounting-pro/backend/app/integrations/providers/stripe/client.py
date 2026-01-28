@@ -16,6 +16,7 @@ from app.integrations.base import (
     SyncResult,
 )
 from app.integrations.registry import register_integration
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -108,8 +109,8 @@ class StripeIntegration(BaseIntegration):
 
         # Demo response
         return {
-            "id": f"pi_{datetime.utcnow().timestamp()}",
-            "client_secret": f"pi_secret_{datetime.utcnow().timestamp()}",
+            "id": f"pi_{utc_now().timestamp()}",
+            "client_secret": f"pi_secret_{utc_now().timestamp()}",
             "amount": amount,
             "currency": currency,
             "status": "requires_payment_method",
@@ -126,7 +127,7 @@ class StripeIntegration(BaseIntegration):
 
         # Demo response
         return {
-            "id": f"plink_{datetime.utcnow().timestamp()}",
+            "id": f"plink_{utc_now().timestamp()}",
             "url": f"https://pay.stripe.com/test_{invoice_id}",
             "active": True,
             "metadata": {"invoice_id": invoice_id},
@@ -153,7 +154,7 @@ class StripeIntegration(BaseIntegration):
 
         # Demo response
         return {
-            "id": f"re_{datetime.utcnow().timestamp()}",
+            "id": f"re_{utc_now().timestamp()}",
             "payment_intent": payment_intent_id,
             "amount": amount or 10000,
             "status": "succeeded",
@@ -171,10 +172,10 @@ class StripeIntegration(BaseIntegration):
 
         # Demo response
         return {
-            "id": f"cus_{datetime.utcnow().timestamp()}",
+            "id": f"cus_{utc_now().timestamp()}",
             "email": email,
             "name": name,
-            "created": int(datetime.utcnow().timestamp()),
+            "created": int(utc_now().timestamp()),
         }
 
     async def get_customer(self, customer_id: str) -> Dict:
@@ -201,7 +202,7 @@ class StripeIntegration(BaseIntegration):
     async def create_invoice(self, customer_id: str, items: List[Dict], metadata: Dict = None) -> Dict:
         """Create a Stripe invoice."""
         return {
-            "id": f"in_{datetime.utcnow().timestamp()}",
+            "id": f"in_{utc_now().timestamp()}",
             "customer": customer_id,
             "status": "draft",
             "total": sum(item.get("amount", 0) for item in items),

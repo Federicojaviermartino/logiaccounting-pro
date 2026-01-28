@@ -6,6 +6,8 @@ Provides secure authentication endpoints with multi-factor authentication suppor
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException, Depends, Request, status, Response
+
+from app.utils.datetime_utils import utc_now
 from pydantic import BaseModel, Field, EmailStr
 import secrets
 import hashlib
@@ -130,7 +132,7 @@ class AuthSecurityStore:
     _reset_tokens: Dict[str, Dict[str, Any]] = {}
     _verification_tokens: Dict[str, Dict[str, Any]] = {}
     _trusted_devices: Dict[str, List[Dict[str, Any]]] = {}
-    _failed_attempts: Dict[str, List[datetime]] = {}
+    _failed_attempts: Dict[str, List] = {}
     _locked_accounts: Dict[str, datetime] = {}
     _sessions: Dict[str, List[str]] = {}
     _mfa_status: Dict[str, bool] = {}
@@ -157,8 +159,8 @@ class AuthSecurityStore:
         self._mfa_tokens[token] = {
             "user_id": user_id,
             "email": email,
-            "created_at": datetime.utcnow(),
-            "expires_at": datetime.utcnow() + timedelta(minutes=5),
+            "created_at": utc_now(),
+            "expires_at": utc_now() + timedelta(minutes=5),
         }
         return token
 
@@ -168,7 +170,7 @@ class AuthSecurityStore:
         if not data:
             return None
 
-        if datetime.utcnow() > data["expires_at"]:
+        if utc_now() > data["expires_at"]:
             del self._mfa_tokens[token]
             return None
 
@@ -186,8 +188,8 @@ class AuthSecurityStore:
         token = secrets.token_urlsafe(32)
         self._reset_tokens[token] = {
             "email": email,
-            "created_at": datetime.utcnow(),
-            "expires_at": datetime.utcnow() + timedelta(hours=1),
+            "created_at": utc_now(),
+            "expires_at": utc_now() + timedelta(hours=1),
         }
         return token
 
@@ -197,7 +199,7 @@ class AuthSecurityStore:
         if not data:
             return None
 
-        if datetime.utcnow() > data["expires_at"]:
+        if utc_now() > data["expires_at"]:
             del self._reset_tokens[token]
             return None
 
@@ -216,8 +218,8 @@ class AuthSecurityStore:
         self._verification_tokens[token] = {
             "user_id": user_id,
             "email": email,
-            "created_at": datetime.utcnow(),
-            "expires_at": datetime.utcnow() + timedelta(hours=24),
+            "created_at": utc_now(),
+            "expires_at": utc_now() + timedelta(hours=24),
         }
         return token
 
@@ -227,7 +229,7 @@ class AuthSecurityStore:
         if not data:
             return None
 
-        if datetime.utcnow() > data["expires_at"]:
+        if utc_now() > data["expires_at"]:
             del self._verification_tokens[token]
             return None
 
@@ -242,7 +244,7 @@ class AuthSecurityStore:
 
     def record_failed_attempt(self, identifier: str):
         """Record a failed login attempt."""
-        now = datetime.utcnow()
+        now = utc_now()
         if identifier not in self._failed_attempts:
             self._failed_attempts[identifier] = []
 
@@ -271,7 +273,7 @@ class AuthSecurityStore:
         if not lock_until:
             return False
 
-        if datetime.utcnow() > lock_until:
+        if utc_now() > lock_until:
             del self._locked_accounts[identifier]
             if identifier in self._failed_attempts:
                 del self._failed_attempts[identifier]
@@ -285,7 +287,7 @@ class AuthSecurityStore:
         if not lock_until:
             return 0
 
-        remaining = (lock_until - datetime.utcnow()).total_seconds()
+        remaining = (lock_until - utc_now()).total_seconds()
         return max(0, int(remaining))
 
     def is_device_trusted(self, user_id: str, device_id: str) -> bool:
@@ -300,14 +302,14 @@ class AuthSecurityStore:
 
         for device in self._trusted_devices[user_id]:
             if device["device_id"] == device_id:
-                device["last_used"] = datetime.utcnow().isoformat()
+                device["last_used"] = utc_now().isoformat()
                 return
 
         self._trusted_devices[user_id].append({
             "device_id": device_id,
             "device_name": device_name or "Unknown Device",
-            "trusted_at": datetime.utcnow().isoformat(),
-            "last_used": datetime.utcnow().isoformat(),
+            "trusted_at": utc_now().isoformat(),
+            "last_used": utc_now().isoformat(),
         })
 
     def get_trusted_devices(self, user_id: str) -> List[Dict[str, Any]]:
@@ -648,7 +650,7 @@ async def register(request: RegisterRequest):
         "role": "user",
         "status": "pending_verification",
         "email_verified": False,
-        "created_at": datetime.utcnow().isoformat(),
+        "created_at": utc_now().isoformat(),
     })
 
     verification_token = auth_security_store.create_verification_token(
@@ -762,7 +764,7 @@ async def confirm_password_reset(request: PasswordResetConfirmRequest):
     hashed_password = get_password_hash(request.new_password)
     db.users.update(user["id"], {
         "password": hashed_password,
-        "password_changed_at": datetime.utcnow().isoformat(),
+        "password_changed_at": utc_now().isoformat(),
     })
 
     auth_security_store.remove_all_sessions(user["id"])
@@ -796,7 +798,7 @@ async def change_password(
     hashed_password = get_password_hash(request.new_password)
     db.users.update(current_user["id"], {
         "password": hashed_password,
-        "password_changed_at": datetime.utcnow().isoformat(),
+        "password_changed_at": utc_now().isoformat(),
     })
 
     if request.logout_other_sessions:
@@ -903,7 +905,7 @@ async def security_check(current_user: dict = Depends(get_current_user)):
     if last_password_change:
         try:
             changed_date = datetime.fromisoformat(last_password_change)
-            if datetime.utcnow() - changed_date > timedelta(days=90):
+            if utc_now() - changed_date > timedelta(days=90):
                 recommendations.append("Consider changing your password (last changed over 90 days ago)")
         except ValueError:
             pass

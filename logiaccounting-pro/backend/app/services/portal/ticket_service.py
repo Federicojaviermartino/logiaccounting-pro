@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.models.crm_store import crm_store
 
 
@@ -36,8 +37,8 @@ class Ticket:
         self.tags = []
         self.custom_fields = {}
         self.messages = []
-        self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        self.created_at = utc_now()
+        self.updated_at = utc_now()
 
     def _generate_ticket_number(self) -> str:
         import random
@@ -45,7 +46,7 @@ class Ticket:
 
     def _calculate_sla(self, priority: str) -> datetime:
         hours = {"urgent": 4, "high": 8, "normal": 24, "low": 48}
-        return datetime.utcnow() + timedelta(hours=hours.get(priority, 24))
+        return utc_now() + timedelta(hours=hours.get(priority, 24))
 
 
 class TicketMessage:
@@ -60,7 +61,7 @@ class TicketMessage:
         self.message = message
         self.attachments = attachments or []
         self.is_internal = is_internal
-        self.created_at = datetime.utcnow()
+        self.created_at = utc_now()
 
 
 class TicketService:
@@ -213,14 +214,14 @@ class TicketService:
         )
 
         ticket.messages.append(msg)
-        ticket.updated_at = datetime.utcnow()
+        ticket.updated_at = utc_now()
 
         if sender_type == "customer" and ticket.status == "waiting_customer":
             ticket.status = "in_progress"
         elif sender_type == "agent" and ticket.status == "open":
             ticket.status = "in_progress"
             if not ticket.first_response_at:
-                ticket.first_response_at = datetime.utcnow()
+                ticket.first_response_at = utc_now()
 
         logger.info(f"Reply added to ticket {ticket.ticket_number}")
 
@@ -237,10 +238,10 @@ class TicketService:
 
         old_status = ticket.status
         ticket.status = status
-        ticket.updated_at = datetime.utcnow()
+        ticket.updated_at = utc_now()
 
         if status == "resolved":
-            ticket.resolved_at = datetime.utcnow()
+            ticket.resolved_at = utc_now()
 
         msg = TicketMessage(
             ticket_id=ticket_id,
@@ -275,7 +276,7 @@ class TicketService:
 
         ticket.status = "open"
         ticket.resolved_at = None
-        ticket.updated_at = datetime.utcnow()
+        ticket.updated_at = utc_now()
 
         msg = TicketMessage(
             ticket_id=ticket_id,
@@ -299,7 +300,7 @@ class TicketService:
 
         ticket.satisfaction_rating = max(1, min(5, rating))
         ticket.satisfaction_comment = comment
-        ticket.updated_at = datetime.utcnow()
+        ticket.updated_at = utc_now()
 
         logger.info(f"Ticket {ticket.ticket_number} rated {rating}/5")
 

@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 import asyncio
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 from app.workflows.models.workflow import Workflow, WorkflowNode
 from app.workflows.models.execution import (
     WorkflowExecution, ExecutionStep, ExecutionLog
@@ -92,7 +94,7 @@ class WorkflowExecutor:
             node_type=node.type.value,
             node_name=node.name,
             status=StepStatus.RUNNING,
-            started_at=datetime.utcnow(),
+            started_at=utc_now(),
             input_data=self._get_node_inputs(node)
         )
 
@@ -106,7 +108,7 @@ class WorkflowExecutor:
             result = await handler(node)
 
             step.status = StepStatus.COMPLETED
-            step.completed_at = datetime.utcnow()
+            step.completed_at = utc_now()
             step.duration_ms = int(
                 (step.completed_at - step.started_at).total_seconds() * 1000
             )
@@ -133,7 +135,7 @@ class WorkflowExecutor:
             raise
         except Exception as e:
             step.status = StepStatus.FAILED
-            step.completed_at = datetime.utcnow()
+            step.completed_at = utc_now()
             step.error = str(e)
 
             self.execution.error_node_id = node.id
@@ -247,7 +249,7 @@ class WorkflowExecutor:
         wait_seconds = duration * multipliers.get(unit, 1)
 
         if wait_seconds > 300:
-            resume_at = datetime.utcnow() + timedelta(seconds=wait_seconds)
+            resume_at = utc_now() + timedelta(seconds=wait_seconds)
 
             self.execution.status = ExecutionStatus.WAITING
             self.execution.waiting_for = "delay"

@@ -8,6 +8,8 @@ from collections import defaultdict
 import logging
 import asyncio
 
+from app.utils.datetime_utils import utc_now
+
 from app.workflows.models.store import workflow_store
 from app.workflows.config import ExecutionStatus, StepStatus
 
@@ -83,10 +85,10 @@ class ExecutionMonitor:
         # Check cache
         if cache_key in self._stats_cache:
             cached = self._stats_cache[cache_key]
-            if (datetime.utcnow() - cached["_cached_at"]).seconds < self._cache_ttl:
+            if (utc_now() - cached["_cached_at"]).seconds < self._cache_ttl:
                 return cached
 
-        cutoff = datetime.utcnow() - timedelta(days=days)
+        cutoff = utc_now() - timedelta(days=days)
         executions = workflow_store.list_executions(workflow_id=workflow_id)
         recent = [e for e in executions if e.started_at and e.started_at >= cutoff]
 
@@ -122,7 +124,7 @@ class ExecutionMonitor:
             "avg_duration_ms": round(avg_duration, 0),
             "by_day": dict(by_day),
             "errors": dict(errors),
-            "_cached_at": datetime.utcnow(),
+            "_cached_at": utc_now(),
         }
 
         self._stats_cache[cache_key] = stats
@@ -142,7 +144,7 @@ class ExecutionMonitor:
                 "workflow_name": workflow_store.get_workflow(e.workflow_id).name if workflow_store.get_workflow(e.workflow_id) else "Unknown",
                 "started_at": e.started_at.isoformat() if e.started_at else None,
                 "current_step": e.steps[-1].name if e.steps else None,
-                "duration_ms": (datetime.utcnow() - e.started_at).total_seconds() * 1000 if e.started_at else 0,
+                "duration_ms": (utc_now() - e.started_at).total_seconds() * 1000 if e.started_at else 0,
             }
             for e in executions
         ]
@@ -172,7 +174,7 @@ class ExecutionMonitor:
 
     def get_dashboard_stats(self, tenant_id: str, days: int = 7) -> Dict[str, Any]:
         """Get dashboard statistics."""
-        cutoff = datetime.utcnow() - timedelta(days=days)
+        cutoff = utc_now() - timedelta(days=days)
 
         workflows = workflow_store.list_workflows(tenant_id=tenant_id)
         executions = workflow_store.list_executions(limit=10000)

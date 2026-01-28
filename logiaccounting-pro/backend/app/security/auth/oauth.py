@@ -14,6 +14,8 @@ from urllib.parse import urlencode
 import logging
 import httpx
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -37,13 +39,13 @@ class OAuthTokenData:
 
     def __post_init__(self):
         if self.expires_at is None:
-            self.expires_at = datetime.utcnow() + timedelta(seconds=self.expires_in)
+            self.expires_at = utc_now() + timedelta(seconds=self.expires_in)
 
     def is_expired(self) -> bool:
         """Check if the access token is expired."""
         if self.expires_at is None:
             return True
-        return datetime.utcnow() >= self.expires_at
+        return utc_now() >= self.expires_at
 
 
 @dataclass
@@ -219,7 +221,7 @@ class OAuthManager:
 
         self._state_store[state] = {
             "provider": provider,
-            "created_at": datetime.utcnow(),
+            "created_at": utc_now(),
             "data": state_data or {},
         }
 
@@ -272,7 +274,7 @@ class OAuthManager:
         state_data = self._state_store.pop(state)
         created_at = state_data["created_at"]
 
-        if datetime.utcnow() - created_at > timedelta(minutes=max_age_minutes):
+        if utc_now() - created_at > timedelta(minutes=max_age_minutes):
             logger.warning("Invalid OAuth state: expired")
             if state in self._pkce_store:
                 del self._pkce_store[state]
@@ -558,7 +560,7 @@ class OAuthManager:
         Returns:
             Number of states removed
         """
-        cutoff = datetime.utcnow() - timedelta(minutes=max_age_minutes)
+        cutoff = utc_now() - timedelta(minutes=max_age_minutes)
         expired = [
             state for state, data in self._state_store.items()
             if data["created_at"] < cutoff

@@ -8,6 +8,7 @@ from typing import List, Optional, Dict, Any
 from uuid import uuid4
 import asyncio
 
+from app.utils.datetime_utils import utc_now
 from app.models.bi_store import bi_store
 
 
@@ -49,8 +50,8 @@ class SchedulerService:
             "recipients": recipients,
             "parameters": parameters or {},
             "created_by": user_id,
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat(),
             "is_active": True,
             "last_run": None,
             "next_run": self._calculate_next_run(cron_expression),
@@ -84,7 +85,7 @@ class SchedulerService:
                 raise ValueError("Invalid cron expression")
             updates["next_run"] = self._calculate_next_run(updates["cron_expression"])
 
-        updates["updated_at"] = datetime.utcnow().isoformat()
+        updates["updated_at"] = utc_now().isoformat()
 
         return bi_store.update_schedule(schedule_id, updates)
 
@@ -107,7 +108,7 @@ class SchedulerService:
 
     def get_due_schedules(self) -> List[dict]:
         """Get schedules that are due to run"""
-        now = datetime.utcnow()
+        now = utc_now()
         all_schedules = bi_store.list_schedules(is_active=True)
 
         due = []
@@ -128,7 +129,7 @@ class SchedulerService:
             "id": str(uuid4()),
             "schedule_id": schedule_id,
             "report_id": schedule["report_id"],
-            "started_at": datetime.utcnow().isoformat(),
+            "started_at": utc_now().isoformat(),
             "status": "running",
             "recipients_count": len(schedule["recipients"]),
         }
@@ -136,26 +137,26 @@ class SchedulerService:
         try:
             # Update schedule
             bi_store.update_schedule(schedule_id, {
-                "last_run": datetime.utcnow().isoformat(),
+                "last_run": utc_now().isoformat(),
                 "next_run": self._calculate_next_run(schedule["cron_expression"]),
                 "run_count": schedule["run_count"] + 1,
                 "last_error": None,
             })
 
             execution["status"] = "completed"
-            execution["completed_at"] = datetime.utcnow().isoformat()
+            execution["completed_at"] = utc_now().isoformat()
 
         except Exception as e:
             # Handle failure
             bi_store.update_schedule(schedule_id, {
-                "last_run": datetime.utcnow().isoformat(),
+                "last_run": utc_now().isoformat(),
                 "failure_count": schedule["failure_count"] + 1,
                 "last_error": str(e),
             })
 
             execution["status"] = "failed"
             execution["error"] = str(e)
-            execution["completed_at"] = datetime.utcnow().isoformat()
+            execution["completed_at"] = utc_now().isoformat()
 
         return execution
 
@@ -170,7 +171,7 @@ class SchedulerService:
     def _calculate_next_run(self, cron_expression: str) -> str:
         """Calculate next run time from cron expression"""
         # Simplified - returns 1 hour from now
-        return (datetime.utcnow() + timedelta(hours=1)).isoformat()
+        return (utc_now() + timedelta(hours=1)).isoformat()
 
     def _get_content_type(self, format: str) -> str:
         """Get MIME type for format"""

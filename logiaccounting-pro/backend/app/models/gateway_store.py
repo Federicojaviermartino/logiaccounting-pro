@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 from typing import Optional, List, Dict, Any
+from app.utils.datetime_utils import utc_now
 from uuid import uuid4
 import hashlib
 import secrets
@@ -48,8 +49,8 @@ class APIKeyStore:
             "total_requests": 0,
             "expires_at": data.get("expires_at"),
             "created_by": data.get("created_by"),
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat()
         }
 
         self._keys[key_id] = key_data
@@ -109,13 +110,13 @@ class APIKeyStore:
             if field in data:
                 key[field] = data[field]
 
-        key["updated_at"] = datetime.utcnow().isoformat()
+        key["updated_at"] = utc_now().isoformat()
         return key
 
     def record_usage(self, key_id: str) -> None:
         """Record API key usage"""
         if key_id in self._keys:
-            self._keys[key_id]["last_used_at"] = datetime.utcnow().isoformat()
+            self._keys[key_id]["last_used_at"] = utc_now().isoformat()
             self._keys[key_id]["total_requests"] = self._keys[key_id].get("total_requests", 0) + 1
 
     def regenerate(self, key_id: str) -> Optional[Dict]:
@@ -139,7 +140,7 @@ class APIKeyStore:
         key["key_hash"] = key_hash
         key["total_requests"] = 0
         key["last_used_at"] = None
-        key["updated_at"] = datetime.utcnow().isoformat()
+        key["updated_at"] = utc_now().isoformat()
 
         self._key_hash_index[key_hash] = key_id
 
@@ -149,7 +150,7 @@ class APIKeyStore:
         """Revoke an API key"""
         if key_id in self._keys:
             self._keys[key_id]["is_active"] = False
-            self._keys[key_id]["updated_at"] = datetime.utcnow().isoformat()
+            self._keys[key_id]["updated_at"] = utc_now().isoformat()
             return True
         return False
 
@@ -190,7 +191,7 @@ class RequestLogStore:
             "error_code": data.get("error_code"),
             "error_message": data.get("error_message"),
             "api_version": data.get("api_version", "v1"),
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
 
         self._logs.insert(0, log)
@@ -219,7 +220,7 @@ class RequestLogStore:
 
     def get_stats(self, tenant_id: str = None, api_key_id: str = None, days: int = 30) -> Dict:
         """Get usage statistics"""
-        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        cutoff = (utc_now() - timedelta(days=days)).isoformat()
 
         logs = self._logs
         if tenant_id:
@@ -397,7 +398,7 @@ class IPAccessRuleStore:
             "cidr_mask": data.get("cidr_mask"),
             "rule_type": data.get("rule_type", "allow"),  # 'allow' or 'deny'
             "description": data.get("description"),
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
             "expires_at": data.get("expires_at")
         }
 

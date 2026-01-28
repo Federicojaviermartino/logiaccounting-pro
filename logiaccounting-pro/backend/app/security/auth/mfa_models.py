@@ -5,6 +5,8 @@ SQLAlchemy models for Multi-Factor Authentication
 
 from datetime import datetime
 from typing import Optional, List
+
+from app.utils.datetime_utils import utc_now
 from sqlalchemy import (
     Column,
     Integer,
@@ -104,14 +106,14 @@ class MFASettings(Base, TimestampMixin):
         """Check if MFA is currently locked due to failed attempts."""
         if self.locked_until is None:
             return False
-        return datetime.utcnow() < self.locked_until
+        return utc_now() < self.locked_until
 
     def increment_failed_attempts(self, max_attempts: int = 5, lockout_minutes: int = 15) -> None:
         """Increment failed attempts and lock if threshold reached."""
         self.failed_attempts += 1
         if self.failed_attempts >= max_attempts:
             from datetime import timedelta
-            self.locked_until = datetime.utcnow() + timedelta(minutes=lockout_minutes)
+            self.locked_until = utc_now() + timedelta(minutes=lockout_minutes)
 
     def reset_failed_attempts(self) -> None:
         """Reset failed attempts counter."""
@@ -120,7 +122,7 @@ class MFASettings(Base, TimestampMixin):
 
     def record_successful_verification(self, method: MFAMethodType) -> None:
         """Record a successful MFA verification."""
-        self.last_used_at = datetime.utcnow()
+        self.last_used_at = utc_now()
         self.last_used_method = method
         self.reset_failed_attempts()
 
@@ -188,7 +190,7 @@ class MFARecoveryCode(Base, TimestampMixin):
     def mark_used(self, ip_address: Optional[str] = None, user_agent: Optional[str] = None) -> None:
         """Mark this recovery code as used."""
         self.used = True
-        self.used_at = datetime.utcnow()
+        self.used_at = utc_now()
         self.used_ip = ip_address
         self.used_user_agent = user_agent[:512] if user_agent else None
 
@@ -235,7 +237,7 @@ class MFAChallenge(Base, TimestampMixin):
 
     def is_expired(self) -> bool:
         """Check if this challenge has expired."""
-        return datetime.utcnow() > self.expires_at
+        return utc_now() > self.expires_at
 
     def is_valid(self) -> bool:
         """Check if this challenge can still be verified."""
@@ -251,7 +253,7 @@ class MFAChallenge(Base, TimestampMixin):
 
         if success:
             self.status = MFAChallengeStatus.VERIFIED
-            self.verified_at = datetime.utcnow()
+            self.verified_at = utc_now()
         elif self.attempts >= self.max_attempts:
             self.status = MFAChallengeStatus.FAILED
 
@@ -293,7 +295,7 @@ class TrustedDevice(Base, TimestampMixin):
     ip_address = Column(String(45), nullable=True)
     location = Column(String(255), nullable=True)
 
-    trusted_at = Column(DateTime, default=datetime.utcnow)
+    trusted_at = Column(DateTime, default=utc_now)
     expires_at = Column(DateTime, nullable=False)
     last_used_at = Column(DateTime, nullable=True)
 
@@ -313,18 +315,18 @@ class TrustedDevice(Base, TimestampMixin):
         return (
             self.is_active
             and self.revoked_at is None
-            and datetime.utcnow() < self.expires_at
+            and utc_now() < self.expires_at
         )
 
     def revoke(self, reason: Optional[str] = None) -> None:
         """Revoke this trusted device."""
         self.is_active = False
-        self.revoked_at = datetime.utcnow()
+        self.revoked_at = utc_now()
         self.revoked_reason = reason
 
     def record_use(self) -> None:
         """Record that this device was used."""
-        self.last_used_at = datetime.utcnow()
+        self.last_used_at = utc_now()
 
     def to_dict(self) -> dict:
         """Convert to dictionary."""

@@ -16,6 +16,7 @@ from app.integrations.base import (
     SyncResult,
 )
 from app.integrations.registry import register_integration
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -68,8 +69,8 @@ class XeroIntegration(BaseIntegration):
         """Handle OAuth callback."""
         # Demo response
         return {
-            "access_token": f"xero_access_{datetime.utcnow().timestamp()}",
-            "refresh_token": f"xero_refresh_{datetime.utcnow().timestamp()}",
+            "access_token": f"xero_access_{utc_now().timestamp()}",
+            "refresh_token": f"xero_refresh_{utc_now().timestamp()}",
             "expires_in": 1800,
             "tenant_id": "xero-tenant-123",
         }
@@ -113,8 +114,8 @@ class XeroIntegration(BaseIntegration):
 
         new_credentials = {
             **self.credentials,
-            "access_token": f"xero_access_{datetime.utcnow().timestamp()}",
-            "token_refreshed_at": datetime.utcnow().isoformat(),
+            "access_token": f"xero_access_{utc_now().timestamp()}",
+            "token_refreshed_at": utc_now().isoformat(),
         }
 
         self._access_token = new_credentials["access_token"]
@@ -150,7 +151,7 @@ class XeroIntegration(BaseIntegration):
         # Demo response
         return {
             "Contacts": [{
-                "ContactID": f"xero_contact_{datetime.utcnow().timestamp()}",
+                "ContactID": f"xero_contact_{utc_now().timestamp()}",
                 "Name": data.get("name"),
                 "EmailAddress": data.get("email"),
             }]
@@ -203,8 +204,8 @@ class XeroIntegration(BaseIntegration):
         total = sum(item.get("quantity", 1) * item.get("unit_price", 0) for item in line_items)
         return {
             "Invoices": [{
-                "InvoiceID": f"xero_inv_{datetime.utcnow().timestamp()}",
-                "InvoiceNumber": invoice_number or f"INV-{int(datetime.utcnow().timestamp())}",
+                "InvoiceID": f"xero_inv_{utc_now().timestamp()}",
+                "InvoiceNumber": invoice_number or f"INV-{int(utc_now().timestamp())}",
                 "Contact": {"ContactID": contact_id},
                 "Total": total,
                 "AmountDue": total,
@@ -247,12 +248,12 @@ class XeroIntegration(BaseIntegration):
             "Invoice": {"InvoiceID": invoice_id},
             "Account": {"AccountID": account_id},
             "Amount": amount,
-            "Date": date or datetime.utcnow().strftime("%Y-%m-%d"),
+            "Date": date or utc_now().strftime("%Y-%m-%d"),
         }
 
         return {
             "Payments": [{
-                "PaymentID": f"xero_pmt_{datetime.utcnow().timestamp()}",
+                "PaymentID": f"xero_pmt_{utc_now().timestamp()}",
                 "Invoice": {"InvoiceID": invoice_id},
                 "Amount": amount,
                 "Status": "AUTHORISED",

@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 import asyncio
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 from app.workflows.actions.base import (
     BaseAction, ActionCategory, ActionInput, ActionOutput, register_action
 )
@@ -60,7 +62,7 @@ class DelayAction(BaseAction):
 
         return {
             "waited_seconds": seconds,
-            "resumed_at": datetime.utcnow().isoformat(),
+            "resumed_at": utc_now().isoformat(),
         }
 
 
@@ -88,7 +90,7 @@ class WaitUntilAction(BaseAction):
         target_str = config.get("datetime")
         target = datetime.fromisoformat(target_str.replace("Z", "+00:00"))
 
-        now = datetime.utcnow()
+        now = utc_now()
         if target > now:
             wait_seconds = (target - now).total_seconds()
             logger.info(f"[WaitUntil] Waiting until {target} ({wait_seconds}s)")
@@ -96,7 +98,7 @@ class WaitUntilAction(BaseAction):
 
         return {
             "target_time": target.isoformat(),
-            "actual_time": datetime.utcnow().isoformat(),
+            "actual_time": utc_now().isoformat(),
         }
 
 
@@ -205,7 +207,7 @@ class LogAction(BaseAction):
         log_func(f"[WorkflowLog] {message}")
 
         return {
-            "logged_at": datetime.utcnow().isoformat(),
+            "logged_at": utc_now().isoformat(),
             "message": message,
         }
 
@@ -247,6 +249,6 @@ class ApprovalAction(BaseAction):
         return {
             "approved": True,
             "approved_by": approvers.split(",")[0].strip(),
-            "approved_at": datetime.utcnow().isoformat(),
+            "approved_at": utc_now().isoformat(),
             "comments": "Auto-approved (demo)",
         }

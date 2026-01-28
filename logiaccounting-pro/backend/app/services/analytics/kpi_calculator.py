@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, asdict
 
+from app.utils.datetime_utils import utc_now
+
 
 @dataclass
 class HealthScore:
@@ -42,7 +44,7 @@ class KPICalculator:
         health = self.get_health_score()
 
         return {
-            'generated_at': datetime.utcnow().isoformat(),
+            'generated_at': utc_now().isoformat(),
             'health_score': {
                 'score': health.score,
                 'grade': health.grade,
@@ -119,7 +121,7 @@ class KPICalculator:
         transactions = self.db.transactions.find_all()
 
         trends = []
-        now = datetime.utcnow()
+        now = utc_now()
 
         for i in range(periods):
             period_end = now - timedelta(days=30 * i)
@@ -151,7 +153,7 @@ class KPICalculator:
 
     def _calculate_revenue_kpi(self, transactions: List[Dict]) -> Dict[str, Any]:
         """Calculate revenue KPI"""
-        now = datetime.utcnow()
+        now = utc_now()
         current_period = self._get_period_data(transactions, now - timedelta(days=30), now)
         previous_period = self._get_period_data(transactions, now - timedelta(days=60), now - timedelta(days=30))
 
@@ -170,7 +172,7 @@ class KPICalculator:
 
     def _calculate_expense_kpi(self, transactions: List[Dict]) -> Dict[str, Any]:
         """Calculate expense KPI"""
-        now = datetime.utcnow()
+        now = utc_now()
         current_period = self._get_period_data(transactions, now - timedelta(days=30), now)
         previous_period = self._get_period_data(transactions, now - timedelta(days=60), now - timedelta(days=30))
 
@@ -189,7 +191,7 @@ class KPICalculator:
 
     def _calculate_profit_kpi(self, transactions: List[Dict]) -> Dict[str, Any]:
         """Calculate profit KPI"""
-        now = datetime.utcnow()
+        now = utc_now()
         current_period = self._get_period_data(transactions, now - timedelta(days=30), now)
         previous_period = self._get_period_data(transactions, now - timedelta(days=60), now - timedelta(days=30))
 
@@ -208,7 +210,7 @@ class KPICalculator:
 
     def _calculate_margin_kpi(self, transactions: List[Dict]) -> Dict[str, Any]:
         """Calculate net margin KPI"""
-        now = datetime.utcnow()
+        now = utc_now()
         current_period = self._get_period_data(transactions, now - timedelta(days=30), now)
 
         income = current_period['income']
@@ -233,7 +235,7 @@ class KPICalculator:
 
     def _calculate_cash_runway(self, transactions: List[Dict], payments: List[Dict]) -> Dict[str, Any]:
         """Calculate cash runway in months"""
-        now = datetime.utcnow()
+        now = utc_now()
         period_data = self._get_period_data(transactions, now - timedelta(days=90), now)
 
         monthly_burn = (period_data['expense'] - period_data['income']) / 3
@@ -272,7 +274,7 @@ class KPICalculator:
         )
 
         movements = self.db.movements.find_all()
-        year_ago = datetime.utcnow() - timedelta(days=365)
+        year_ago = utc_now() - timedelta(days=365)
 
         annual_cogs = 0
         for mov in movements:
@@ -313,7 +315,7 @@ class KPICalculator:
 
     def _calculate_receivables_aging(self, payments: List[Dict]) -> Dict[str, Any]:
         """Calculate receivables aging"""
-        now = datetime.utcnow()
+        now = utc_now()
 
         receivables = [
             p for p in payments
@@ -424,7 +426,7 @@ class KPICalculator:
 
     def _score_profitability(self, transactions: List[Dict]) -> float:
         """Score profitability (0-100)"""
-        now = datetime.utcnow()
+        now = utc_now()
         data = self._get_period_data(transactions, now - timedelta(days=90), now)
 
         if data['income'] == 0:
@@ -447,7 +449,7 @@ class KPICalculator:
 
     def _score_cashflow(self, transactions: List[Dict]) -> float:
         """Score cash flow (0-100)"""
-        now = datetime.utcnow()
+        now = utc_now()
         data = self._get_period_data(transactions, now - timedelta(days=30), now)
 
         net_flow = data['income'] - data['expense']
@@ -478,7 +480,7 @@ class KPICalculator:
         if not receivables:
             return 100
 
-        now = datetime.utcnow()
+        now = utc_now()
         total = sum(p.get('amount', 0) for p in receivables)
         overdue_amount = 0
 
@@ -497,7 +499,7 @@ class KPICalculator:
 
     def _score_growth(self, transactions: List[Dict]) -> float:
         """Score revenue growth (0-100)"""
-        now = datetime.utcnow()
+        now = utc_now()
 
         current = self._get_period_data(transactions, now - timedelta(days=90), now)
         previous = self._get_period_data(transactions, now - timedelta(days=180), now - timedelta(days=90))
@@ -522,7 +524,7 @@ class KPICalculator:
 
     def _score_expense_control(self, transactions: List[Dict]) -> float:
         """Score expense control (0-100)"""
-        now = datetime.utcnow()
+        now = utc_now()
 
         current = self._get_period_data(transactions, now - timedelta(days=90), now)
         previous = self._get_period_data(transactions, now - timedelta(days=180), now - timedelta(days=90))

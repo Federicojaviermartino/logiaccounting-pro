@@ -8,6 +8,8 @@ from datetime import datetime
 import logging
 import asyncio
 
+from app.utils.datetime_utils import utc_now
+
 from app.workflows.triggers import trigger_registry, EventType
 
 logger = logging.getLogger(__name__)
@@ -26,7 +28,7 @@ class WorkflowEventEmitter:
             "type": event_type,
             "payload": payload,
             "customer_id": customer_id,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": utc_now().isoformat(),
         }
 
         # Add to history
@@ -84,7 +86,7 @@ class WorkflowEventEmitter:
                 "invoice_number": invoice.get("number"),
                 "customer_id": invoice.get("customer_id"),
                 "amount": payment.get("amount"),
-                "paid_at": payment.get("paid_at") or datetime.utcnow().isoformat(),
+                "paid_at": payment.get("paid_at") or utc_now().isoformat(),
             },
             customer_id=invoice.get("customer_id"),
         )
@@ -116,7 +118,7 @@ class WorkflowEventEmitter:
                 "customer_id": payment.get("customer_id"),
                 "amount": payment.get("amount"),
                 "method": payment.get("method"),
-                "received_at": payment.get("paid_at") or datetime.utcnow().isoformat(),
+                "received_at": payment.get("paid_at") or utc_now().isoformat(),
             },
             customer_id=payment.get("customer_id"),
         )

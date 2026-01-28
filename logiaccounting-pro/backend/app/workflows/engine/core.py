@@ -7,6 +7,8 @@ from datetime import datetime
 import asyncio
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 from app.workflows.models.workflow import Workflow, WorkflowNode
 from app.workflows.models.execution import (
     WorkflowExecution, ExecutionStep, ExecutionContext, ExecutionLog
@@ -126,13 +128,13 @@ class WorkflowEngine:
             result = await executor.execute()
 
             execution.status = ExecutionStatus.COMPLETED
-            execution.completed_at = datetime.utcnow()
+            execution.completed_at = utc_now()
             execution.duration_ms = int(
                 (execution.completed_at - execution.started_at).total_seconds() * 1000
             )
 
             workflow.execution_count += 1
-            workflow.last_executed = datetime.utcnow()
+            workflow.last_executed = utc_now()
             workflow_store.save_workflow(workflow)
 
             self._log(execution.id, "info", "Workflow completed successfully", {
@@ -141,7 +143,7 @@ class WorkflowEngine:
 
         except Exception as e:
             execution.status = ExecutionStatus.FAILED
-            execution.completed_at = datetime.utcnow()
+            execution.completed_at = utc_now()
             execution.error = str(e)
 
             logger.error(f"Workflow execution failed: {e}")
@@ -222,7 +224,7 @@ class WorkflowEngine:
             del self._active_executions[execution_id]
 
         execution.status = ExecutionStatus.CANCELLED
-        execution.completed_at = datetime.utcnow()
+        execution.completed_at = utc_now()
         workflow_store.save_execution(execution)
 
         self._log(execution_id, "info", "Execution cancelled")

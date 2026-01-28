@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 from typing import Optional, List, Dict, Any
+from app.utils.datetime_utils import utc_now
 from uuid import uuid4
 import secrets
 from enum import Enum
@@ -284,8 +285,8 @@ class WebhookEndpointStore:
             "disabled_at": None,
             "disabled_reason": None,
             "created_by": data.get("created_by"),
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat()
         }
 
         self._endpoints[endpoint_id] = endpoint
@@ -366,26 +367,26 @@ class WebhookEndpointStore:
             endpoint["disabled_reason"] = None
             endpoint["consecutive_failures"] = 0
 
-        endpoint["updated_at"] = datetime.utcnow().isoformat()
+        endpoint["updated_at"] = utc_now().isoformat()
         return endpoint
 
     def record_success(self, endpoint_id: str):
         """Record successful delivery"""
         if endpoint_id in self._endpoints:
-            self._endpoints[endpoint_id]["last_success_at"] = datetime.utcnow().isoformat()
+            self._endpoints[endpoint_id]["last_success_at"] = utc_now().isoformat()
             self._endpoints[endpoint_id]["consecutive_failures"] = 0
 
     def record_failure(self, endpoint_id: str, reason: str = None):
         """Record failed delivery"""
         if endpoint_id in self._endpoints:
             endpoint = self._endpoints[endpoint_id]
-            endpoint["last_failure_at"] = datetime.utcnow().isoformat()
+            endpoint["last_failure_at"] = utc_now().isoformat()
             endpoint["consecutive_failures"] = endpoint.get("consecutive_failures", 0) + 1
 
             # Auto-disable if threshold reached
             if endpoint["consecutive_failures"] >= endpoint.get("failure_threshold", 10):
                 endpoint["is_active"] = False
-                endpoint["disabled_at"] = datetime.utcnow().isoformat()
+                endpoint["disabled_at"] = utc_now().isoformat()
                 endpoint["disabled_reason"] = f"Auto-disabled after {endpoint['consecutive_failures']} consecutive failures"
 
     def regenerate_secret(self, endpoint_id: str) -> Optional[str]:
@@ -395,7 +396,7 @@ class WebhookEndpointStore:
 
         new_secret = f"whsec_{secrets.token_urlsafe(32)}"
         self._endpoints[endpoint_id]["secret"] = new_secret
-        self._endpoints[endpoint_id]["updated_at"] = datetime.utcnow().isoformat()
+        self._endpoints[endpoint_id]["updated_at"] = utc_now().isoformat()
 
         return new_secret
 
@@ -437,7 +438,7 @@ class WebhookDeliveryStore:
             "response_headers": None,
             "response_time_ms": None,
             "error_message": None,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
             "delivered_at": None
         }
 
@@ -458,7 +459,7 @@ class WebhookDeliveryStore:
 
     def find_pending_retries(self, limit: int = 100) -> List[Dict]:
         """Find deliveries pending retry"""
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
 
         deliveries = [
             d for d in self._deliveries.values()
@@ -489,7 +490,7 @@ class WebhookDeliveryStore:
         if delivery_id in self._deliveries:
             delivery = self._deliveries[delivery_id]
             delivery["status"] = "delivered"
-            delivery["delivered_at"] = datetime.utcnow().isoformat()
+            delivery["delivered_at"] = utc_now().isoformat()
             delivery["response_status"] = response_status
             delivery["response_time_ms"] = response_time_ms
             delivery["response_body"] = response_body[:5000] if response_body else None
@@ -511,7 +512,7 @@ class WebhookDeliveryStore:
             # Schedule retry
             idx = min(delivery["attempt_count"], len(self.RETRY_DELAYS) - 1)
             delay = self.RETRY_DELAYS[idx]
-            delivery["next_retry_at"] = (datetime.utcnow() + timedelta(seconds=delay)).isoformat()
+            delivery["next_retry_at"] = (utc_now() + timedelta(seconds=delay)).isoformat()
             delivery["status"] = "pending"
 
     def increment_attempt(self, delivery_id: str):
@@ -537,7 +538,7 @@ class WebhookDeliveryStore:
             "error_type": data.get("error_type"),
             "error_message": data.get("error_message"),
             "started_at": data.get("started_at"),
-            "completed_at": data.get("completed_at", datetime.utcnow().isoformat())
+            "completed_at": data.get("completed_at", utc_now().isoformat())
         }
 
         self._attempts.insert(0, attempt)

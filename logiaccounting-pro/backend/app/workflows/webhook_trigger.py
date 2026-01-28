@@ -10,6 +10,8 @@ import hmac
 import hashlib
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -22,7 +24,7 @@ class WebhookTrigger:
         self.path = path or f"/webhooks/trigger/{self.id}"
         self.secret = uuid4().hex
         self.enabled = True
-        self.created_at = datetime.utcnow()
+        self.created_at = utc_now()
         self.last_triggered_at: Optional[datetime] = None
         self.trigger_count = 0
 
@@ -120,7 +122,7 @@ class WebhookTriggerHandler:
             return {"success": False, "error": "Trigger is disabled"}
 
         # Update trigger stats
-        trigger.last_triggered_at = datetime.utcnow()
+        trigger.last_triggered_at = utc_now()
         trigger.trigger_count += 1
 
         # Prepare trigger data
@@ -129,7 +131,7 @@ class WebhookTriggerHandler:
             "webhook_id": trigger.id,
             "payload": payload,
             "headers": {k: v for k, v in headers.items() if k.lower() not in ["authorization", "cookie"]},
-            "received_at": datetime.utcnow().isoformat(),
+            "received_at": utc_now().isoformat(),
         }
 
         # Execute workflow

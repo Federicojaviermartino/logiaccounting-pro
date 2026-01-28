@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 from typing import Optional, List, Dict, Any
+from app.utils.datetime_utils import utc_now
 from uuid import uuid4
 from enum import Enum
 import secrets
@@ -185,7 +186,7 @@ class IntegrationStore:
         )
 
     def create(self, data: Dict) -> Dict:
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         integration = {
             "id": str(uuid4()),
             "organization_id": data["organization_id"],
@@ -236,7 +237,7 @@ class IntegrationStore:
                 self._data[i] = {
                     **integration,
                     **{k: v for k, v in data.items() if v is not None},
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -269,7 +270,7 @@ class IntegrationStore:
             update_data["oauth_refresh_token"] = refresh_token
 
         if expires_in:
-            expires_at = datetime.utcnow() + timedelta(seconds=expires_in)
+            expires_at = utc_now() + timedelta(seconds=expires_in)
             update_data["oauth_token_expires_at"] = expires_at.isoformat()
 
         if scope:
@@ -281,7 +282,7 @@ class IntegrationStore:
         """Mark integration as connected"""
         return self.update(integration_id, {
             "status": IntegrationStatus.CONNECTED,
-            "connected_at": datetime.utcnow().isoformat(),
+            "connected_at": utc_now().isoformat(),
             "connected_by": user_id,
             "last_error": None,
             "error_count": 0,
@@ -296,7 +297,7 @@ class IntegrationStore:
         return self.update(integration_id, {
             "status": IntegrationStatus.ERROR,
             "last_error": error,
-            "last_error_at": datetime.utcnow().isoformat(),
+            "last_error_at": utc_now().isoformat(),
             "error_count": integration.get("error_count", 0) + 1,
         })
 
@@ -320,7 +321,7 @@ class IntegrationStore:
         if not integration:
             return None
 
-        now = datetime.utcnow()
+        now = utc_now()
         next_sync = None
         if integration.get("sync_enabled") and integration.get("sync_frequency_minutes"):
             next_sync = (now + timedelta(minutes=integration["sync_frequency_minutes"])).isoformat()
@@ -338,7 +339,7 @@ class IntegrationStore:
 
         expires_at = datetime.fromisoformat(integration["oauth_token_expires_at"])
         buffer = timedelta(minutes=5)
-        return datetime.utcnow() >= (expires_at - buffer)
+        return utc_now() >= (expires_at - buffer)
 
 
 class SyncConfigStore:
@@ -368,7 +369,7 @@ class SyncConfigStore:
         )
 
     def create(self, data: Dict) -> Dict:
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         config = {
             "id": str(uuid4()),
             "integration_id": data["integration_id"],
@@ -392,7 +393,7 @@ class SyncConfigStore:
                 self._data[i] = {
                     **config,
                     **{k: v for k, v in data.items() if v is not None},
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -427,7 +428,7 @@ class FieldMappingStore:
         return next((m for m in self._data if m["id"] == mapping_id), None)
 
     def create(self, data: Dict) -> Dict:
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         mapping = {
             "id": str(uuid4()),
             "sync_config_id": data["sync_config_id"],
@@ -486,7 +487,7 @@ class SyncLogStore:
         return next((l for l in self._data if l["id"] == log_id), None)
 
     def create(self, data: Dict) -> Dict:
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         log = {
             "id": str(uuid4()),
             "integration_id": data["integration_id"],
@@ -522,7 +523,7 @@ class SyncLogStore:
         """Mark sync as started"""
         return self.update(log_id, {
             "status": SyncLogStatus.RUNNING,
-            "started_at": datetime.utcnow().isoformat(),
+            "started_at": utc_now().isoformat(),
         })
 
     def complete(self, log_id: str, status: str = SyncLogStatus.COMPLETED) -> Optional[Dict]:
@@ -531,7 +532,7 @@ class SyncLogStore:
         if not log:
             return None
 
-        now = datetime.utcnow()
+        now = utc_now()
         duration_ms = None
         if log.get("started_at"):
             started = datetime.fromisoformat(log["started_at"])
@@ -552,7 +553,7 @@ class SyncLogStore:
         errors = log.get("errors", [])
         errors.append({
             **error,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": utc_now().isoformat()
         })
 
         return self.update(log_id, {
@@ -607,7 +608,7 @@ class SyncRecordStore:
         return results[:limit]
 
     def create(self, data: Dict) -> Dict:
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         record = {
             "id": str(uuid4()),
             "integration_id": data["integration_id"],
@@ -632,7 +633,7 @@ class SyncRecordStore:
                 self._data[i] = {
                     **record,
                     **{k: v for k, v in data.items() if v is not None},
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -675,7 +676,7 @@ class WebhookStore:
         )
 
     def create(self, data: Dict) -> Dict:
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         webhook = {
             "id": str(uuid4()),
             "integration_id": data["integration_id"],
@@ -700,7 +701,7 @@ class WebhookStore:
                 self._data[i] = {
                     **webhook,
                     **{k: v for k, v in data.items() if v is not None},
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -720,7 +721,7 @@ class WebhookStore:
 
         update_data = {
             "total_received": webhook.get("total_received", 0) + 1,
-            "last_received_at": datetime.utcnow().isoformat(),
+            "last_received_at": utc_now().isoformat(),
         }
 
         if processed:
@@ -752,7 +753,7 @@ class WebhookEventStore:
         return next((e for e in self._data if e["id"] == event_id), None)
 
     def create(self, data: Dict) -> Dict:
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         event = {
             "id": str(uuid4()),
             "webhook_id": data["webhook_id"],
@@ -778,7 +779,7 @@ class WebhookEventStore:
     def mark_processed(self, event_id: str) -> Optional[Dict]:
         return self.update(event_id, {
             "status": "processed",
-            "processed_at": datetime.utcnow().isoformat(),
+            "processed_at": utc_now().isoformat(),
         })
 
     def mark_failed(self, event_id: str, error: str) -> Optional[Dict]:
@@ -803,7 +804,7 @@ class OAuthStateStore:
                redirect_uri: str = None, additional_data: Dict = None,
                expires_in_minutes: int = 10) -> Dict:
         """Create a new OAuth state"""
-        now = datetime.utcnow()
+        now = utc_now()
         state = {
             "id": str(uuid4()),
             "state": secrets.token_urlsafe(32),
@@ -820,7 +821,7 @@ class OAuthStateStore:
 
     def validate_and_consume(self, state: str, provider: str) -> Optional[Dict]:
         """Validate state and remove it (one-time use)"""
-        now = datetime.utcnow()
+        now = utc_now()
 
         for i, oauth_state in enumerate(self._data):
             if (oauth_state["state"] == state
@@ -832,7 +833,7 @@ class OAuthStateStore:
 
     def cleanup_expired(self) -> int:
         """Remove expired states"""
-        now = datetime.utcnow()
+        now = utc_now()
         original_len = len(self._data)
         self._data = [
             s for s in self._data

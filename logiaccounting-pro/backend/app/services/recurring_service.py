@@ -6,6 +6,7 @@ Automate periodic transactions and payments
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 
 
 class RecurringService:
@@ -67,7 +68,7 @@ class RecurringService:
             "auto_create": auto_create,
             "active": True,
             "created_by": created_by,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
             "generation_count": 0
         }
 
@@ -88,9 +89,9 @@ class RecurringService:
             else:
                 base_date = datetime.strptime(from_date, '%Y-%m-%d').date()
         except:
-            base_date = datetime.utcnow().date()
+            base_date = utc_now().date()
 
-        today = datetime.utcnow().date()
+        today = utc_now().date()
 
         if base_date > today:
             return base_date.isoformat()
@@ -181,7 +182,7 @@ class RecurringService:
 
     def get_due_templates(self) -> List[dict]:
         """Get templates due for generation"""
-        today = datetime.utcnow().date().isoformat()
+        today = utc_now().date().isoformat()
         return [
             t for t in self._templates.values()
             if t["active"] and t["next_occurrence"] <= today
@@ -197,8 +198,8 @@ class RecurringService:
         entity_type = template["entity_type"]
         data = template["template_data"].copy()
 
-        data["date"] = datetime.utcnow().date().isoformat()
-        data["created_at"] = datetime.utcnow().isoformat()
+        data["date"] = utc_now().date().isoformat()
+        data["created_at"] = utc_now().isoformat()
         data["recurring_template_id"] = template_id
 
         if entity_type == "transaction":
@@ -208,7 +209,7 @@ class RecurringService:
         else:
             return None
 
-        template["last_generated"] = datetime.utcnow().isoformat()
+        template["last_generated"] = utc_now().isoformat()
         template["generation_count"] += 1
         template["next_occurrence"] = self._calculate_next_occurrence(
             template["next_occurrence"],

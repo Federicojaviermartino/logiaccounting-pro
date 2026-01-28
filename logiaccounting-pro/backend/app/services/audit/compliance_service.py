@@ -10,6 +10,7 @@ from enum import Enum
 from abc import ABC, abstractmethod
 import logging
 
+from app.utils.datetime_utils import utc_now
 from app.models.audit_store import audit_db
 from app.models.store import db
 
@@ -56,7 +57,7 @@ class CheckResult:
     findings: List[str] = field(default_factory=list)
     evidence: Dict[str, Any] = field(default_factory=dict)
     recommendations: List[str] = field(default_factory=list)
-    checked_at: datetime = field(default_factory=datetime.utcnow)
+    checked_at: datetime = field(default_factory=utc_now)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -152,14 +153,14 @@ class BaseComplianceFramework(ABC):
             'errors': errors,
             'overall_score': self.calculate_overall_score(results),
             'status': 'compliant' if failed == 0 and errors == 0 else 'non_compliant',
-            'checked_at': datetime.utcnow().isoformat(),
+            'checked_at': utc_now().isoformat(),
         }
 
     # Helper methods for common checks
 
     def _check_audit_logging_enabled(self) -> Tuple[bool, Dict]:
         """Check if audit logging is capturing events"""
-        since = (datetime.utcnow() - timedelta(days=7)).isoformat()
+        since = (utc_now() - timedelta(days=7)).isoformat()
         recent_logs = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
             "from_date": since
@@ -169,7 +170,7 @@ class BaseComplianceFramework(ABC):
 
     def _check_access_reviews(self, days: int = 90) -> Tuple[bool, Dict]:
         """Check if access reviews are performed regularly"""
-        since = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        since = (utc_now() - timedelta(days=days)).isoformat()
         reviews = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
             "from_date": since
@@ -325,7 +326,7 @@ class SOXComplianceFramework(BaseComplianceFramework):
         findings = []
         evidence = {}
 
-        since = (datetime.utcnow() - timedelta(days=30)).isoformat()
+        since = (utc_now() - timedelta(days=30)).isoformat()
         logs = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
             "from_date": since
@@ -403,7 +404,7 @@ class SOXComplianceFramework(BaseComplianceFramework):
         findings = []
         evidence = {}
 
-        since = (datetime.utcnow() - timedelta(days=30)).isoformat()
+        since = (utc_now() - timedelta(days=30)).isoformat()
         logs = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
             "from_date": since
@@ -449,7 +450,7 @@ class SOXComplianceFramework(BaseComplianceFramework):
         findings = []
         evidence = {}
 
-        since = (datetime.utcnow() - timedelta(days=30)).isoformat()
+        since = (utc_now() - timedelta(days=30)).isoformat()
         logs = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
             "from_date": since
@@ -490,7 +491,7 @@ class SOXComplianceFramework(BaseComplianceFramework):
             findings.append("No audit logs found in the last 7 days")
 
         # Check financial transaction logging
-        since = (datetime.utcnow() - timedelta(days=30)).isoformat()
+        since = (utc_now() - timedelta(days=30)).isoformat()
         logs = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
             "from_date": since
@@ -549,7 +550,7 @@ class SOXComplianceFramework(BaseComplianceFramework):
         findings = []
         evidence = {}
 
-        since = (datetime.utcnow() - timedelta(days=30)).isoformat()
+        since = (utc_now() - timedelta(days=30)).isoformat()
         logs = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
             "from_date": since
@@ -731,7 +732,7 @@ class GDPRComplianceFramework(BaseComplianceFramework):
         findings = []
         evidence = {}
 
-        since = (datetime.utcnow() - timedelta(days=90)).isoformat()
+        since = (utc_now() - timedelta(days=90)).isoformat()
         logs = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
             "from_date": since
@@ -760,7 +761,7 @@ class GDPRComplianceFramework(BaseComplianceFramework):
         findings = []
         evidence = {}
 
-        since = (datetime.utcnow() - timedelta(days=365)).isoformat()
+        since = (utc_now() - timedelta(days=365)).isoformat()
         logs = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
             "from_date": since
@@ -788,7 +789,7 @@ class GDPRComplianceFramework(BaseComplianceFramework):
         findings = []
         evidence = {}
 
-        since = (datetime.utcnow() - timedelta(days=365)).isoformat()
+        since = (utc_now() - timedelta(days=365)).isoformat()
         logs = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
             "from_date": since
@@ -843,7 +844,7 @@ class GDPRComplianceFramework(BaseComplianceFramework):
             findings.append(f"Low MFA adoption: {mfa_evidence.get('adoption_rate', 0)}%")
             score -= 30
 
-        since = (datetime.utcnow() - timedelta(days=30)).isoformat()
+        since = (utc_now() - timedelta(days=30)).isoformat()
         logs = audit_db.audit_logs.find_all({
             "organization_id": self.organization_id,
             "from_date": since
@@ -885,7 +886,7 @@ class GDPRComplianceFramework(BaseComplianceFramework):
             "organization_id": self.organization_id
         }, limit=1000)
 
-        since = (datetime.utcnow() - timedelta(days=30)).isoformat()
+        since = (utc_now() - timedelta(days=30)).isoformat()
         recent_alerts = [a for a in alerts if a.get("created_at", "") >= since and a.get("severity") in ['high', 'critical']]
         evidence['high_severity_alerts_30d'] = len(recent_alerts)
 

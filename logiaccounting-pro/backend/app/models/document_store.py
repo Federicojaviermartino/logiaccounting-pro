@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
 from uuid import uuid4
 from app.models.store import BaseStore
+from app.utils.datetime_utils import utc_now
 import secrets
 import hashlib
 import re
@@ -147,8 +148,8 @@ class EnhancedDocumentStore(BaseStore):
         doc = self.find_by_id(doc_id)
         if doc:
             doc["status"] = "deleted"
-            doc["deleted_at"] = datetime.utcnow().isoformat()
-            doc["updated_at"] = datetime.utcnow().isoformat()
+            doc["deleted_at"] = utc_now().isoformat()
+            doc["updated_at"] = utc_now().isoformat()
             return doc
         return None
 
@@ -156,8 +157,8 @@ class EnhancedDocumentStore(BaseStore):
         doc = self.find_by_id(doc_id)
         if doc:
             doc["status"] = "archived"
-            doc["archived_at"] = datetime.utcnow().isoformat()
-            doc["updated_at"] = datetime.utcnow().isoformat()
+            doc["archived_at"] = utc_now().isoformat()
+            doc["updated_at"] = utc_now().isoformat()
             return doc
         return None
 
@@ -167,7 +168,7 @@ class EnhancedDocumentStore(BaseStore):
             doc["status"] = "active"
             doc["deleted_at"] = None
             doc["archived_at"] = None
-            doc["updated_at"] = datetime.utcnow().isoformat()
+            doc["updated_at"] = utc_now().isoformat()
             return doc
         return None
 
@@ -201,12 +202,12 @@ class DocumentShareStore(BaseStore):
         if not share.get("expires_at"):
             return False
         expires = datetime.fromisoformat(share["expires_at"].replace("Z", ""))
-        return datetime.utcnow() > expires
+        return utc_now() > expires
 
     def record_access(self, share_id: str):
         share = self.find_by_id(share_id)
         if share:
-            share["last_accessed_at"] = datetime.utcnow().isoformat()
+            share["last_accessed_at"] = utc_now().isoformat()
             share["access_count"] = share.get("access_count", 0) + 1
 
     def create_link_share(
@@ -228,7 +229,7 @@ class DocumentShareStore(BaseStore):
         }
 
         if expires_days:
-            data["expires_at"] = (datetime.utcnow() + timedelta(days=expires_days)).isoformat()
+            data["expires_at"] = (utc_now() + timedelta(days=expires_days)).isoformat()
 
         return self.create(data)
 
@@ -250,7 +251,7 @@ class DocumentShareStore(BaseStore):
             existing["permission"] = permission
             existing["can_download"] = can_download
             existing["can_share"] = can_share
-            existing["updated_at"] = datetime.utcnow().isoformat()
+            existing["updated_at"] = utc_now().isoformat()
             return existing
 
         return self.create({
@@ -290,7 +291,7 @@ class DocumentCommentStore(BaseStore):
         if comment:
             comment["is_resolved"] = True
             comment["resolved_by"] = resolved_by
-            comment["resolved_at"] = datetime.utcnow().isoformat()
+            comment["resolved_at"] = utc_now().isoformat()
             return comment
         return None
 

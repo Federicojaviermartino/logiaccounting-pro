@@ -11,6 +11,8 @@ from collections import defaultdict
 from enum import Enum
 import threading
 
+from app.utils.datetime_utils import utc_now
+
 
 class RateLimitAlgorithm(str, Enum):
     """Rate limiting algorithm types."""
@@ -113,11 +115,11 @@ class SlidingWindowCounter:
             self._cleanup_old_entries(key, current_time)
 
             if not self._buckets[key]:
-                return datetime.utcnow()
+                return utc_now()
 
             oldest = min(ts for ts, _ in self._buckets[key])
             reset_time = oldest + self._window_seconds
-            return datetime.utcfromtimestamp(reset_time)
+            return datetime.fromtimestamp(reset_time, tz=None)
 
 
 class TokenBucket:
@@ -254,8 +256,8 @@ class RateLimiter:
         """Check if key is under penalty."""
         with self._lock:
             if key in self._penalties:
-                if datetime.utcnow() < self._penalties[key]:
-                    remaining = (self._penalties[key] - datetime.utcnow()).seconds
+                if utc_now() < self._penalties[key]:
+                    remaining = (self._penalties[key] - utc_now()).seconds
                     return remaining
                 del self._penalties[key]
         return None
@@ -263,7 +265,7 @@ class RateLimiter:
     def _apply_penalty(self, key: str, seconds: int) -> None:
         """Apply a penalty to a key."""
         with self._lock:
-            self._penalties[key] = datetime.utcnow() + timedelta(seconds=seconds)
+            self._penalties[key] = utc_now() + timedelta(seconds=seconds)
 
     def check(
         self,
@@ -282,7 +284,7 @@ class RateLimiter:
                 allowed=True,
                 limit=0,
                 remaining=0,
-                reset_at=datetime.utcnow(),
+                reset_at=utc_now(),
             )
 
         if path and any(path.startswith(p) for p in config.exclude_paths):
@@ -290,7 +292,7 @@ class RateLimiter:
                 allowed=True,
                 limit=config.requests,
                 remaining=config.requests,
-                reset_at=datetime.utcnow() + timedelta(seconds=config.window_seconds),
+                reset_at=utc_now() + timedelta(seconds=config.window_seconds),
             )
 
         if config.apply_to_authenticated_only and not is_authenticated:
@@ -298,7 +300,7 @@ class RateLimiter:
                 allowed=True,
                 limit=config.requests,
                 remaining=config.requests,
-                reset_at=datetime.utcnow() + timedelta(seconds=config.window_seconds),
+                reset_at=utc_now() + timedelta(seconds=config.window_seconds),
             )
 
         if config.apply_to_anonymous_only and is_authenticated:
@@ -306,7 +308,7 @@ class RateLimiter:
                 allowed=True,
                 limit=config.requests,
                 remaining=config.requests,
-                reset_at=datetime.utcnow() + timedelta(seconds=config.window_seconds),
+                reset_at=utc_now() + timedelta(seconds=config.window_seconds),
             )
 
         key = self._get_key(config, identifier, user_id, organization_id)
@@ -340,14 +342,14 @@ class RateLimiter:
                 remaining = bucket.get_tokens(key)
                 allowed = remaining >= 1
             remaining = int(remaining)
-            reset_at = datetime.utcnow() + timedelta(seconds=1 / (config.requests / config.window_seconds))
+            reset_at = utc_now() + timedelta(seconds=1 / (config.requests / config.window_seconds))
 
         else:
             return RateLimitResult(
                 allowed=True,
                 limit=config.requests,
                 remaining=config.requests,
-                reset_at=datetime.utcnow() + timedelta(seconds=config.window_seconds),
+                reset_at=utc_now() + timedelta(seconds=config.window_seconds),
             )
 
         if not allowed and config.penalty_seconds > 0:
@@ -356,7 +358,7 @@ class RateLimiter:
                 allowed=False,
                 limit=config.requests,
                 remaining=0,
-                reset_at=datetime.utcnow() + timedelta(seconds=config.penalty_seconds),
+                reset_at=utc_now() + timedelta(seconds=config.penalty_seconds),
                 retry_after_seconds=config.penalty_seconds,
                 rule_name=rule_name,
             )
@@ -413,7 +415,7 @@ class RateLimiter:
             allowed=True,
             limit=0,
             remaining=0,
-            reset_at=datetime.utcnow(),
+            reset_at=utc_now(),
         )
 
     def reset(self, rule_name: str, identifier: str) -> bool:

@@ -15,6 +15,7 @@ from app.integrations.base import (
     IntegrationStatus,
 )
 from app.integrations.registry import register_integration
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -155,7 +156,7 @@ class ZapierIntegration(BaseIntegration):
             "trigger": trigger_key,
             "webhook_url": webhook_url,
             "customer_id": customer_id,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
             "active": True,
         }
 
@@ -233,11 +234,11 @@ class ZapierIntegration(BaseIntegration):
         # In production: call invoice service
         return {
             "id": f"inv_{uuid4().hex[:12]}",
-            "number": data.get("invoice_number", f"INV-{int(datetime.utcnow().timestamp())}"),
+            "number": data.get("invoice_number", f"INV-{int(utc_now().timestamp())}"),
             "customer_id": data.get("customer_id"),
             "amount": data.get("amount"),
             "status": "draft",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
         }
 
     async def _action_create_customer(self, data: Dict) -> Dict:
@@ -246,7 +247,7 @@ class ZapierIntegration(BaseIntegration):
             "id": f"cust_{uuid4().hex[:12]}",
             "name": data.get("name"),
             "email": data.get("email"),
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
         }
 
     async def _action_create_project(self, data: Dict) -> Dict:
@@ -256,7 +257,7 @@ class ZapierIntegration(BaseIntegration):
             "name": data.get("name"),
             "customer_id": data.get("customer_id"),
             "status": "active",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
         }
 
     async def _action_send_notification(self, data: Dict) -> Dict:
@@ -265,7 +266,7 @@ class ZapierIntegration(BaseIntegration):
             "id": f"notif_{uuid4().hex[:12]}",
             "recipient": data.get("recipient"),
             "message": data.get("message"),
-            "sent_at": datetime.utcnow().isoformat(),
+            "sent_at": utc_now().isoformat(),
         }
 
     async def _action_create_ticket(self, data: Dict) -> Dict:
@@ -276,7 +277,7 @@ class ZapierIntegration(BaseIntegration):
             "description": data.get("description"),
             "priority": data.get("priority", "medium"),
             "status": "open",
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
         }
 
     # ==================== Sample Data ====================
@@ -294,7 +295,7 @@ class ZapierIntegration(BaseIntegration):
                 "currency": "USD",
                 "status": "draft",
                 "due_date": "2024-02-15",
-                "created_at": datetime.utcnow().isoformat(),
+                "created_at": utc_now().isoformat(),
             },
             "invoice_paid": {
                 "id": "inv_sample123",
@@ -303,7 +304,7 @@ class ZapierIntegration(BaseIntegration):
                 "amount": 1500.00,
                 "paid_amount": 1500.00,
                 "payment_method": "credit_card",
-                "paid_at": datetime.utcnow().isoformat(),
+                "paid_at": utc_now().isoformat(),
             },
             "new_customer": {
                 "id": "cust_sample123",
@@ -311,7 +312,7 @@ class ZapierIntegration(BaseIntegration):
                 "email": "customer@example.com",
                 "company": "Sample Corp",
                 "phone": "+1-555-0123",
-                "created_at": datetime.utcnow().isoformat(),
+                "created_at": utc_now().isoformat(),
             },
             "new_payment": {
                 "id": "pmt_sample123",
@@ -319,13 +320,13 @@ class ZapierIntegration(BaseIntegration):
                 "amount": 1500.00,
                 "currency": "USD",
                 "method": "credit_card",
-                "received_at": datetime.utcnow().isoformat(),
+                "received_at": utc_now().isoformat(),
             },
             "project_completed": {
                 "id": "proj_sample123",
                 "name": "Sample Project",
                 "customer_id": "cust_sample123",
-                "completed_at": datetime.utcnow().isoformat(),
+                "completed_at": utc_now().isoformat(),
             },
             "new_ticket": {
                 "id": "tkt_sample123",
@@ -334,14 +335,14 @@ class ZapierIntegration(BaseIntegration):
                 "description": "This is a sample ticket",
                 "priority": "medium",
                 "customer_id": "cust_sample123",
-                "created_at": datetime.utcnow().isoformat(),
+                "created_at": utc_now().isoformat(),
             },
             "ticket_resolved": {
                 "id": "tkt_sample123",
                 "number": "TKT-0001",
                 "subject": "Sample Ticket",
                 "resolution": "Issue resolved",
-                "resolved_at": datetime.utcnow().isoformat(),
+                "resolved_at": utc_now().isoformat(),
             },
         }
         return samples.get(trigger_key, {})

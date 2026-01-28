@@ -7,6 +7,7 @@ from typing import Optional, Set, Dict, List, Any, Tuple
 from datetime import datetime
 from enum import Enum
 
+from app.utils.datetime_utils import utc_now
 from .roles import RoleManager, role_manager, SystemRole
 from .permissions import PermissionRegistry, permission_registry, Scope
 from .policies import PolicyEngine, policy_engine, PolicyEffect
@@ -164,7 +165,7 @@ class RBACEngine:
             "user_agent": request.user_agent,
             "mfa_verified": request.mfa_verified,
             "session_id": request.session_id,
-            "current_time": datetime.utcnow(),
+            "current_time": utc_now(),
             **request.additional_context,
         }
 
@@ -179,7 +180,7 @@ class RBACEngine:
 
         if cached:
             permissions, cached_at = cached
-            elapsed = (datetime.utcnow() - cached_at).total_seconds()
+            elapsed = (utc_now() - cached_at).total_seconds()
             if elapsed < self._cache_ttl_seconds:
                 return permissions
 
@@ -188,7 +189,7 @@ class RBACEngine:
             organization_id,
         )
 
-        self._user_permissions_cache[cache_key] = (permissions, datetime.utcnow())
+        self._user_permissions_cache[cache_key] = (permissions, utc_now())
         return permissions
 
     def _check_permission(
@@ -236,7 +237,7 @@ class RBACEngine:
             "resource_id": request.resource_id,
             "result": result,
             "ip_address": request.ip_address,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": utc_now().isoformat(),
         }
 
     def invalidate_user_cache(

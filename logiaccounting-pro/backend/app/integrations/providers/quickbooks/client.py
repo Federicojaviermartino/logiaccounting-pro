@@ -16,6 +16,7 @@ from app.integrations.base import (
     SyncResult,
 )
 from app.integrations.registry import register_integration
+from app.utils.datetime_utils import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -76,8 +77,8 @@ class QuickBooksIntegration(BaseIntegration):
         # In production: exchange code for tokens
         # Demo response
         return {
-            "access_token": f"qb_access_{datetime.utcnow().timestamp()}",
-            "refresh_token": f"qb_refresh_{datetime.utcnow().timestamp()}",
+            "access_token": f"qb_access_{utc_now().timestamp()}",
+            "refresh_token": f"qb_refresh_{utc_now().timestamp()}",
             "expires_in": 3600,
             "realm_id": "123456789",
         }
@@ -126,8 +127,8 @@ class QuickBooksIntegration(BaseIntegration):
         # Demo response
         new_credentials = {
             **self.credentials,
-            "access_token": f"qb_access_{datetime.utcnow().timestamp()}",
-            "token_refreshed_at": datetime.utcnow().isoformat(),
+            "access_token": f"qb_access_{utc_now().timestamp()}",
+            "token_refreshed_at": utc_now().isoformat(),
         }
 
         self._access_token = new_credentials["access_token"]
@@ -161,7 +162,7 @@ class QuickBooksIntegration(BaseIntegration):
         # Demo response
         return {
             "Customer": {
-                "Id": f"qb_cust_{datetime.utcnow().timestamp()}",
+                "Id": f"qb_cust_{utc_now().timestamp()}",
                 "DisplayName": data.get("name"),
                 "PrimaryEmailAddr": {"Address": data.get("email")},
                 "SyncToken": "0",
@@ -222,8 +223,8 @@ class QuickBooksIntegration(BaseIntegration):
         total = sum(item.get("amount", 0) for item in line_items)
         return {
             "Invoice": {
-                "Id": f"qb_inv_{datetime.utcnow().timestamp()}",
-                "DocNumber": f"INV-{int(datetime.utcnow().timestamp())}",
+                "Id": f"qb_inv_{utc_now().timestamp()}",
+                "DocNumber": f"INV-{int(utc_now().timestamp())}",
                 "CustomerRef": {"value": customer_id},
                 "TotalAmt": total,
                 "Balance": total,
@@ -268,7 +269,7 @@ class QuickBooksIntegration(BaseIntegration):
 
         return {
             "Payment": {
-                "Id": f"qb_pmt_{datetime.utcnow().timestamp()}",
+                "Id": f"qb_pmt_{utc_now().timestamp()}",
                 "CustomerRef": {"value": customer_id},
                 "TotalAmt": amount,
                 "SyncToken": "0",

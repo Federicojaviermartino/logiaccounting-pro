@@ -11,6 +11,7 @@ import time
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 import asyncio
+from app.utils.datetime_utils import utc_now
 
 from app.models.webhook_store import (
     webhook_db, get_event_definitions, get_event_types,
@@ -464,7 +465,7 @@ class WebhookService:
             "id": event_id,
             "type": event_type,
             "api_version": "v1",
-            "created_at": datetime.utcnow().isoformat() + "Z",
+            "created_at": utc_now().isoformat() + "Z",
             "tenant_id": tenant_id,
             "data": payload
         }
@@ -538,7 +539,7 @@ class WebhookService:
         }
 
         # Record attempt
-        attempt_start = datetime.utcnow()
+        attempt_start = utc_now()
 
         try:
             timeout = endpoint.get("timeout_seconds", 30)
@@ -550,7 +551,7 @@ class WebhookService:
                     headers=headers
                 )
 
-            response_time_ms = int((datetime.utcnow() - attempt_start).total_seconds() * 1000)
+            response_time_ms = int((utc_now() - attempt_start).total_seconds() * 1000)
 
             # Record attempt details
             webhook_db.deliveries.record_attempt({
@@ -642,14 +643,14 @@ class WebhookService:
         test_payload = {
             "message": "This is a test webhook from LogiAccounting Pro",
             "endpoint_id": webhook_id,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": utc_now().isoformat()
         }
 
         payload_json = json.dumps({
             "id": f"test_{int(time.time())}",
             "type": "test.ping",
             "api_version": "v1",
-            "created_at": datetime.utcnow().isoformat() + "Z",
+            "created_at": utc_now().isoformat() + "Z",
             "data": test_payload
         }, separators=(",", ":"))
 
@@ -921,5 +922,5 @@ async def emit_project_status_changed(
         "project_id": project_id,
         "old_status": old_status,
         "new_status": new_status,
-        "changed_at": datetime.utcnow().isoformat()
+        "changed_at": utc_now().isoformat()
     }, tenant_id)

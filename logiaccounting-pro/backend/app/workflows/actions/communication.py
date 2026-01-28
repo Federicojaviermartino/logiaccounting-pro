@@ -7,6 +7,8 @@ from typing import Dict, Any, List
 from datetime import datetime
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 from app.workflows.actions.base import (
     BaseAction, ActionCategory, ActionInput, ActionOutput, register_action
 )
@@ -58,13 +60,13 @@ class SendEmailAction(BaseAction):
         # In production: use email service
         # await email_service.send(to=to, subject=subject, body=body, ...)
 
-        message_id = f"msg_{datetime.utcnow().timestamp()}"
+        message_id = f"msg_{utc_now().timestamp()}"
 
         logger.info(f"[SendEmail] Sending to {to}: {subject}")
 
         return {
             "message_id": message_id,
-            "sent_at": datetime.utcnow().isoformat(),
+            "sent_at": utc_now().isoformat(),
             "recipients": [to] + [e.strip() for e in cc.split(",") if e.strip()],
             "success": True,
         }
@@ -96,14 +98,14 @@ class SendSMSAction(BaseAction):
         message = config.get("message", "")[:160]
 
         # In production: use Twilio or similar
-        message_id = f"sms_{datetime.utcnow().timestamp()}"
+        message_id = f"sms_{utc_now().timestamp()}"
 
         logger.info(f"[SendSMS] Sending to {to}")
 
         return {
             "message_id": message_id,
             "status": "sent",
-            "sent_at": datetime.utcnow().isoformat(),
+            "sent_at": utc_now().isoformat(),
         }
 
 
@@ -139,7 +141,7 @@ class SendSlackMessageAction(BaseAction):
         logger.info(f"[SendSlack] Sending to {channel}")
 
         return {
-            "message_ts": str(datetime.utcnow().timestamp()),
+            "message_ts": str(utc_now().timestamp()),
             "channel_id": channel,
             "success": True,
         }
@@ -179,7 +181,7 @@ class SendNotificationAction(BaseAction):
         title = config.get("title")
         message = config.get("message")
 
-        notification_id = f"notif_{datetime.utcnow().timestamp()}"
+        notification_id = f"notif_{utc_now().timestamp()}"
 
         logger.info(f"[SendNotification] Sending to user {user_id}: {title}")
 

@@ -11,6 +11,7 @@ import logging
 import os
 import base64
 from io import BytesIO
+from app.utils.datetime_utils import utc_now
 
 from app.models.document_store import doc_db
 from app.services.storage import get_storage_provider
@@ -79,7 +80,7 @@ class SignatureService:
             'message': message,
             'status': 'draft',
             'signing_order': signing_order,
-            'expires_at': (datetime.utcnow() + timedelta(days=expires_in_days)).isoformat(),
+            'expires_at': (utc_now() + timedelta(days=expires_in_days)).isoformat(),
             'reminder_frequency_days': reminder_frequency,
             'created_by': created_by,
             'recipients': [],
@@ -152,7 +153,7 @@ class SignatureService:
         # Update request status
         doc_db.signature_requests.update(request_id, {
             'status': 'pending',
-            'sent_at': datetime.utcnow().isoformat(),
+            'sent_at': utc_now().isoformat(),
         })
 
         return {
@@ -198,7 +199,7 @@ class SignatureService:
 
         if request.get('expires_at'):
             expires = datetime.fromisoformat(request['expires_at'].replace('Z', ''))
-            if datetime.utcnow() > expires:
+            if utc_now() > expires:
                 return {'error': 'This signature request has expired'}
 
         if request.get('status') == 'cancelled':
@@ -228,7 +229,7 @@ class SignatureService:
         if recipient.get('status') == 'sent':
             doc_db.signature_recipients.update(recipient['id'], {
                 'status': 'viewed',
-                'viewed_at': datetime.utcnow().isoformat(),
+                'viewed_at': utc_now().isoformat(),
             })
 
         return {
@@ -283,7 +284,7 @@ class SignatureService:
         # Record signature
         doc_db.signature_recipients.update(recipient['id'], {
             'signature_data': signature_data,
-            'signed_at': datetime.utcnow().isoformat(),
+            'signed_at': utc_now().isoformat(),
             'status': 'signed',
             'ip_address': ip_address,
             'user_agent': user_agent,
@@ -301,7 +302,7 @@ class SignatureService:
 
             doc_db.signature_requests.update(request['id'], {
                 'status': 'completed',
-                'completed_at': datetime.utcnow().isoformat(),
+                'completed_at': utc_now().isoformat(),
                 'signed_document_id': signed_doc_id,
             })
 
@@ -324,7 +325,7 @@ class SignatureService:
             'success': True,
             'request_status': 'completed' if pending_count == 0 else 'in_progress',
             'pending_signatures': pending_count,
-            'signed_at': datetime.utcnow().isoformat()
+            'signed_at': utc_now().isoformat()
         }
 
     def decline_signature(
@@ -356,7 +357,7 @@ class SignatureService:
         doc_db.signature_recipients.update(recipient['id'], {
             'status': 'declined',
             'decline_reason': reason,
-            'declined_at': datetime.utcnow().isoformat(),
+            'declined_at': utc_now().isoformat(),
         })
 
         # Mark request as declined
@@ -459,7 +460,7 @@ class SignatureService:
 
         doc_db.signature_requests.update(request_id, {
             'status': 'cancelled',
-            'cancelled_at': datetime.utcnow().isoformat(),
+            'cancelled_at': utc_now().isoformat(),
             'cancelled_by': cancelled_by,
         })
 
@@ -553,7 +554,7 @@ class SignatureService:
             signature_page.insert_text((50, y), f"Request ID: {request['id']}", fontsize=10)
             y += 20
 
-            completed_at = request.get('completed_at', datetime.utcnow().isoformat())
+            completed_at = request.get('completed_at', utc_now().isoformat())
             signature_page.insert_text((50, y), f"Completed: {completed_at}", fontsize=10)
             y += 40
 

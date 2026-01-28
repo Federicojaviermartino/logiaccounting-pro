@@ -12,6 +12,8 @@ from uuid import UUID
 import logging
 import json
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -109,7 +111,7 @@ class SessionData:
 
     def is_expired(self) -> bool:
         """Check if session has expired."""
-        return datetime.utcnow() > self.expires_at
+        return utc_now() > self.expires_at
 
     def is_valid(self) -> bool:
         """Check if session is valid."""
@@ -117,11 +119,11 @@ class SessionData:
 
     def update_activity(self) -> None:
         """Update last activity timestamp."""
-        self.last_activity = datetime.utcnow()
+        self.last_activity = utc_now()
 
     def extend(self, minutes: int) -> None:
         """Extend session expiration."""
-        self.expires_at = datetime.utcnow() + timedelta(minutes=minutes)
+        self.expires_at = utc_now() + timedelta(minutes=minutes)
         self.update_activity()
 
     def to_dict(self) -> Dict[str, Any]:
@@ -234,7 +236,7 @@ class SessionManager:
         await self._enforce_session_limit(user_id)
 
         session_id = self._generate_session_id()
-        now = datetime.utcnow()
+        now = utc_now()
 
         if device_info is None and user_agent:
             device_info = DeviceInfo.from_user_agent(user_agent)
@@ -261,7 +263,7 @@ class SessionManager:
         """Store session in backend."""
         if self.redis:
             key = self._get_session_key(session.session_id)
-            ttl = int((session.expires_at - datetime.utcnow()).total_seconds())
+            ttl = int((session.expires_at - utc_now()).total_seconds())
             await self.redis.setex(key, ttl, session.to_json())
 
             user_key = self._get_user_sessions_key(session.user_id)
@@ -343,7 +345,7 @@ class SessionManager:
         extension = minutes or self.session_timeout_minutes
 
         max_expiry = session.created_at + timedelta(hours=self.absolute_timeout_hours)
-        new_expiry = datetime.utcnow() + timedelta(minutes=extension)
+        new_expiry = utc_now() + timedelta(minutes=extension)
 
         if new_expiry > max_expiry:
             new_expiry = max_expiry
@@ -364,7 +366,7 @@ class SessionManager:
             return False
 
         session.mfa_verified = True
-        session.mfa_verified_at = datetime.utcnow()
+        session.mfa_verified_at = utc_now()
         await self._store_session(session)
 
         logger.info(f"Session {session_id[:8]}... marked as MFA verified")

@@ -7,6 +7,8 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 import logging
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -60,7 +62,7 @@ class MobileAggregatorService:
                 "icon": "file-text",
                 "title": "New Invoice",
                 "description": "Invoice #INV-2024-0042 for $5,250",
-                "timestamp": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
+                "timestamp": (utc_now() - timedelta(hours=2)).isoformat(),
                 "action_url": "/portal/payments/inv_001",
             },
             {
@@ -69,7 +71,7 @@ class MobileAggregatorService:
                 "icon": "credit-card",
                 "title": "Payment Received",
                 "description": "Payment of $3,500 confirmed",
-                "timestamp": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+                "timestamp": (utc_now() - timedelta(days=1)).isoformat(),
                 "action_url": "/portal/payments",
             },
             {
@@ -78,7 +80,7 @@ class MobileAggregatorService:
                 "icon": "folder",
                 "title": "Project Update",
                 "description": "Website Redesign reached 65%",
-                "timestamp": (datetime.utcnow() - timedelta(days=1, hours=5)).isoformat(),
+                "timestamp": (utc_now() - timedelta(days=1, hours=5)).isoformat(),
                 "action_url": "/portal/projects/proj_001",
             },
             {
@@ -87,7 +89,7 @@ class MobileAggregatorService:
                 "icon": "message-circle",
                 "title": "Support Reply",
                 "description": "New reply on ticket #TKT-0015",
-                "timestamp": (datetime.utcnow() - timedelta(days=2)).isoformat(),
+                "timestamp": (utc_now() - timedelta(days=2)).isoformat(),
                 "action_url": "/portal/support/tkt_001",
             },
             {
@@ -96,7 +98,7 @@ class MobileAggregatorService:
                 "icon": "file",
                 "title": "Quote Sent",
                 "description": "Quote #QT-2024-0012 for $12,500",
-                "timestamp": (datetime.utcnow() - timedelta(days=3)).isoformat(),
+                "timestamp": (utc_now() - timedelta(days=3)).isoformat(),
                 "action_url": "/portal/quotes/qt_001",
             },
         ]
@@ -157,7 +159,7 @@ class MobileAggregatorService:
                     "body": "Invoice #INV-2024-0042 is due in 3 days",
                     "read": False,
                     "action_url": "/portal/payments/inv_001",
-                    "created_at": (datetime.utcnow() - timedelta(hours=1)).isoformat(),
+                    "created_at": (utc_now() - timedelta(hours=1)).isoformat(),
                 },
                 {
                     "id": "notif_002",
@@ -166,7 +168,7 @@ class MobileAggregatorService:
                     "body": "Your ticket received a response",
                     "read": False,
                     "action_url": "/portal/support/tkt_001",
-                    "created_at": (datetime.utcnow() - timedelta(hours=3)).isoformat(),
+                    "created_at": (utc_now() - timedelta(hours=3)).isoformat(),
                 },
                 {
                     "id": "notif_003",
@@ -175,7 +177,7 @@ class MobileAggregatorService:
                     "body": "Quote #QT-2024-0012 expires in 2 days",
                     "read": False,
                     "action_url": "/portal/quotes/qt_001",
-                    "created_at": (datetime.utcnow() - timedelta(hours=6)).isoformat(),
+                    "created_at": (utc_now() - timedelta(hours=6)).isoformat(),
                 },
                 {
                     "id": "notif_004",
@@ -184,7 +186,7 @@ class MobileAggregatorService:
                     "body": "Design phase completed for Website Redesign",
                     "read": True,
                     "action_url": "/portal/projects/proj_001",
-                    "created_at": (datetime.utcnow() - timedelta(days=1)).isoformat(),
+                    "created_at": (utc_now() - timedelta(days=1)).isoformat(),
                 },
                 {
                     "id": "notif_005",
@@ -193,7 +195,7 @@ class MobileAggregatorService:
                     "body": "Your payment of $3,500 has been received",
                     "read": True,
                     "action_url": "/portal/payments",
-                    "created_at": (datetime.utcnow() - timedelta(days=2)).isoformat(),
+                    "created_at": (utc_now() - timedelta(days=2)).isoformat(),
                 },
             ]
 
@@ -219,8 +221,8 @@ class MobileAggregatorService:
     def get_offline_data_package(self, customer_id: str, contact_id: str) -> Dict[str, Any]:
         """Get data package for offline use."""
         return {
-            "generated_at": datetime.utcnow().isoformat(),
-            "expires_at": (datetime.utcnow() + timedelta(hours=24)).isoformat(),
+            "generated_at": utc_now().isoformat(),
+            "expires_at": (utc_now() + timedelta(hours=24)).isoformat(),
             "data": {
                 "stats": self._get_quick_stats(customer_id),
                 "invoices": self._get_offline_invoices(customer_id),

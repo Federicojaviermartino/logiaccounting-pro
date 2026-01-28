@@ -9,6 +9,8 @@ import asyncio
 import logging
 from croniter import croniter
 
+from app.utils.datetime_utils import utc_now
+
 logger = logging.getLogger(__name__)
 
 
@@ -31,7 +33,7 @@ class ScheduledJob:
 
     def _calculate_next_run(self):
         """Calculate the next run time."""
-        now = datetime.utcnow()
+        now = utc_now()
 
         if self.schedule_type == "cron":
             cron_expr = self.schedule_config.get("cron", "0 * * * *")
@@ -69,7 +71,7 @@ class ScheduledJob:
 
     def mark_executed(self, success: bool = True, error: str = None):
         """Mark job as executed and calculate next run."""
-        self.last_run = datetime.utcnow()
+        self.last_run = utc_now()
         self.run_count += 1
 
         if not success:
@@ -82,7 +84,7 @@ class ScheduledJob:
         """Check if job is due for execution."""
         if not self.enabled or not self.next_run:
             return False
-        return datetime.utcnow() >= self.next_run
+        return utc_now() >= self.next_run
 
     def to_dict(self) -> Dict:
         return {
@@ -229,7 +231,7 @@ class WorkflowScheduler:
         try:
             await self._on_execute(workflow_id, {
                 "trigger_type": "manual",
-                "triggered_at": datetime.utcnow().isoformat(),
+                "triggered_at": utc_now().isoformat(),
             })
             return True
         except Exception as e:
@@ -332,7 +334,7 @@ class CronExpressionHelper:
     def get_next_runs(cls, cron: str, count: int = 5) -> List[datetime]:
         """Get next N run times for a cron expression."""
         try:
-            now = datetime.utcnow()
+            now = utc_now()
             cron_iter = croniter(cron, now)
             return [cron_iter.get_next(datetime) for _ in range(count)]
         except Exception:

@@ -8,6 +8,7 @@ from typing import Optional, List, Dict, Any
 from uuid import uuid4
 
 from app.utils.encryption import encrypt_value, decrypt_value
+from app.utils.datetime_utils import utc_now
 
 
 class SSOConnectionStore:
@@ -87,8 +88,8 @@ class SSOConnectionStore:
             "session_duration_hours": data.get("session_duration_hours", 8),
             "metadata_url": data.get("metadata_url"),
             "metadata_xml": data.get("metadata_xml"),
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat(),
             "last_used_at": None
         }
         self._data.append(connection)
@@ -102,7 +103,7 @@ class SSOConnectionStore:
                     data["oauth_client_secret_encrypted"] = encrypt_value(data.pop("oauth_client_secret"))
                 if "scim_token" in data:
                     data["scim_token_encrypted"] = encrypt_value(data.pop("scim_token"))
-                self._data[i] = {**conn, **data, "updated_at": datetime.utcnow().isoformat()}
+                self._data[i] = {**conn, **data, "updated_at": utc_now().isoformat()}
                 return self._mask_secrets(self._data[i])
         return None
 
@@ -145,7 +146,7 @@ class SSOConnectionStore:
         """Update last used timestamp"""
         for conn in self._data:
             if conn["id"] == connection_id:
-                conn["last_used_at"] = datetime.utcnow().isoformat()
+                conn["last_used_at"] = utc_now().isoformat()
                 break
 
     def map_user_role(self, connection_id: str, groups: List[str]) -> str:
@@ -204,9 +205,9 @@ class SSOSessionStore:
             "id_token": data.get("id_token"),
             "token_expires_at": data.get("token_expires_at"),
             "is_active": True,
-            "created_at": datetime.utcnow().isoformat(),
-            "last_activity_at": datetime.utcnow().isoformat(),
-            "expires_at": (datetime.utcnow() + timedelta(hours=duration_hours)).isoformat()
+            "created_at": utc_now().isoformat(),
+            "last_activity_at": utc_now().isoformat(),
+            "expires_at": (utc_now() + timedelta(hours=duration_hours)).isoformat()
         }
         self._data.append(session)
         return session
@@ -217,7 +218,7 @@ class SSOSessionStore:
 
     def find_active(self, user_id: str, connection_id: str = None) -> Optional[Dict]:
         """Find active session for user"""
-        now = datetime.utcnow().isoformat()
+        now = utc_now().isoformat()
         for session in self._data:
             if session["user_id"] != user_id:
                 continue
@@ -234,7 +235,7 @@ class SSOSessionStore:
         """Update session activity timestamp"""
         for session in self._data:
             if session["id"] == session_id:
-                session["last_activity_at"] = datetime.utcnow().isoformat()
+                session["last_activity_at"] = utc_now().isoformat()
                 break
 
     def invalidate(self, session_id: str):
@@ -295,9 +296,9 @@ class UserExternalIdentityStore:
             "provider_user_id": data.get("provider_user_id"),
             "email": data.get("email"),
             "profile_data": data.get("profile_data", {}),
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat(),
-            "last_login_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat(),
+            "last_login_at": utc_now().isoformat()
         }
         self._data.append(identity)
         return identity
@@ -309,8 +310,8 @@ class UserExternalIdentityStore:
             for key, value in kwargs.items():
                 if value is not None:
                     existing[key] = value
-            existing["last_login_at"] = datetime.utcnow().isoformat()
-            existing["updated_at"] = datetime.utcnow().isoformat()
+            existing["last_login_at"] = utc_now().isoformat()
+            existing["updated_at"] = utc_now().isoformat()
             return existing
 
         return self.create({
@@ -359,7 +360,7 @@ class SCIMSyncLogStore:
             "error_message": error_message,
             "request_payload": request_payload,
             "response_payload": response_payload,
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
         self._data.append(log)
         return log

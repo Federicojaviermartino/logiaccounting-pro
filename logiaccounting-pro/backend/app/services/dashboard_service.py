@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Dict, List, Optional
 import secrets
 from app.models.store import db
+from app.utils.datetime_utils import utc_now
 
 
 class DashboardService:
@@ -114,8 +115,8 @@ class DashboardService:
             "is_shared": False,
             "share_token": None,
             "refresh_interval": 60,  # seconds
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat()
         }
 
         self._dashboards[dashboard_id] = dashboard
@@ -128,7 +129,7 @@ class DashboardService:
 
         dashboard = self._dashboards[dashboard_id]
         dashboard["layout"] = layout
-        dashboard["updated_at"] = datetime.utcnow().isoformat()
+        dashboard["updated_at"] = utc_now().isoformat()
         return dashboard
 
     def add_widget(self, dashboard_id: str, widget: dict) -> Optional[dict]:
@@ -139,7 +140,7 @@ class DashboardService:
         dashboard = self._dashboards[dashboard_id]
         widget_id = f"w{len(dashboard['layout']) + 1}"
         dashboard["layout"].append({"widget_id": widget_id, **widget})
-        dashboard["updated_at"] = datetime.utcnow().isoformat()
+        dashboard["updated_at"] = utc_now().isoformat()
         return dashboard
 
     def remove_widget(self, dashboard_id: str, widget_id: str) -> Optional[dict]:
@@ -149,7 +150,7 @@ class DashboardService:
 
         dashboard = self._dashboards[dashboard_id]
         dashboard["layout"] = [w for w in dashboard["layout"] if w["widget_id"] != widget_id]
-        dashboard["updated_at"] = datetime.utcnow().isoformat()
+        dashboard["updated_at"] = utc_now().isoformat()
         return dashboard
 
     def update_widget(self, dashboard_id: str, widget_id: str, updates: dict) -> Optional[dict]:
@@ -163,7 +164,7 @@ class DashboardService:
                 widget.update(updates)
                 break
 
-        dashboard["updated_at"] = datetime.utcnow().isoformat()
+        dashboard["updated_at"] = utc_now().isoformat()
         return dashboard
 
     def share_dashboard(self, dashboard_id: str) -> Optional[str]:
@@ -395,7 +396,7 @@ class DashboardService:
 
         # Overdue payments
         if filter_type in [None, "payments"]:
-            today = datetime.utcnow().date().isoformat()
+            today = utc_now().date().isoformat()
             for p in payments:
                 if p.get("status") == "pending" and p.get("due_date", "") < today:
                     alerts.append({

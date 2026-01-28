@@ -9,6 +9,7 @@ from typing import Optional, Dict, List, Any, Tuple
 from dataclasses import dataclass, asdict
 from collections import defaultdict
 import math
+from app.utils.datetime_utils import utc_now
 
 # Optional ML imports
 try:
@@ -121,7 +122,7 @@ class AnomalyDetectionService:
             summary = "No anomalies detected. All data appears normal."
 
         return AnomalyReport(
-            generated_at=datetime.utcnow().isoformat(),
+            generated_at=utc_now().isoformat(),
             total_anomalies=len(anomalies),
             critical_count=critical,
             high_count=high,
@@ -135,7 +136,7 @@ class AnomalyDetectionService:
     def _generate_anomaly_id(self) -> str:
         """Generate unique anomaly ID"""
         self._anomaly_counter += 1
-        return f"ANO-{datetime.utcnow().strftime('%Y%m%d')}-{self._anomaly_counter:04d}"
+        return f"ANO-{utc_now().strftime('%Y%m%d')}-{self._anomaly_counter:04d}"
 
     def _detect_duplicate_invoices(self) -> List[Anomaly]:
         """
@@ -172,7 +173,7 @@ class AnomalyDetectionService:
                         "Verify with vendor if multiple payments were intended",
                         "Check if refund or reversal is needed"
                     ],
-                    detected_at=datetime.utcnow().isoformat()
+                    detected_at=utc_now().isoformat()
                 ))
 
         # Check for same amount + date combinations (potential duplicates without invoice numbers)
@@ -203,7 +204,7 @@ class AnomalyDetectionService:
                             "Check for data entry errors",
                             "Add invoice numbers to prevent future confusion"
                         ],
-                        detected_at=datetime.utcnow().isoformat()
+                        detected_at=utc_now().isoformat()
                     ))
 
         return anomalies
@@ -266,7 +267,7 @@ class AnomalyDetectionService:
                         "Verify invoice amounts are correct",
                         "Check for pricing errors or unauthorized changes"
                     ],
-                    detected_at=datetime.utcnow().isoformat()
+                    detected_at=utc_now().isoformat()
                 ))
 
         return anomalies
@@ -334,7 +335,7 @@ class AnomalyDetectionService:
                         "Identify major purchases or unusual items",
                         "Verify budget approval for large expenses"
                     ],
-                    detected_at=datetime.utcnow().isoformat()
+                    detected_at=utc_now().isoformat()
                 ))
 
         return anomalies
@@ -371,7 +372,7 @@ class AnomalyDetectionService:
                         vendor_stats[vendor_id]["name"] = vendor_map[vendor_id].get("company_name", "Unknown")
 
         # Detect sudden new high-value vendors
-        today = datetime.utcnow()
+        today = utc_now()
         thirty_days_ago = (today - timedelta(days=30)).isoformat()[:10]
 
         for vendor_id, stats in vendor_stats.items():
@@ -398,7 +399,7 @@ class AnomalyDetectionService:
                             "Review all transactions with this vendor",
                             "Ensure proper vendor onboarding was completed"
                         ],
-                        detected_at=datetime.utcnow().isoformat()
+                        detected_at=utc_now().isoformat()
                     ))
 
             # Unusual transaction frequency
@@ -425,7 +426,7 @@ class AnomalyDetectionService:
                             "Verify actual services/goods received",
                             "Consider more detailed expense tracking"
                         ],
-                        detected_at=datetime.utcnow().isoformat()
+                        detected_at=utc_now().isoformat()
                     ))
 
         return anomalies
@@ -512,7 +513,7 @@ class AnomalyDetectionService:
                             "Verify transaction authenticity",
                             "Check for data entry errors"
                         ],
-                        detected_at=datetime.utcnow().isoformat()
+                        detected_at=utc_now().isoformat()
                     ))
 
         return anomalies[:10]  # Limit ML anomalies to top 10
@@ -553,7 +554,7 @@ class AnomalyDetectionService:
                     detection_method="real_time_check",
                     confidence=1.0,
                     recommendations=["Verify this is not a duplicate entry"],
-                    detected_at=datetime.utcnow().isoformat()
+                    detected_at=utc_now().isoformat()
                 ))
 
         # Check price variation for vendor
@@ -581,7 +582,7 @@ class AnomalyDetectionService:
                             detection_method="real_time_check",
                             confidence=0.8,
                             recommendations=["Verify the amount is correct"],
-                            detected_at=datetime.utcnow().isoformat()
+                            detected_at=utc_now().isoformat()
                         ))
 
         return anomalies

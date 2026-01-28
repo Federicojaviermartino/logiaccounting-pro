@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 import hashlib
 import json
+from app.utils.datetime_utils import utc_now
 
 
 class AuditService:
@@ -64,7 +65,7 @@ class AuditService:
             changes = self._calculate_changes(before, after)
 
         # Generate unique ID with hash for integrity
-        timestamp = datetime.utcnow().isoformat()
+        timestamp = utc_now().isoformat()
         entry_data = f"{self._counter}{timestamp}{action}{entity_type}{entity_id}{user_id}"
         integrity_hash = hashlib.sha256(entry_data.encode()).hexdigest()[:16]
 
@@ -176,7 +177,7 @@ class AuditService:
 
     def get_user_activity(self, user_id: str, days: int = 30) -> List[dict]:
         """Get user activity for last N days"""
-        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        cutoff = (utc_now() - timedelta(days=days)).isoformat()
         return sorted(
             [l for l in self._logs if l["user_id"] == user_id and l["timestamp"] >= cutoff],
             key=lambda x: x["timestamp"],
@@ -185,7 +186,7 @@ class AuditService:
 
     def get_statistics(self, days: int = 30) -> dict:
         """Get audit statistics"""
-        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        cutoff = (utc_now() - timedelta(days=days)).isoformat()
         recent = [l for l in self._logs if l["timestamp"] >= cutoff]
 
         # Count by action
@@ -262,7 +263,7 @@ class AuditService:
     def detect_anomalies(self) -> List[dict]:
         """Detect suspicious activity patterns"""
         anomalies = []
-        now = datetime.utcnow()
+        now = utc_now()
         hour_ago = (now - timedelta(hours=1)).isoformat()
         recent = [l for l in self._logs if l["timestamp"] >= hour_ago]
 

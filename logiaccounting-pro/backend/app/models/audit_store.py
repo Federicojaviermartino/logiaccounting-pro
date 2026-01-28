@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 from typing import Optional, List, Dict, Any
+from app.utils.datetime_utils import utc_now
 from uuid import uuid4
 import hashlib
 import json
@@ -60,7 +61,7 @@ class AuditLogStore:
         sequence_number = self._get_next_sequence(organization_id)
         previous_hash = self._get_previous_hash(organization_id)
 
-        occurred_at = data.get("occurred_at", datetime.utcnow().isoformat())
+        occurred_at = data.get("occurred_at", utc_now().isoformat())
 
         item = {
             "id": str(uuid4()),
@@ -68,7 +69,7 @@ class AuditLogStore:
             "sequence_number": sequence_number,
             "previous_hash": previous_hash,
             "occurred_at": occurred_at,
-            "recorded_at": datetime.utcnow().isoformat(),
+            "recorded_at": utc_now().isoformat(),
             "is_archived": False,
         }
 
@@ -238,7 +239,7 @@ class ChangeHistoryStore:
             "id": str(uuid4()),
             **data,
             "version_number": self._get_next_version(entity_type, entity_id),
-            "created_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat()
         }
         self._data.append(item)
         return item
@@ -292,7 +293,7 @@ class AccessLogStore:
         item = {
             "id": str(uuid4()),
             **data,
-            "occurred_at": data.get("occurred_at", datetime.utcnow().isoformat())
+            "occurred_at": data.get("occurred_at", utc_now().isoformat())
         }
         self._data.append(item)
         return item
@@ -322,7 +323,7 @@ class AccessLogStore:
 
     def count_failed_attempts(self, ip_address: str = None, user_email: str = None, minutes: int = 30) -> int:
         """Count recent failed login attempts"""
-        since = (datetime.utcnow() - timedelta(minutes=minutes)).isoformat()
+        since = (utc_now() - timedelta(minutes=minutes)).isoformat()
 
         results = [
             l for l in self._data
@@ -371,8 +372,8 @@ class AuditAlertStore:
             "id": str(uuid4()),
             **data,
             "status": data.get("status", "open"),
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat()
         }
         self._data.append(item)
         return item
@@ -401,7 +402,7 @@ class AuditAlertStore:
                 self._data[i] = {
                     **alert,
                     **data,
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -416,7 +417,7 @@ class AuditAlertStore:
         return self.update(alert_id, {
             "status": "resolved",
             "resolved_by": user_id,
-            "resolved_at": datetime.utcnow().isoformat(),
+            "resolved_at": utc_now().isoformat(),
             "resolution_notes": notes
         })
 
@@ -424,13 +425,13 @@ class AuditAlertStore:
         return self.update(alert_id, {
             "status": "dismissed",
             "resolved_by": user_id,
-            "resolved_at": datetime.utcnow().isoformat(),
+            "resolved_at": utc_now().isoformat(),
             "resolution_notes": reason
         })
 
     def get_stats(self, organization_id: str, days: int = 30) -> Dict:
         """Get alert statistics"""
-        since = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        since = (utc_now() - timedelta(days=days)).isoformat()
         alerts = [
             a for a in self._data
             if a.get("organization_id") == organization_id and
@@ -465,8 +466,8 @@ class AlertRuleStore:
             **data,
             "is_active": data.get("is_active", True),
             "cooldown_minutes": data.get("cooldown_minutes", 60),
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat()
         }
         self._data.append(item)
         return item
@@ -493,7 +494,7 @@ class AlertRuleStore:
                 self._data[i] = {
                     **rule,
                     **data,
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -516,11 +517,11 @@ class AlertRuleStore:
 
         cooldown = rule.get("cooldown_minutes", 60)
         cooldown_end = datetime.fromisoformat(last_triggered) + timedelta(minutes=cooldown)
-        return datetime.utcnow() >= cooldown_end
+        return utc_now() >= cooldown_end
 
     def record_trigger(self, rule_id: str) -> Optional[Dict]:
         """Record that rule was triggered"""
-        return self.update(rule_id, {"last_triggered_at": datetime.utcnow().isoformat()})
+        return self.update(rule_id, {"last_triggered_at": utc_now().isoformat()})
 
 
 class RetentionPolicyStore:
@@ -534,8 +535,8 @@ class RetentionPolicyStore:
             "id": str(uuid4()),
             **data,
             "is_active": data.get("is_active", True),
-            "created_at": datetime.utcnow().isoformat(),
-            "updated_at": datetime.utcnow().isoformat()
+            "created_at": utc_now().isoformat(),
+            "updated_at": utc_now().isoformat()
         }
         self._data.append(item)
         return item
@@ -560,7 +561,7 @@ class RetentionPolicyStore:
                 self._data[i] = {
                     **policy,
                     **data,
-                    "updated_at": datetime.utcnow().isoformat()
+                    "updated_at": utc_now().isoformat()
                 }
                 return self._data[i]
         return None
@@ -583,8 +584,8 @@ class ComplianceCheckStore:
         item = {
             "id": str(uuid4()),
             **data,
-            "checked_at": data.get("checked_at", datetime.utcnow().isoformat()),
-            "created_at": datetime.utcnow().isoformat()
+            "checked_at": data.get("checked_at", utc_now().isoformat()),
+            "created_at": utc_now().isoformat()
         }
         self._data.append(item)
         return item
